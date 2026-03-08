@@ -1,4 +1,4 @@
-# 🌱 ESRS Gap Detector
+# 🦒 Project Girafon
 
 **Automatically analyse any ESG/sustainability report against ESRS (CSRD) requirements and find exactly what's missing — with evidence.**
 
@@ -10,12 +10,12 @@
 
 Upload any company ESG/sustainability PDF and get:
 
-- ✅ **Per-disclosure status** — FOUND / PARTIAL / MISSING for each ESRS section
-- 📄 **Evidence quotes** — the exact sentence and page number that proves each finding
-- 📊 **Weighted score** — 0–100 overall score with E / S / G breakdown
-- 🚨 **Greenwashing flags** — vague language, missing baselines, unsupported net-zero claims
-- 📋 **Actionable recommendations** — prioritised list of what to fix and what to add
-- 🆕 **Omnibus mode** — toggle between original ESRS 2023 and the 2026 simplified post-Omnibus framework
+-  **Per-disclosure status** — FOUND / PARTIAL / MISSING for each ESRS section
+-  **Evidence quotes** — the exact sentence and page number that proves each finding
+-  **Weighted score** — 0–100 overall score with E / S / G breakdown
+-  **Greenwashing flags** — vague language, missing baselines, unsupported net-zero claims
+-  **Actionable recommendations** — prioritised list of what to fix and what to add
+-  **Omnibus mode** — toggle between original ESRS 2023 and the 2026 simplified post-Omnibus framework
 
 ---
 
@@ -65,7 +65,7 @@ python main.py --pdf report.pdf
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-handle/esg-gap-detector
+git clone https://github.com/monsieurr/girafon
 cd esg-gap-detector
 
 # 2. Install dependencies
@@ -76,7 +76,7 @@ cp .env.example .env
 # Edit .env and add your ANTHROPIC_API_KEY
 
 # 4. Run
-python main.py --pdf your_esg_report.pdf --company "Acme Corp"
+python main.py --pdf your_esg_report.pdf --company "Giraffe Big Corporate"
 ```
 
 This produces `your_esg_report_report.html` — open it in any browser.
