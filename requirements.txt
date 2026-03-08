@@ -1,0 +1,30 @@
+# ── LLM (supports Anthropic, OpenAI, Ollama, Groq, Mistral, and 100+ more)
+litellm>=1.40.0
+
+# ── PDF parsing
+# pymupdf4llm converts PDF pages to Markdown, preserving tables perfectly.
+# pymupdf (fitz) is its required dependency and serves as plain-text fallback.
+pymupdf4llm>=0.0.17
+pymupdf>=1.24.0
+pdfplumber>=0.10.0       # last-resort fallback if PyMuPDF is unavailable
+
+# ── HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+# ── Retrieval
+# scikit-learn provides TF-IDF (always available, no download required).
+# sentence-transformers is optional: install it to unlock dense embedding
+# retrieval (~22 MB model download on first run, ~10-20% recall improvement).
+scikit-learn>=1.4.0
+# sentence-transformers>=2.7.0   # optional — uncomment for semantic retrieval
+
+# ── Async support (stdlib asyncio + aiohttp used by litellm internally)
+# No extra install needed; litellm.acompletion works out of the box.
+
+# ── Environment variables
+python-dotenv>=1.0.0
+
+# ── Optional: OCR for scanned PDFs (uncomment if needed)
+# pytesseract>=0.3.10
+# Pillow>=10.0.0

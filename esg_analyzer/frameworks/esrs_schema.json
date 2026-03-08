@@ -1,0 +1,1217 @@
+{
+  "_meta": {
+    "version": "2.0.0",
+    "source_original": "EFRAG ESRS Delegated Act (EU) 2023/2772",
+    "source_omnibus": "EU Omnibus Directive adopted 24 Feb 2026, published OJ 26 Feb 2026",
+    "last_updated": "2026-02",
+    "note": "Each disclosure has both original_mandatory and omnibus_mandatory flags. Run the tool with --mode original or --mode omnibus to switch regimes.",
+    "modes": {
+      "original": "Full ESRS as per 2023/2772 — applies to Wave 1 (FY2024 reports)",
+      "omnibus": "Simplified ESRS post-Omnibus — scope limited to 1000+ FTE / €450M+ turnover, 61% fewer mandatory data points"
+    },
+    "status_values": [
+      "FOUND",
+      "PARTIAL",
+      "MISSING"
+    ],
+    "scoring": {
+      "FOUND": 1.0,
+      "PARTIAL": 0.5,
+      "MISSING": 0.0
+    }
+  },
+  "E1-6_Scope1": {
+    "framework": "ESRS",
+    "section": "E1-6",
+    "name": "Gross Scope 1 GHG Emissions",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "Direct greenhouse gas emissions from owned or controlled sources. Must include absolute value in tCO2e, consolidation approach (equity share or operational control), and GHG Protocol methodology reference.",
+    "keywords": [
+      "scope 1",
+      "direct emissions",
+      "gross scope 1",
+      "tco2e",
+      "ghg protocol",
+      "operational control",
+      "equity share"
+    ],
+    "expected_units": [
+      "tCO2e",
+      "metric tons CO2e"
+    ],
+    "expected_data_points": [
+      "absolute value tCO2e",
+      "consolidation approach",
+      "GHG Protocol methodology"
+    ],
+    "quality_checks": [
+      "Is a baseline year stated?",
+      "Is the methodology explicitly named?",
+      "Are biogenic emissions separated?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained as mandatory — Scope 1 is a core climate metric under all regimes.",
+    "weight_original": 8,
+    "weight_omnibus": 9,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 305-1"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "Mt CO2e",
+      "tCO2e",
+      "scope 1",
+      "direct emissions",
+      "operated perimeter"
+    ],
+    "value_hint": "Look for a row labelled 'Scope 1' or 'Direct emissions' followed by a series of annual values in Mt CO2e (or Mt COe). The most recent year is typically the rightmost value."
+  },
+  "E1-6_Scope2": {
+    "framework": "ESRS",
+    "section": "E1-6",
+    "name": "Gross Scope 2 GHG Emissions",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "Indirect GHG emissions from purchased electricity, heat or steam. Both market-based and location-based figures required under original ESRS.",
+    "keywords": [
+      "scope 2",
+      "indirect emissions",
+      "purchased electricity",
+      "market-based",
+      "location-based",
+      "energy indirect"
+    ],
+    "expected_units": [
+      "tCO2e",
+      "metric tons CO2e"
+    ],
+    "expected_data_points": [
+      "market-based value",
+      "location-based value",
+      "methodology"
+    ],
+    "quality_checks": [
+      "Are both market-based and location-based values provided?",
+      "Is the emission factor source named?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained. Simplified ESRS still requires both market-based and location-based.",
+    "weight_original": 8,
+    "weight_omnibus": 8,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 305-2"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "Mt CO2e",
+      "tCO2e",
+      "scope 2",
+      "market-based",
+      "location-based",
+      "energy indirect"
+    ],
+    "value_hint": "Look for rows labelled 'Scope 2', 'Market-based' and 'Location-based' with Mt CO2e values. Both figures must be present for full compliance."
+  },
+  "E1-6_Scope3": {
+    "framework": "ESRS",
+    "section": "E1-6",
+    "name": "Gross Scope 3 GHG Emissions",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "All other indirect emissions across the value chain. Must list relevant GHG Protocol categories (1–15), disclose estimation methodology, and identify significant categories.",
+    "keywords": [
+      "scope 3",
+      "value chain",
+      "upstream",
+      "downstream",
+      "category 1",
+      "category 11",
+      "purchased goods",
+      "use of sold products",
+      "business travel",
+      "employee commuting"
+    ],
+    "expected_units": [
+      "tCO2e",
+      "metric tons CO2e"
+    ],
+    "expected_data_points": [
+      "breakdown by category",
+      "estimation methodology",
+      "significant categories identified",
+      "exclusions stated"
+    ],
+    "quality_checks": [
+      "Are all 15 categories addressed (included or explicitly excluded)?",
+      "Is the estimation method stated (spend-based, activity-based, hybrid)?",
+      "Is a base year given?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained but simplified — companies may now report only significant Scope 3 categories rather than all 15, provided they justify exclusions.",
+    "weight_original": 10,
+    "weight_omnibus": 9,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 305-3"
+        ],
+        "alignment": "partial",
+        "gri_stricter": false,
+        "gri_delta": "GRI 305-3 and ESRS E1-6 Scope 3 are closely aligned; both require category-level breakdown and methodology. No material GRI-stricter delta."
+      }
+    },
+    "unit_queries": [
+      "Mt CO2e",
+      "tCO2e",
+      "scope 3",
+      "value chain",
+      "category 11",
+      "use of sold products"
+    ],
+    "value_hint": "Look for Scope 3 category breakdowns (Cat. 1 through Cat. 15) with individual Mt CO2e values. A single category total (e.g. Cat. 11) is PARTIAL; multiple categories constitute FOUND."
+  },
+  "E1-6_Intensity": {
+    "framework": "ESRS",
+    "section": "E1-6",
+    "name": "GHG Emissions Intensity",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "Total GHG emissions per unit of net revenue. Enables cross-company normalised comparison.",
+    "keywords": [
+      "intensity",
+      "emissions per revenue",
+      "carbon intensity",
+      "per million euro",
+      "per meur",
+      "emissions intensity"
+    ],
+    "expected_units": [
+      "tCO2e/MEUR",
+      "tCO2e per revenue"
+    ],
+    "expected_data_points": [
+      "ratio value",
+      "denominator definition"
+    ],
+    "quality_checks": [
+      "Is the denominator clearly defined?",
+      "Is Scope 1+2+3 included or only partial?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Moved to voluntary under the Omnibus simplification — intensity ratios are no longer mandatory but remain best practice.",
+    "weight_original": 5,
+    "weight_omnibus": 3,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 305-4"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "tCO2e",
+      "kboe",
+      "intensity ratio",
+      "per unit",
+      "gCO2",
+      "gCO2e"
+    ],
+    "value_hint": "Look for a GHG intensity ratio — a number followed by a unit like gCO2e/MJ, tCO2e/unit, or similar. A target intensity without a current value is PARTIAL."
+  },
+  "E1-4_Targets": {
+    "framework": "ESRS",
+    "section": "E1-4",
+    "name": "Climate Targets",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "GHG emission reduction targets including baseline year, target year, and % reduction. SBTi-aligned targets should be explicitly flagged. Net-zero claims require interim milestones.",
+    "keywords": [
+      "target",
+      "reduction target",
+      "net zero",
+      "sbti",
+      "science-based",
+      "baseline year",
+      "2030",
+      "2050",
+      "interim milestone",
+      "absolute reduction"
+    ],
+    "expected_units": [
+      "%",
+      "year"
+    ],
+    "expected_data_points": [
+      "baseline year",
+      "target year",
+      "reduction % vs baseline",
+      "scope coverage of target",
+      "SBTi validation status"
+    ],
+    "quality_checks": [
+      "Is there an interim milestone before 2030?",
+      "Is the target science-based or just aspirational?",
+      "Does the company distinguish between operational and value chain targets?"
+    ],
+    "is_quantitative": false,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained as mandatory. However, Omnibus removed the requirement to align targets with EU Climate Law pathways — companies now set their own trajectories.",
+    "weight_original": 8,
+    "weight_omnibus": 8,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 305-5"
+        ],
+        "alignment": "partial",
+        "gri_stricter": false,
+        "gri_delta": "GRI 305-5 focuses on GHG reduction targets. ESRS E1-4 also requires alignment with Paris Agreement pathways and interim milestones — stricter than GRI here."
+      }
+    },
+    "unit_queries": [
+      "% reduction",
+      "net zero",
+      "2030",
+      "2050",
+      "baseline",
+      "Mtco2",
+      "target emissions"
+    ],
+    "value_hint": "Look for a specific GHG reduction target: a percentage, a baseline year (e.g. 2015), and a target year (e.g. 2030 or 2050). All three together = FOUND."
+  },
+  "E1-5_Energy": {
+    "framework": "ESRS",
+    "section": "E1-5",
+    "name": "Energy Consumption and Mix",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "Total energy consumption and share from renewable vs. non-renewable sources, broken down by fuel type and energy vector.",
+    "keywords": [
+      "energy consumption",
+      "renewable energy",
+      "electricity mix",
+      "mwh",
+      "gj",
+      "fossil fuel",
+      "non-renewable",
+      "energy intensity"
+    ],
+    "expected_units": [
+      "MWh",
+      "GJ",
+      "%"
+    ],
+    "expected_data_points": [
+      "total consumption MWh or GJ",
+      "renewable share %",
+      "non-renewable share %",
+      "energy intensity ratio"
+    ],
+    "quality_checks": [
+      "Is the renewable certification type stated (EAC, PPA, etc.)?",
+      "Is energy intensity disclosed?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained. Renewable share and total consumption remain mandatory.",
+    "weight_original": 6,
+    "weight_omnibus": 6,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 302-1",
+          "GRI 302-3",
+          "GRI 302-4"
+        ],
+        "alignment": "full",
+        "gri_stricter": true,
+        "gri_delta": "GRI 302-1 requires energy breakdown by fuel type and by renewable/non-renewable per source. ESRS E1-5 allows aggregated totals — GRI is more granular here."
+      }
+    },
+    "unit_queries": [
+      "energy consumption",
+      "total energy",
+      "non-renewable energy",
+      "TWh total",
+      "GJ total",
+      "fuel consumption",
+      "MWh consumed"
+    ],
+    "value_hint": "Look for total energy consumption in MWh, GWh, TWh or GJ, AND a breakdown between renewable and non-renewable. A generation capacity target without consumption data = PARTIAL."
+  },
+  "E1-1_TransitionPlan": {
+    "framework": "ESRS",
+    "section": "E1-1",
+    "name": "Transition Plan for Climate Change Mitigation",
+    "category": "Environment",
+    "pillar": "Climate Change",
+    "description": "Description of the company's transition plan to a low-carbon economy, including timelines, key actions, and capital allocation towards decarbonisation. Must address Paris Agreement alignment.",
+    "keywords": [
+      "transition plan",
+      "decarbonisation",
+      "climate strategy",
+      "low carbon",
+      "capex",
+      "green investment",
+      "paris agreement",
+      "climate roadmap"
+    ],
+    "expected_units": [
+      "EUR",
+      "%"
+    ],
+    "expected_data_points": [
+      "key actions list",
+      "timelines per action",
+      "investment/capex amounts",
+      "Paris alignment statement"
+    ],
+    "quality_checks": [
+      "Does the plan include concrete investment amounts?",
+      "Are timelines specific (year) not vague?",
+      "Is there a mention of locked-in emissions or stranded assets?"
+    ],
+    "is_quantitative": false,
+    "original_mandatory": true,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Significantly relaxed under Omnibus. Transition plans are now voluntary for most companies; only financial sector entities face stricter requirements.",
+    "weight_original": 6,
+    "weight_omnibus": 3,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 201-2"
+        ],
+        "alignment": "partial",
+        "gri_stricter": false,
+        "gri_delta": "GRI 201-2 covers financial implications of climate change but does not require a full transition plan. ESRS E1-1 is significantly more demanding on transition plan detail."
+      }
+    },
+    "unit_queries": [
+      "billion",
+      "capex",
+      "investment",
+      "MUSD",
+      "MEUR",
+      "2025",
+      "2026",
+      "2030"
+    ],
+    "value_hint": "Look for specific actions with timelines AND investment/capex amounts. A strategy narrative without concrete figures = PARTIAL."
+  },
+  "E2-4_Pollution": {
+    "framework": "ESRS",
+    "section": "E2-4",
+    "name": "Emissions to Air, Water and Soil",
+    "category": "Environment",
+    "pillar": "Pollution",
+    "description": "Emissions of key pollutants — NOx, SOx, VOCs, particulate matter, heavy metals — into air, water, and soil.",
+    "keywords": [
+      "nox",
+      "sox",
+      "voc",
+      "particulate matter",
+      "pm10",
+      "pm2.5",
+      "water discharge",
+      "pollutants",
+      "heavy metals",
+      "persistent organic pollutants"
+    ],
+    "expected_units": [
+      "metric tons",
+      "kg",
+      "mg/l"
+    ],
+    "expected_data_points": [
+      "pollutant type",
+      "emission medium (air/water/soil)",
+      "absolute quantity"
+    ],
+    "quality_checks": [
+      "Are all relevant regulated pollutants covered?",
+      "Are measurement vs. estimation methods stated?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": false,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Remains subject to materiality assessment. Mandatory only if pollution is identified as a material topic.",
+    "weight_original": 4,
+    "weight_omnibus": 3,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 305-7"
+        ],
+        "alignment": "partial",
+        "gri_stricter": true,
+        "gri_delta": "GRI 305-7 requires NOx, SOx and other air emissions by weight. ESRS E2-4 covers air, water and soil but GRI 305-7 requires a more specific pollutant-by-pollutant breakdown."
+      }
+    },
+    "unit_queries": [
+      "SO2",
+      "NOx",
+      "NMVOC",
+      "kt SO",
+      "kt NO",
+      "atmospheric emissions",
+      "sulphur",
+      "nitrogen oxide",
+      "pollutant"
+    ],
+    "value_hint": "Look for quantified pollutant emissions — SO2, NOx, NMVOC, particulates — in kt or tonnes. GHG emissions alone do not satisfy E2-4."
+  },
+  "E3-4_Water": {
+    "framework": "ESRS",
+    "section": "E3-4",
+    "name": "Water Consumption",
+    "category": "Environment",
+    "pillar": "Water and Marine Resources",
+    "description": "Total water withdrawal and consumption, with specific disclosure in areas at water risk. Must identify water-stressed geographies.",
+    "keywords": [
+      "water withdrawal",
+      "water consumption",
+      "water stress",
+      "water risk",
+      "megaliters",
+      "freshwater",
+      "water recycled"
+    ],
+    "expected_units": [
+      "m3",
+      "megaliters",
+      "ML"
+    ],
+    "expected_data_points": [
+      "total withdrawal m3",
+      "consumption in water-stressed areas",
+      "water sources (surface/ground/municipal)",
+      "recycled water %"
+    ],
+    "quality_checks": [
+      "Are water-stressed locations identified using a recognised tool (WRI Aqueduct, etc.)?",
+      "Is the distinction between withdrawal and consumption made?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": false,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Remains subject to materiality. Mandatory only if water is material — e.g., manufacturing, food & beverage, semiconductors.",
+    "weight_original": 4,
+    "weight_omnibus": 3,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 303-3",
+          "GRI 303-4",
+          "GRI 303-5"
+        ],
+        "alignment": "partial",
+        "gri_stricter": true,
+        "gri_delta": "GRI 303-3 requires breakdown of water withdrawal by source (surface water, groundwater, seawater, produced water, third-party water). ESRS E3-4 does not require this source-level granularity — GRI is stricter here."
+      }
+    },
+    "unit_queries": [
+      "m3",
+      "cubic metre",
+      "Mm3",
+      "million m3",
+      "withdrawal",
+      "freshwater",
+      "water stressed"
+    ],
+    "value_hint": "Look for total freshwater withdrawal in m3 or Mm3, AND data for water-stressed areas specifically. A target without a current consumption figure = PARTIAL."
+  },
+  "E4-1_Biodiversity": {
+    "framework": "ESRS",
+    "section": "E4-1",
+    "name": "Biodiversity and Ecosystem Policies",
+    "category": "Environment",
+    "pillar": "Biodiversity",
+    "description": "Policies and transition plans related to biodiversity conservation, land use, and ecosystem protection. Must address sites near Natura 2000 or protected areas.",
+    "keywords": [
+      "biodiversity",
+      "ecosystems",
+      "deforestation",
+      "nature",
+      "land use",
+      "protected areas",
+      "species",
+      "habitat",
+      "natura 2000",
+      "tnfd"
+    ],
+    "expected_units": [
+      "hectares"
+    ],
+    "expected_data_points": [
+      "policy existence",
+      "sites near protected areas",
+      "biodiversity metrics or targets"
+    ],
+    "quality_checks": [
+      "Are site locations near protected areas disclosed?",
+      "Is there a commitment to no net loss or nature positive?"
+    ],
+    "is_quantitative": false,
+    "original_mandatory": false,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Moved to fully voluntary for most sectors under Omnibus. Remains mandatory only for companies with significant land-use impacts.",
+    "weight_original": 3,
+    "weight_omnibus": 2,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 304-1",
+          "GRI 304-2",
+          "GRI 304-3",
+          "GRI 304-4"
+        ],
+        "alignment": "partial",
+        "gri_stricter": true,
+        "gri_delta": "GRI 304-1 requires the size of each operational site in or near protected areas. ESRS E4 allows aggregated figures. GRI 304-4 requires a count of IUCN Red List species affected — ESRS has no equivalent requirement."
+      }
+    },
+    "unit_queries": [
+      "hectare",
+      "ha",
+      "sites",
+      "protected area",
+      "biodiversity action",
+      "species"
+    ],
+    "value_hint": "Look for: (1) a biodiversity policy, (2) sites near protected areas, (3) biodiversity metrics or action plans. All three together = FOUND."
+  },
+  "E5-5_Waste": {
+    "framework": "ESRS",
+    "section": "E5-5",
+    "name": "Resource Use and Waste",
+    "category": "Environment",
+    "pillar": "Circular Economy",
+    "description": "Total waste generated, hazardous vs non-hazardous, and breakdown by disposal route (recycled, landfill, incineration, etc.).",
+    "keywords": [
+      "waste generated",
+      "hazardous waste",
+      "recycling rate",
+      "landfill",
+      "circular economy",
+      "waste diverted",
+      "incineration",
+      "non-hazardous"
+    ],
+    "expected_units": [
+      "metric tons"
+    ],
+    "expected_data_points": [
+      "total waste metric tons",
+      "hazardous waste %",
+      "recycling/reuse rate",
+      "disposal method breakdown"
+    ],
+    "quality_checks": [
+      "Is the recycling rate distinguishable from 'recovery' (which includes incineration with energy)?",
+      "Is hazardous waste treatment method stated?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": false,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Subject to materiality. Mandatory if resource use is identified as material.",
+    "weight_original": 4,
+    "weight_omnibus": 3,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 306-3",
+          "GRI 306-4",
+          "GRI 306-5"
+        ],
+        "alignment": "full",
+        "gri_stricter": true,
+        "gri_delta": "GRI 306-3 requires waste disclosed by hazardous / non-hazardous AND by disposal method (landfill, incineration, recycling, etc.) simultaneously. ESRS E5-5 allows these to be reported separately — GRI requires the cross-tabulation."
+      }
+    },
+    "unit_queries": [
+      "waste generated",
+      "hazardous waste",
+      "non-hazardous",
+      "waste tonnes",
+      "kt waste",
+      "landfill",
+      "incineration",
+      "recycling rate"
+    ],
+    "value_hint": "Look for total waste generated in tonnes or kt, AND a breakdown by hazardous/non-hazardous or by disposal method. A recovery rate % alone is PARTIAL."
+  },
+  "S1-9_Diversity": {
+    "framework": "ESRS",
+    "section": "S1-9",
+    "name": "Diversity and Equal Opportunities",
+    "category": "Social",
+    "pillar": "Own Workforce",
+    "description": "Gender distribution across all employees and at top management/board level. Age group, disability, and other diversity dimensions if material.",
+    "keywords": [
+      "gender",
+      "diversity",
+      "female",
+      "male",
+      "board representation",
+      "management",
+      "gender pay gap",
+      "age group",
+      "equal pay"
+    ],
+    "expected_units": [
+      "%",
+      "number"
+    ],
+    "expected_data_points": [
+      "% female employees total",
+      "% female in management",
+      "% female on board",
+      "gender pay gap %"
+    ],
+    "quality_checks": [
+      "Is pay gap data adjusted vs unadjusted?",
+      "Are management levels clearly defined?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained. Gender diversity metrics remain mandatory under simplified ESRS.",
+    "weight_original": 5,
+    "weight_omnibus": 5,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 405-1"
+        ],
+        "alignment": "partial",
+        "gri_stricter": true,
+        "gri_delta": "GRI 405-1 requires diversity breakdown by employee category (board, senior management, middle management, employees). ESRS S1-9 requires board and total employees but not the full category ladder — GRI is more granular."
+      }
+    },
+    "unit_queries": [
+      "% women",
+      "% female",
+      "gender",
+      "pay gap",
+      "board",
+      "management"
+    ],
+    "value_hint": "Look for the percentage of women across: total employees, management level, and board. A single level (e.g. only General Managers) = PARTIAL."
+  },
+  "S1-14_HealthSafety": {
+    "framework": "ESRS",
+    "section": "S1-14",
+    "name": "Health and Safety",
+    "category": "Social",
+    "pillar": "Own Workforce",
+    "description": "Work-related injuries, fatalities, ill health cases, and lost-time injury frequency rate (LTIFR). Coverage must include all employee categories and significant contractors.",
+    "keywords": [
+      "ltifr",
+      "injuries",
+      "fatalities",
+      "lost time",
+      "occupational health",
+      "accidents",
+      "recordable incidents",
+      "near miss",
+      "sick leave"
+    ],
+    "expected_units": [
+      "rate",
+      "number",
+      "%"
+    ],
+    "expected_data_points": [
+      "fatalities count",
+      "LTIFR value",
+      "recordable injury rate",
+      "ill health cases",
+      "coverage scope"
+    ],
+    "quality_checks": [
+      "Does LTIFR include contractors?",
+      "Is the formula for rate calculation stated?",
+      "Is sick leave rate disclosed?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained. LTIFR and fatalities remain mandatory.",
+    "weight_original": 5,
+    "weight_omnibus": 5,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 403-9",
+          "GRI 403-10"
+        ],
+        "alignment": "partial",
+        "gri_stricter": true,
+        "gri_delta": "GRI 403-9 covers employees AND workers not employed by the organisation whose work is controlled by the company. ESRS S1-14 covers a narrower scope of non-employee workers — GRI is broader here."
+      }
+    },
+    "unit_queries": [
+      "LTIFR",
+      "TRIR",
+      "fatalities",
+      "injuries",
+      "recordable",
+      "per million hours"
+    ],
+    "value_hint": "Look for LTIFR (Lost Time Injury Frequency Rate) or TRIR values as numbers per million hours worked, AND fatality count. Named rates with values = FOUND."
+  },
+  "S1-13_Training": {
+    "framework": "ESRS",
+    "section": "S1-13",
+    "name": "Training and Skills Development",
+    "category": "Social",
+    "pillar": "Own Workforce",
+    "description": "Average training hours per employee per year and types of training offered (technical, ESG, compliance, etc.).",
+    "keywords": [
+      "training",
+      "skills development",
+      "training hours",
+      "training days",
+      "learning",
+      "upskilling",
+      "professional development",
+      "training course"
+    ],
+    "expected_units": [
+      "hours/employee",
+      "hours"
+    ],
+    "expected_data_points": [
+      "average hours per employee",
+      "breakdown by employee category",
+      "training topic types"
+    ],
+    "quality_checks": [
+      "Is training broken down by employee category (management vs non-management)?",
+      "Are sustainability/ESG training hours specified?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Moved to voluntary under Omnibus simplification — training hours are no longer a mandatory disclosure.",
+    "weight_original": 4,
+    "weight_omnibus": 2,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 404-1"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "training days per employee",
+      "average training hours",
+      "employees trained",
+      "% employees training",
+      "training course",
+      "upskilling",
+      "5.5 days",
+      "training days/year"
+    ],
+    "value_hint": "Look for average training hours or days per employee per year as a number. '98% participated' without hours = PARTIAL. Both participation rate AND hours/days = FOUND."
+  },
+  "S1-8_CollectiveBargaining": {
+    "framework": "ESRS",
+    "section": "S1-8",
+    "name": "Collective Bargaining Coverage",
+    "category": "Social",
+    "pillar": "Own Workforce",
+    "description": "Percentage of employees covered by collective bargaining agreements (CBAs) and how social dialogue is structured.",
+    "keywords": [
+      "collective bargaining",
+      "trade union",
+      "workers council",
+      "social dialogue",
+      "cba",
+      "union representation"
+    ],
+    "expected_units": [
+      "%"
+    ],
+    "expected_data_points": [
+      "CBA coverage %",
+      "countries where CBAs apply",
+      "worker representation type"
+    ],
+    "quality_checks": [
+      "Is coverage broken down by geography?",
+      "Is the type of worker representation clarified (trade union, works council, other)?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained as mandatory.",
+    "weight_original": 4,
+    "weight_omnibus": 4,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 402-1",
+          "GRI 407-1"
+        ],
+        "alignment": "partial",
+        "gri_stricter": false,
+        "gri_delta": "GRI 407-1 identifies operations/suppliers where the right to freedom of association may be at risk. ESRS S1-8 focuses on CBA coverage % — different angle on the same topic."
+      }
+    },
+    "unit_queries": [
+      "collective bargaining agreement",
+      "CBA coverage",
+      "71.9",
+      "72.6",
+      "73.6",
+      "labor union",
+      "union representation"
+    ],
+    "value_hint": "Look for a percentage of employees covered by collective bargaining agreements (CBAs). A row showing '% collective bargaining' followed by a number (e.g. 73.6) = FOUND."
+  },
+  "S2-1_SupplyChain": {
+    "framework": "ESRS",
+    "section": "S2-1",
+    "name": "Value Chain Workers — Due Diligence",
+    "category": "Social",
+    "pillar": "Workers in the Value Chain",
+    "description": "Policies addressing human rights, forced labour, child labour, and fair wages in the supply chain. Must include a due diligence process description.",
+    "keywords": [
+      "supply chain",
+      "human rights",
+      "forced labour",
+      "child labour",
+      "due diligence",
+      "supplier code of conduct",
+      "supplier audit",
+      "csddd"
+    ],
+    "expected_units": [],
+    "expected_data_points": [
+      "human rights policy",
+      "supplier code of conduct",
+      "due diligence process description",
+      "remediation mechanism"
+    ],
+    "quality_checks": [
+      "Is the due diligence process OECD-aligned?",
+      "Are high-risk geographies identified?",
+      "Is there a grievance/remediation mechanism?"
+    ],
+    "is_quantitative": false,
+    "original_mandatory": false,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Remains subject to materiality. Note: CSDDD (CS3D) companion directive also addresses supply chain due diligence obligations separately.",
+    "weight_original": 4,
+    "weight_omnibus": 3,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 408-1",
+          "GRI 409-1",
+          "GRI 414-1"
+        ],
+        "alignment": "partial",
+        "gri_stricter": true,
+        "gri_delta": "GRI 408-1 (child labour) and GRI 409-1 (forced labour) require identification of specific operations and suppliers at significant risk. ESRS S2-1 requires policies and due diligence process — GRI demands more operational specificity."
+      }
+    },
+    "unit_queries": [
+      "suppliers audited",
+      "due diligence",
+      "human rights",
+      "supply chain"
+    ],
+    "value_hint": "Look for a supplier due diligence PROCESS description AND a remediation mechanism — not just a policy statement."
+  },
+  "G1-1_Governance": {
+    "framework": "ESRS",
+    "section": "G1-1",
+    "name": "Governance Structure and ESG Oversight",
+    "category": "Governance",
+    "pillar": "Business Conduct",
+    "description": "Roles and composition of the board and management bodies. How sustainability/ESG is integrated into governance — committees, accountability lines, and incentive structures.",
+    "keywords": [
+      "board of directors",
+      "supervisory board",
+      "governance committee",
+      "esg committee",
+      "sustainability governance",
+      "incentive",
+      "remuneration",
+      "csr committee"
+    ],
+    "expected_units": [],
+    "expected_data_points": [
+      "board composition description",
+      "ESG/sustainability committee existence",
+      "ESG in executive remuneration",
+      "oversight mechanism"
+    ],
+    "quality_checks": [
+      "Is ESG linked to executive pay?",
+      "Is there a named board member responsible for sustainability?",
+      "Is board independence % stated?"
+    ],
+    "is_quantitative": false,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained. Governance structure disclosure remains a core requirement.",
+    "weight_original": 5,
+    "weight_omnibus": 5,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 2-9",
+          "GRI 2-10",
+          "GRI 2-11"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "board",
+      "directors",
+      "committee",
+      "independent",
+      "remuneration",
+      "ESG oversight"
+    ],
+    "value_hint": "Look for: board composition, a sustainability/ESG committee, and ESG metrics in executive pay. All three = FOUND."
+  },
+  "G1-3_AntiCorruption": {
+    "framework": "ESRS",
+    "section": "G1-3",
+    "name": "Anti-Corruption and Anti-Bribery",
+    "category": "Governance",
+    "pillar": "Business Conduct",
+    "description": "Policies and procedures to prevent and detect corruption, bribery and anti-competitive behaviour. Must include whistleblower protection and training coverage.",
+    "keywords": [
+      "corruption",
+      "bribery",
+      "whistleblower",
+      "ethics",
+      "code of conduct",
+      "anti-corruption training",
+      "speak up",
+      "compliance"
+    ],
+    "expected_units": [
+      "%"
+    ],
+    "expected_data_points": [
+      "policy existence and scope",
+      "training coverage % of employees",
+      "whistleblower channel description",
+      "reporting mechanism"
+    ],
+    "quality_checks": [
+      "Is training coverage % disclosed?",
+      "Is the whistleblower channel anonymous?",
+      "Is the policy reviewed annually?"
+    ],
+    "is_quantitative": false,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained. Anti-corruption remains a core governance disclosure.",
+    "weight_original": 6,
+    "weight_omnibus": 6,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 205-2"
+        ],
+        "alignment": "full",
+        "gri_stricter": true,
+        "gri_delta": "GRI 205-2 requires % of governance body members AND employees trained on anti-corruption policies, broken down by region. ESRS G1-3 requires training coverage % but does not mandate regional breakdown."
+      }
+    },
+    "unit_queries": [
+      "% trained",
+      "anti-corruption",
+      "bribery",
+      "whistleblower",
+      "compliance training"
+    ],
+    "value_hint": "Look for: anti-corruption policy scope, % of employees trained, AND a whistleblower channel description. Training coverage as a number = key evidence."
+  },
+  "G1-4_CorruptionIncidents": {
+    "framework": "ESRS",
+    "section": "G1-4",
+    "name": "Confirmed Corruption and Bribery Incidents",
+    "category": "Governance",
+    "pillar": "Business Conduct",
+    "description": "Number of confirmed corruption or bribery incidents, ongoing legal proceedings, and fines received during the reporting period.",
+    "keywords": [
+      "confirmed incidents",
+      "legal proceedings",
+      "fines",
+      "corruption cases",
+      "bribery conviction",
+      "sanctions",
+      "regulatory action"
+    ],
+    "expected_units": [
+      "number",
+      "EUR"
+    ],
+    "expected_data_points": [
+      "number of confirmed incidents",
+      "fines/penalties EUR",
+      "legal proceedings status",
+      "number of dismissals"
+    ],
+    "quality_checks": [
+      "Is the definition of 'confirmed incident' stated?",
+      "Are fines disaggregated by jurisdiction?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": true,
+    "omnibus_mandatory": true,
+    "omnibus_notes": "Retained.",
+    "weight_original": 4,
+    "weight_omnibus": 4,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 205-3"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "incidents",
+      "dismissals",
+      "fines",
+      "penalties",
+      "disciplinary",
+      "EUR"
+    ],
+    "value_hint": "Look for the NUMBER of confirmed corruption/bribery incidents and any associated fines or dismissals. Named incident counts = FOUND."
+  },
+  "G1-5_PoliticalInfluence": {
+    "framework": "ESRS",
+    "section": "G1-5",
+    "name": "Political Influence and Lobbying",
+    "category": "Governance",
+    "pillar": "Business Conduct",
+    "description": "Financial and non-financial contributions to political entities and lobbying activities, including amounts, topics, and trade association memberships.",
+    "keywords": [
+      "lobbying",
+      "political contributions",
+      "political donations",
+      "trade association",
+      "public affairs",
+      "government relations"
+    ],
+    "expected_units": [
+      "EUR",
+      "USD"
+    ],
+    "expected_data_points": [
+      "total financial contributions",
+      "lobbying topics",
+      "trade associations and their ESG positions"
+    ],
+    "quality_checks": [
+      "Are individual contribution amounts disclosed?",
+      "Is there potential misalignment between company ESG commitments and trade association lobbying disclosed?"
+    ],
+    "is_quantitative": true,
+    "original_mandatory": false,
+    "omnibus_mandatory": false,
+    "omnibus_notes": "Subject to materiality. Voluntary under Omnibus for most companies.",
+    "weight_original": 3,
+    "weight_omnibus": 2,
+    "cross_references": {
+      "GRI": {
+        "standards": [
+          "GRI 415-1"
+        ],
+        "alignment": "full",
+        "gri_stricter": false,
+        "gri_delta": null
+      }
+    },
+    "unit_queries": [
+      "lobbying",
+      "political contribution",
+      "trade association",
+      "EUR contribution",
+      "financial contribution"
+    ],
+    "value_hint": "Look for financial contribution amounts to political entities OR lobbying expenditure in EUR/USD. A statement of support without amounts = PARTIAL."
+  },
+  "_scoring_config": {
+    "bands": {
+      "excellent": {
+        "min": 80,
+        "max": 100,
+        "label": "Excellent",
+        "color": "#22c55e"
+      },
+      "good": {
+        "min": 60,
+        "max": 79,
+        "label": "Good",
+        "color": "#84cc16"
+      },
+      "needs_improvement": {
+        "min": 40,
+        "max": 59,
+        "label": "Needs Improvement",
+        "color": "#f59e0b"
+      },
+      "weak": {
+        "min": 0,
+        "max": 39,
+        "label": "Weak / High Risk",
+        "color": "#ef4444"
+      }
+    },
+    "greenwashing_flags": [
+      "we aim to",
+      "we aspire to",
+      "working towards",
+      "committed to becoming",
+      "carbon neutral by",
+      "net zero ambition",
+      "offset"
+    ]
+  }
+}
