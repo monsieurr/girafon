@@ -2,6 +2,10 @@
 
 **Automatically analyse any ESG/sustainability report against ESRS (CSRD) requirements and find exactly what's missing — with evidence.**
 
+```
+DISCLAIMER : This isn't a mature tool by any mean. It can indeed give you hinsights on ESG/sustainability reports but please do not use its results in its current version (or, use with caution please). Besides, if you see incoherent results please tell me I will gladly investigate.
+```
+
 > *"ESLint for ESG reports"*
 
 ---
