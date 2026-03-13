@@ -33,9 +33,35 @@ CSRD (Corporate Sustainability Reporting Directive) requires thousands of EU com
 
 ---
 
-## Quick start
+## Installation
 
-### Option A — Local LLM with Ollama (no API key needed)
+```bash
+# 1. Clone
+git clone https://github.com/monsieurr/girafon
+cd girafon
+
+# 2. Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## Usage (two ways)
+
+You can use Girafon either:
+- **From the terminal (CLI)** for batch runs and automation
+- **With a GUI (Streamlit)** for demos and quick uploads
+
+**Choose your path**
+
+| Use case | Best choice | Why |
+|---------|-------------|-----|
+| Batch runs, automation, CI | **CLI (Terminal)** | Fast, scriptable, easy to scale |
+| Demos, non-technical users | **GUI (Streamlit)** | Upload + click, shareable |
+
+### CLI — Terminal usage
+
+#### Option A — Local LLM with Ollama (no API key needed)
 
 ```bash
 # Install Ollama: https://ollama.com
@@ -51,7 +77,7 @@ python main.py --check               # verify connection
 python main.py --pdf report.pdf      # run analysis
 ```
 
-### Option B — Cloud API (Anthropic, OpenAI, Groq, Mistral)
+#### Option B — Cloud API (Anthropic, OpenAI, Groq, Mistral)
 
 ```bash
 cp .env.example .env
@@ -63,25 +89,29 @@ python main.py --check               # verify connection
 python main.py --pdf report.pdf
 ```
 
-## Quick start
+This produces `report_report.html` — open it in any browser.
+
+### GUI — Streamlit usage
+
+#### Option C — Local Streamlit UI
 
 ```bash
-# 1. Clone
-git clone https://github.com/monsieurr/girafon
-cd esg-gap-detector
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Add your Anthropic API key
-cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
-
-# 4. Run
-python main.py --pdf your_esg_report.pdf --company "Giraffe Big Corporate"
+streamlit run streamlit_app.py
 ```
 
-This produces `your_esg_report_report.html` — open it in any browser.
+#### Option D — Streamlit Cloud (self-hosted UI)
+
+1) Push this repo to your GitHub.
+2) On Streamlit Cloud, create a new app from your repo.
+3) Add secrets in **App settings → Secrets** (see `.streamlit/secrets.toml.example`).
+4) Deploy. The app stays private to your account/team.
+
+#### Option E — Docker (self-hosted UI)
+
+```bash
+docker build -t girafon .
+docker run -p 8501:8501 girafon
+```
 
 ---
 
@@ -93,7 +123,58 @@ python main.py --pdf <path>           # Required: path to ESG PDF
                --output report.html   # Custom output path
                --json results.json    # Also save raw results as JSON
                --mode original        # "original" (ESRS 2023) or "omnibus" (2026)
+               --chunk-words 500      # Chunk size in words (default: 500)
+               --overlap-words 120    # Chunk overlap (default: 120)
+               --min-chunk-words 40   # Discard very short chunks (default: 40)
+               --schema basic         # "basic" (20 disclosures), "ig3-core" (ESRS2+E1+G1), or "ig3" (full datapoints)
+               --taxonomy-map map.json # Optional ESRS taxonomy mapping file
 ```
+
+## ESRS XBRL taxonomy mapping (optional)
+
+If you want JSON outputs to include ESRS taxonomy element IDs, build the mapping once:
+
+```bash
+python -m esg_analyzer.taxonomy.build_map \
+  --annex /path/to/Annex-1-ESRS-Set1-XBRL-Taxonomy-illustrated-in-Excel.xlsx \
+  --out esg_analyzer/frameworks/esrs_taxonomy_map.json
+```
+
+When `esrs_taxonomy_map.json` exists, CLI and Streamlit outputs automatically add
+`taxonomy_elements` to each disclosure in the JSON report.
+
+## IG3 full datapoint schema (optional)
+
+IG3 contains 1,000+ datapoints and is much slower than the basic 20-disclosure run.
+For a faster high-impact scan, use `--schema ig3-core` (ESRS 2 + E1 + G1).
+
+```bash
+python -m esg_analyzer.frameworks.build_ig3_schema \
+  --ig3 /path/to/EFRAG_IG3_List_of_ESRS_Data_Points.xlsx \
+  --out esg_analyzer/frameworks/esrs_ig3_schema.json \
+  --base-schema esg_analyzer/frameworks/esrs_schema.json
+
+python main.py --pdf report.pdf --schema ig3-core
+python main.py --pdf report.pdf --schema ig3
+```
+
+### Materiality-aware scoring (strict)
+
+In IG3 mode, the tool runs a strict materiality scan:
+it only treats a topic as non-material if the report explicitly states so.
+When a topic is declared non-material, related datapoints are excluded from scoring
+and recommendations, while still being listed in the report with a note.
+Materiality matrices in markdown tables are also parsed (strictly) when they include
+explicit "Not material" columns with marks (e.g. X).
+
+---
+
+## Security & Data Privacy
+
+- **Self-hosted by default.** Run locally or on your own Streamlit Cloud workspace.
+- **No data leaves your machine** when using a local LLM (Ollama).
+- **API keys are never stored in the UI.** Use `.env` or Streamlit secrets.
+- **Advisory only.** Outputs are not legal compliance certificates.
 
 ---
 
@@ -211,7 +292,7 @@ The tool flags vague or unsupported language patterns including:
 - [ ] Semantic search upgrade (sentence-transformers + FAISS)
 - [ ] GRI / ISSB cross-mapping
 - [ ] Batch processing for multiple companies
-- [ ] Streamlit web UI
+- [x] Streamlit web UI (basic)
 
 ---
 

@@ -85,6 +85,7 @@ class DetectionResult:
     mode: str                      = "original"
     used_fallback: bool            = False
     cross_references: Dict         = field(default_factory=dict)
+    ig3: Dict                      = field(default_factory=dict)
 
 
 # ── System prompt ──────────────────────────────────────────────────────────────
@@ -456,6 +457,7 @@ def _base_fields(key: str, d: Dict[str, Any]) -> Dict[str, Any]:
         "weight_omnibus": d.get("weight_omnibus", 0),
         "omnibus_notes": d.get("omnibus_notes", ""),
         "top_candidate_pages": [],
+        "ig3": d.get("ig3", {}),
     }
 
 

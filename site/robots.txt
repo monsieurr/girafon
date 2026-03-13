@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://example.com/esrs-gap-detector/sitemap.xml

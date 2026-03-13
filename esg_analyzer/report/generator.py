@@ -64,6 +64,20 @@ def _build_html(
     # Colour for score circle
     score_color = band["color"]
 
+    topic_labels = {
+        "ESRS 2": "General Disclosures",
+        "E1": "Climate Change",
+        "E2": "Pollution",
+        "E3": "Water and Marine Resources",
+        "E4": "Biodiversity and Ecosystems",
+        "E5": "Resource Use and Circular Economy",
+        "S1": "Own Workforce",
+        "S2": "Workers in the Value Chain",
+        "S3": "Affected Communities",
+        "S4": "Consumers and End Users",
+        "G1": "Business Conduct",
+    }
+
     # Status badge helper
     def badge(status):
         colors = {
@@ -80,7 +94,7 @@ def _build_html(
         return '<span class="chip medium">MEDIUM</span>'
 
     # Build disclosure rows
-    rows_by_category = {"Environment": [], "Social": [], "Governance": []}
+    rows_by_category: Dict[str, list] = {}
     for item in r["per_item"]:
         cat = item.get("category", "Environment")
         if cat not in rows_by_category:
@@ -101,6 +115,14 @@ def _build_html(
         if item.get("data_points_missing"):
             dps = item["data_points_missing"]
             missing_dp_html = f'<div class="missing-dp">Missing: {", ".join(dps[:3])}</div>'
+
+        materiality_html = ""
+        if item.get("materiality_status") == "non_material":
+            evidence = item.get("materiality_evidence")
+            page = item.get("materiality_page")
+            pg = f" (p.{page})" if page else ""
+            ev = f' — "{evidence}"' if evidence else ""
+            materiality_html = f'<div class="materiality-note">Non-material (explicit){pg}{ev}</div>'
 
         omnibus_note = ""
         if item.get("omnibus_notes"):
@@ -134,6 +156,7 @@ def _build_html(
             {quote_html}
             {flags_html}
             {missing_dp_html}
+            {materiality_html}
             {gri_html}
             {omnibus_note}
           </td>
@@ -143,10 +166,11 @@ def _build_html(
 
     # Category sections
     category_icons = {"Environment": "🌱", "Social": "👥", "Governance": "⚖️"}
+    preferred_order = ["General", "Environment", "Social", "Governance"]
+    ordered_categories = [c for c in preferred_order if c in cat_scores]
+    ordered_categories += [c for c in cat_scores.keys() if c not in ordered_categories]
     category_sections_html = ""
-    for cat in ["Environment", "Social", "Governance"]:
-        if cat not in cat_scores:
-            continue
+    for cat in ordered_categories:
         cs = cat_scores[cat]
         rows = rows_by_category.get(cat, [])
         icon = category_icons.get(cat, "")
@@ -201,6 +225,35 @@ def _build_html(
             qf_html += f'<div class="qf-item"><span class="qf-disc">{qf["disclosure"]}</span> — {qf["flag"]}</div>'
     else:
         qf_html = '<p class="no-flags">No greenwashing signals detected in this report.</p>'
+
+    # Materiality summary (explicit non-material only)
+    materiality_summary = r.get("materiality_summary", {}) or {}
+    non_material_items = []
+    for topic, info in materiality_summary.items():
+        if info.get("status") != "non_material":
+            continue
+        label = topic_labels.get(topic, topic)
+        page = info.get("page")
+        evidence = info.get("evidence") or ""
+        evidence_short = (evidence[:140] + "…") if len(evidence) > 140 else evidence
+        pg = f" (p.{page})" if page else ""
+        ev = f' — "{evidence_short}"' if evidence_short else ""
+        non_material_items.append(f"<li><strong>{topic}</strong> — {label}{pg}{ev}</li>")
+
+    if non_material_items:
+        materiality_html = (
+            '<div class="materiality-summary">'
+            '<div class="ms-title">Non-material topics (explicit)</div>'
+            f"<ul class=\"ms-list\">{''.join(non_material_items)}</ul>"
+            "</div>"
+        )
+    else:
+        materiality_html = (
+            '<div class="materiality-summary">'
+            '<div class="ms-title">Non-material topics (explicit)</div>'
+            '<div class="ms-empty">No explicit non-material topics detected.</div>'
+            "</div>"
+        )
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -302,6 +355,39 @@ def _build_html(
       display: flex;
       gap: 40px;
       flex-wrap: wrap;
+    }}
+
+    /* ── Materiality summary ── */
+    .materiality-summary {{
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 64px 14px;
+    }}
+    .ms-title {{
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }}
+    .ms-list {{
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 6px;
+      color: #475569;
+      font-size: 12px;
+    }}
+    .ms-list li strong {{
+      font-family: 'DM Mono', monospace;
+      font-weight: 600;
+      color: var(--accent);
+    }}
+    .ms-empty {{
+      color: #94a3b8;
+      font-size: 12px;
     }}
     .stat {{
       display: flex;
@@ -563,6 +649,15 @@ def _build_html(
       color: #78350f;
       border-radius: 0 3px 3px 0;
     }}
+    .materiality-note {{
+      margin-top: 6px;
+      padding: 6px 8px;
+      background: #f1f5f9;
+      border-left: 3px solid #94a3b8;
+      color: #475569;
+      font-size: 12px;
+      border-radius: 0 3px 3px 0;
+    }}
 
     /* ── Greenwashing flags ── */
     .flags-section {{ margin-bottom: 48px; }}
@@ -617,6 +712,8 @@ def _build_html(
     <span class="score-label">{band['label']}</span>
   </div>
 </header>
+
+{materiality_html}
 
 <!-- ── Stats bar ── -->
 <div class="stats-bar">

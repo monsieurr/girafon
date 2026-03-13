@@ -20,21 +20,36 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
-    datefmt="%H:%M:%S",
-)
-logging.getLogger("pdfplumber").setLevel(logging.WARNING)
-logging.getLogger("fitz").setLevel(logging.WARNING)
-logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
-for _litellm_logger in ("LiteLLM", "LiteLLM Router", "LiteLLM Proxy", "litellm", "litellm.utils", "litellm.main"):
-    logging.getLogger(_litellm_logger).setLevel(logging.WARNING)
-
 logger = logging.getLogger("esg_detector")
 
 
+def _setup_logging() -> None:
+    """
+    Clean, screenshot-friendly logs by default.
+    Only warnings and errors are shown unless explicitly printed.
+    """
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="%(levelname)s: %(message)s",
+        datefmt="%H:%M:%S",
+        force=True,
+    )
+    logging.getLogger("pdfplumber").setLevel(logging.WARNING)
+    logging.getLogger("fitz").setLevel(logging.WARNING)
+    logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
+    for _litellm_logger in (
+        "LiteLLM",
+        "LiteLLM Router",
+        "LiteLLM Proxy",
+        "litellm",
+        "litellm.utils",
+        "litellm.main",
+    ):
+        logging.getLogger(_litellm_logger).setLevel(logging.WARNING)
+
+
 def main() -> None:
+    _setup_logging()
     parser = argparse.ArgumentParser(
         description="ESRS Gap Detector — Analyse ESG reports for CSRD compliance gaps",
     )
@@ -50,6 +65,16 @@ def main() -> None:
     parser.add_argument("--model",     default="", help="Model name (e.g. llama3.2, gpt-4o-mini)")
     parser.add_argument("--concurrent", type=int, default=None,
                         help="Max concurrent LLM calls (default: 6, lower if you hit rate limits)")
+    parser.add_argument("--chunk-words", type=int, default=500,
+                        help="Chunk size in words (default: 500)")
+    parser.add_argument("--overlap-words", type=int, default=120,
+                        help="Overlap between chunks in words (default: 120)")
+    parser.add_argument("--min-chunk-words", type=int, default=40,
+                        help="Discard chunks shorter than this (default: 40)")
+    parser.add_argument("--schema", choices=["basic", "ig3-core", "ig3"], default="basic",
+                        help="Schema profile: basic (20 disclosures), ig3-core (ESRS2+E1+G1), or ig3 (full datapoints)")
+    parser.add_argument("--taxonomy-map", default="",
+                        help="Path to ESRS taxonomy mapping JSON (optional)")
     parser.add_argument("--providers", action="store_true", help="List supported LLM providers and exit")
     parser.add_argument("--check",     action="store_true", help="Test your LLM connection and exit")
     args = parser.parse_args()
@@ -79,6 +104,7 @@ def main() -> None:
     print(f"  Company  : {company_name}")
     print(f"  Mode     : {args.mode.upper()}")
     print(f"  Source   : {doc_path.name}")
+    print(f"  Schema   : {args.schema}")
     print(f"{'='*56}\n")
 
     # ── LLM config ─────────────────────────────────────────────────────────────
@@ -89,113 +115,68 @@ def main() -> None:
         logger.error("LLM config error: %s", e)
         sys.exit(1)
     print(f"  LLM      : {llm_config.provider} / {llm_config.model}")
-    # --concurrent > ESG_MAX_CONCURRENT env var > provider-aware smart default
-    # (Ollama = 1, cloud APIs = 6 — avoids connection timeouts on local models)
+    from esg_analyzer.pipeline import default_concurrency, run_pipeline
     import os as _os
-    concurrent = (
-        args.concurrent
-        or int(_os.environ.get("ESG_MAX_CONCURRENT", 0))
-        or llm_config.recommended_concurrency
-    )
+    concurrent = args.concurrent or default_concurrency(llm_config)
     source = "CLI" if args.concurrent else ("env" if _os.environ.get("ESG_MAX_CONCURRENT") else "auto")
-    print(f"  Workers  : {concurrent} concurrent LLM calls ({source})\n")
+    print(f"  Workers  : {concurrent} concurrent LLM calls ({source})")
+    print(f"  Chunking : {args.chunk_words} words, overlap {args.overlap_words} words\n")
+    if args.schema == "ig3":
+        print("  NOTE     : IG3 mode runs 1,000+ datapoints and can take a long time.")
+        print("             Consider using a local model with low concurrency.\n")
+    if args.schema == "ig3-core":
+        print("  NOTE     : IG3-core runs ESRS 2 + E1 + G1 (faster than full IG3).")
+        print("             Use this for a high-impact quick scan.\n")
 
-    # ── Parse document ─────────────────────────────────────────────────────────
-    print("📄 [1/4] Parsing document…")
-    from esg_analyzer.parsers.document_parser import ParseError, UnsupportedFormatError, parse_document
+    def _progress(msg: str) -> None:
+        print(msg)
+
+    def _warn(msg: str) -> None:
+        print(msg)
+
+    frameworks_dir = Path(__file__).parent / "esg_analyzer" / "frameworks"
+    schema_path = frameworks_dir / ("esrs_schema.json" if args.schema == "basic" else "esrs_ig3_schema.json")
+    default_taxonomy_map = frameworks_dir / "esrs_taxonomy_map.json"
+    taxonomy_map_path = None
+    if args.schema == "basic":
+        taxonomy_map_path = Path(args.taxonomy_map) if args.taxonomy_map else (
+            default_taxonomy_map if default_taxonomy_map.exists() else None
+        )
+    ig3_scope = None
+    if args.schema == "ig3-core":
+        ig3_scope = {"ESRS 2", "ESRS 2 MDR", "E1", "G1"}
+
     try:
-        doc = parse_document(doc_path)
+        pipeline_result = run_pipeline(
+            doc_path=doc_path,
+            company_name=company_name,
+            mode=args.mode,
+            llm_config=llm_config,
+            schema_path=schema_path,
+            taxonomy_map_path=taxonomy_map_path,
+            ig3_scope=ig3_scope,
+            output_path=output_path,
+            chunk_words=args.chunk_words,
+            overlap_words=args.overlap_words,
+            min_chunk_words=args.min_chunk_words,
+            max_concurrent=concurrent,
+            progress=_progress,
+            warn=_warn,
+        )
     except FileNotFoundError as e:
         logger.error("%s", e)
         sys.exit(1)
-    except (UnsupportedFormatError, ParseError) as e:
-        logger.error("%s", e)
-        sys.exit(1)
-    print(f"       ✓ {doc.total_pages} pages · {doc.total_chunks} chunks · method: {doc.extraction_method}")
-
-    if doc.extraction_method == "pdfplumber":
-        print()
-        print("  ⚠️  PDF QUALITY WARNING")
-        print("     pymupdf4llm is not installed — using pdfplumber fallback.")
-        print("     Multi-column tables (GHG data, social metrics) may be garbled,")
-        print("     which can cause FOUND disclosures to be reported as PARTIAL.")
-        print("     For best results: pip install pymupdf4llm")
-        print()
-    else:
-        print()
-
-    # ── Load schema ────────────────────────────────────────────────────────────
-    print("📋 [2/4] Loading ESRS schema…")
-    schema_path = Path(__file__).parent / "esg_analyzer" / "frameworks" / "esrs_schema.json"
-    try:
-        with open(schema_path, encoding="utf-8") as f:
-            schema = json.load(f)
-    except FileNotFoundError:
-        logger.error(
-            "ESRS schema not found at: %s\n"
-            "Ensure esrs_schema.json is present in esg_analyzer/frameworks/",
-            schema_path,
-        )
-        sys.exit(1)
-    except json.JSONDecodeError as e:
-        logger.error("ESRS schema is not valid JSON: %s", e)
-        sys.exit(1)
-
-    scoring_config = schema.get("_scoring_config", {})
-    n = sum(1 for k in schema if not k.startswith("_"))
-    if n == 0:
-        logger.error("ESRS schema contains no disclosures (all keys start with '_'). Check the file.")
-        sys.exit(1)
-    print(f"       ✓ {n} disclosures (mode: {args.mode})\n")
-
-    # ── Detect ─────────────────────────────────────────────────────────────────
-    print(f"🔍 [3/4] Detecting disclosures ({n} checks, {concurrent} concurrent)…")
-    from esg_analyzer.analysis.detector import detect_all
-    try:
-        results = detect_all(
-            schema=schema,
-            doc=doc,
-            llm_config=llm_config,
-            mode=args.mode,
-            max_concurrent=concurrent,
-        )
     except Exception as e:
-        logger.error("Detection failed unexpectedly: %s", e, exc_info=True)
-        sys.exit(1)
-    print()
-
-    # ── Score + report ─────────────────────────────────────────────────────────
-    print("📊 [4/4] Scoring and generating report…")
-    from esg_analyzer.analysis.scorer import compute_scores
-    from esg_analyzer.report.generator import generate_report
-
-    try:
-        score_report = compute_scores(
-            results=[vars(r) for r in results],
-            scoring_config=scoring_config,
-            mode=args.mode,
-        )
-    except Exception as e:
-        logger.error("Scoring failed: %s", e, exc_info=True)
+        logger.error("Pipeline failed: %s", e)
         sys.exit(1)
 
-    try:
-        generate_report(
-            score_report=score_report,
-            company_name=company_name,
-            pdf_filename=doc_path.name,
-            output_path=output_path,
-            mode=args.mode,
-        )
-    except OSError as e:
-        logger.error("Could not write report to '%s': %s", output_path, e)
-        sys.exit(1)
+    score_report = pipeline_result.score_report
 
     if args.json:
         try:
             with open(args.json, "w", encoding="utf-8") as f:
                 json.dump(score_report, f, indent=2, ensure_ascii=False)
-            print(f"       ✓ JSON saved: {args.json}")
+            print(f"OK        JSON saved: {args.json}")
         except OSError as e:
             logger.warning("Could not write JSON output to '%s': %s", args.json, e)
 

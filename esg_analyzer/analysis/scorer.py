@@ -15,7 +15,7 @@ All scoring logic is pure Python — no LLM involved.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +38,8 @@ _REQUIRED_KEYS = {"key", "section", "name", "status", "category"}
 def compute_scores(
     results: List[Dict[str, Any]],
     scoring_config: Dict[str, Any],
+    taxonomy_map: Dict[str, Any] | None = None,
+    materiality_map: Dict[str, Any] | None = None,
     mode: str = "original",
 ) -> Dict[str, Any]:
     """
@@ -95,6 +97,32 @@ def compute_scores(
         status_val = STATUS_VALUES.get(r["status"], 0.0)
         contribution = weight * status_val
 
+        topic_code = _topic_code(r)
+        mat_status = "unknown"
+        mat_evidence = None
+        mat_page = None
+        if materiality_map and topic_code in materiality_map:
+            mat = materiality_map.get(topic_code) or {}
+            mat_status = mat.get("status", "unknown")
+            mat_evidence = mat.get("evidence")
+            mat_page = mat.get("page")
+
+        exclude_from_scoring = (
+            mat_status == "non_material" and not r.get("is_mandatory", False)
+        )
+
+        score_weight = 0.0 if exclude_from_scoring else weight
+        score_contribution = 0.0 if exclude_from_scoring else contribution
+        materiality_badge = "Non-material (explicit)" if mat_status == "non_material" else None
+
+        taxonomy_elements = []
+        if taxonomy_map:
+            taxonomy_elements = (
+                taxonomy_map.get("by_disclosure", {})
+                .get(r["key"], {})
+                .get("elements", [])
+            )
+
         per_item.append({
             "key": r["key"],
             "section": r["section"],
@@ -103,7 +131,9 @@ def compute_scores(
             "pillar": r["pillar"],
             "status": r["status"],
             "weight": weight,
+            "score_weight": score_weight,
             "contribution": contribution,
+            "score_contribution": score_contribution,
             "best_quote": r.get("best_quote"),
             "page": r.get("page"),
             "reason": r.get("reason"),
@@ -114,10 +144,17 @@ def compute_scores(
             "omnibus_notes": r.get("omnibus_notes", ""),
             "top_candidate_pages": r.get("top_candidate_pages", []),
             "cross_references": r.get("cross_references", {}),
+            "taxonomy_elements": taxonomy_elements,
+            "materiality_status": mat_status,
+            "materiality_evidence": mat_evidence,
+            "materiality_page": mat_page,
+            "materiality_badge": materiality_badge,
+            "excluded_from_scoring": exclude_from_scoring,
+            "ig3": r.get("ig3", {}),
         })
 
-        total_weight += weight
-        weighted_sum += contribution
+        total_weight += score_weight
+        weighted_sum += score_contribution
 
     # Normalise to 0–100
     overall_score = round((weighted_sum / total_weight) * 100, 1) if total_weight > 0 else 0.0
@@ -126,7 +163,7 @@ def compute_scores(
     band = _get_band(overall_score, scoring_config.get("bands", {}))
 
     # ── Category breakdown ─────────────────────────────────────────────────────
-    category_scores = _compute_category_scores(per_item, weight_key="weight")
+    category_scores = _compute_category_scores(per_item, weight_key="score_weight")
 
     # ── Mandatory compliance rate ──────────────────────────────────────────────
     mandatory_items = [i for i in per_item if i["is_mandatory"]]
@@ -167,7 +204,31 @@ def compute_scores(
         "per_item": per_item,
         "recommendations": recommendations,
         "quality_flags_summary": all_quality_flags,
+        "materiality_summary": materiality_map or {},
+        "taxonomy_meta": taxonomy_map.get("_meta") if taxonomy_map else None,
     }
+
+
+def _topic_code(item: Dict[str, Any]) -> Optional[str]:
+    ig3 = item.get("ig3", {})
+    esrs = str(ig3.get("esrs", "") or "").strip()
+    if esrs:
+        if esrs.upper().startswith("ESRS 2"):
+            return "ESRS 2"
+        return esrs
+
+    section = str(item.get("section", "") or "")
+    if section:
+        prefix = section.split("-")[0].strip()
+        if prefix in {"E1", "E2", "E3", "E4", "E5", "S1", "S2", "S3", "S4", "G1"}:
+            return prefix
+
+    key = str(item.get("key", "") or "")
+    if key:
+        prefix = key.split("-")[0].strip()
+        if prefix in {"E1", "E2", "E3", "E4", "E5", "S1", "S2", "S3", "S4", "G1"}:
+            return prefix
+    return None
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -219,13 +280,18 @@ def _build_recommendations(per_item: List[Dict], top_n: int = 5) -> List[Dict]:
     3. High-weight optional disclosures that are MISSING
     """
     missing_mandatory = [
-        i for i in per_item if i["status"] == "MISSING" and i["is_mandatory"]
+        i for i in per_item
+        if i["status"] == "MISSING" and i["is_mandatory"] and not i.get("excluded_from_scoring")
     ]
     partial_mandatory = [
-        i for i in per_item if i["status"] == "PARTIAL" and i["is_mandatory"]
+        i for i in per_item
+        if i["status"] == "PARTIAL" and i["is_mandatory"] and not i.get("excluded_from_scoring")
     ]
     missing_optional = sorted(
-        [i for i in per_item if i["status"] == "MISSING" and not i["is_mandatory"]],
+        [
+            i for i in per_item
+            if i["status"] == "MISSING" and not i["is_mandatory"] and not i.get("excluded_from_scoring")
+        ],
         key=lambda x: x["weight"],
         reverse=True,
     )

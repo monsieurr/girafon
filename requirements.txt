@@ -25,6 +25,12 @@ scikit-learn>=1.4.0
 # ── Environment variables
 python-dotenv>=1.0.0
 
+# ── UI (optional but recommended for demos)
+streamlit>=1.32.0
+
+# ── Taxonomy mapping build (optional)
+openpyxl>=3.1.5
+
 # ── Optional: OCR for scanned PDFs (uncomment if needed)
 # pytesseract>=0.3.10
 # Pillow>=10.0.0
