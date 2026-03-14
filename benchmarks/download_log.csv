@@ -29,3 +29,33 @@ CPI Europe,2024,https://cpi-europe.com/en/sustainability,error,,"URLError: <urlo
 Cabka N.V.,2024,https://investors.cabka.com/investor-relations,error,,"URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
 SAP,2024,https://www.sap.com/integrated-reports/2024/en.html,error,,"URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
 Enexis Holding N.V.,2024,https://publications.enexis.nl/annual-report/annual-report-2024,error,,"URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+Schneider Electric SE,2024,https://www.sustainabilityreports.com/schneider-electric/2024/sustainable-development-report,error,,HTTPError: HTTP Error 403: Forbidden
+Piaggio & C SpA,2024,https://www.sustainabilityreports.com/piaggio-and-c/2024/consolidated-sustainability-statement,error,,HTTPError: HTTP Error 403: Forbidden
+Banco de Sabadell SA,2024,https://sustainabilityreports.com/reports/banco-de-sabadell-sa-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Indel B SpA,2024,https://www.sustainabilityreports.com/indel-b/2024/consolidated-sustainability-report,error,,HTTPError: HTTP Error 403: Forbidden
+Arobs Transilvania Software SA,2024,https://sustainabilityreports.com/reports/arobs-transilvania-software-sa-2024-esg-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+SNGN Romgaz SA,2024,https://www.sustainabilityreports.com/sngn-romgaz/2024/consolidated-report,error,,HTTPError: HTTP Error 403: Forbidden
+Echo Investment SA,2024,https://sustainabilityreports.com/reports/echo-investment-sa-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Nokia Oyj,2024,https://www.sustainabilityreports.com/nokia/2024/sustainability-statement,error,,HTTPError: HTTP Error 403: Forbidden
+Atenor SA,2024,https://sustainabilityreports.com/reports/atenor-sa-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Eurocash SA,2024,https://sustainabilityreports.com/reports/eurocash-sa-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Global Dominion Access SA,2024,https://www.sustainabilityreports.com/global-dominion-access/2024/consolidated-statement-of-non-financial-information-and-sustainability-information,error,,HTTPError: HTTP Error 403: Forbidden
+Air France-KLM SA,2024,https://www.sustainabilityreports.com/air-france-klm/2024/sustainability-statement,error,,HTTPError: HTTP Error 403: Forbidden
+Stellantis NV,2024,https://www.sustainabilityreports.com/stellantis/2024/expanded-sustainability-statement,error,,HTTPError: HTTP Error 403: Forbidden
+Henkel AG & Co KGaA,2024,https://sustainabilityreports.com/reports/henkel-ag-and-co-kgaa-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Covivio,2024,https://sustainabilityreports.com/reports/covivio-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Mondi PLC,2024,https://www.sustainabilityreports.com/mondi/2024/sustainable-development-report,error,,HTTPError: HTTP Error 403: Forbidden
+Volkswagen AG,2024,https://sustainabilityreports.com/reports/volkswagen-ag-2024-sustainability-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Kontron AG,2024,https://sustainabilityreports.com/reports/kontron-ag-2024-non-financial-report-pdf/,error,,HTTPError: HTTP Error 403: Forbidden
+Linea Directa Aseguradora SA,2024,https://www.sustainabilityreports.com/linea-directa-aseguradora/2024/consolidated-non-financial-information-statement-and-sustainability-report,error,,HTTPError: HTTP Error 403: Forbidden
+Grenergy Renovables SA,2024,https://www.sustainabilityreports.com/grenergy-renovables/2024/sustainability-report,error,,HTTPError: HTTP Error 403: Forbidden
+Redeia Corporacion SA,2024,https://www.sustainabilityreports.com/redeia-corporacion/2024/consolidated-non-financial-information-statement-and-sustainability-information,error,,HTTPError: HTTP Error 403: Forbidden
+Continental Group,2024,https://annualreport.continental.com/2024/en/service/docs/annual-report-2024-data.pdf#page=98,ok,Continental_Group_2024.pdf,resolved from landing page
+Porsche AG,2024,https://newsroom.porsche.com/assets/uploads/documents/Annual_and_Sustainability_Report_2025_Porsche_AG_(Consolidated_Financial_Statements_IFRS).pdf,ok,Porsche_AG_2024.pdf,resolved from landing page
+Eni,2024,https://report.eni.com/annual-report-2024/en/_assets/downloads/sustainability-eni-ar24.pdf,ok,Eni_2024.pdf,resolved from landing page
+Merck KGaA,2024,https://www.emdgroup.com/en/annualreport/2024/management-report/sustainability-statement.html,manual,,no PDF link found
+Lenzing,2024,https://reports.lenzing.com/annual-and-sustainability-report/2024/_assets/downloads/cfs-statements-notes-lenzing-ar24.pdf,ok,Lenzing_2024.pdf,resolved from landing page
+CPI Europe,2024,https://cdn.cpi-europe.com/uploads/production/5c0fd20b6c89014bf57bf380/9c10ef431b70e0f9f05089feee26efa1.pdf,ok,CPI_Europe_2024.pdf,resolved from landing page
+Cabka N.V.,2024,https://investors.cabka.com/investor-relations,error,,TimeoutError: The read operation timed out
+SAP,2024,https://www.sap.com/integrated-reports/2024/en.html,error,,HTTPError: HTTP Error 403: Forbidden
+Enexis Holding N.V.,2024,https://publications.enexis.nl/annual-report/annual-report-2024,manual,,no PDF link found

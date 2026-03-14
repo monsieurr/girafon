@@ -17,7 +17,7 @@ from typing import Any, Callable, Dict, List, Optional
 from esg_analyzer.analysis.detector import DetectionResult, detect_all
 from esg_analyzer.analysis.materiality import detect_materiality
 from esg_analyzer.analysis.scorer import compute_scores
-from esg_analyzer.llm_provider import LLMConfig
+from esg_analyzer.llm_provider import LLMConfig, get_llm_status
 from esg_analyzer.parsers.document_parser import ParsedDocument, parse_document
 from esg_analyzer.report.generator import generate_report
 from esg_analyzer.taxonomy.mapping import load_taxonomy_map
@@ -65,6 +65,7 @@ def run_pipeline(
     schema_path: Path,
     taxonomy_map_path: Path | None = None,
     ig3_scope: set[str] | None = None,
+    schema_profile: str | None = None,
     output_path: str,
     chunk_words: int = 500,
     overlap_words: int = 120,
@@ -115,6 +116,8 @@ def run_pipeline(
         llm_config=llm_config,
         mode=mode,
         max_concurrent=max_concurrent,
+        progress_cb=lambda msg: _notify(progress, msg),
+        warn_cb=lambda msg: _notify(warn, msg),
     )
 
     _notify(progress, "Step 4/4  Scoring and generating report...")
@@ -125,12 +128,24 @@ def run_pipeline(
         materiality_map=materiality_map,
         mode=mode,
     )
+    fallback_count = sum(1 for r in results if r.used_fallback)
+    llm_status = get_llm_status(llm_config)
+    score_report["llm_info"] = {
+        "provider": llm_config.provider,
+        "model": llm_config.model,
+        "state": llm_status.get("state", "unknown"),
+        "detail": llm_status.get("detail", ""),
+        "verified": llm_status.get("verified", False),
+        "fallback_count": fallback_count,
+        "total_disclosures": len(results),
+    }
     generate_report(
         score_report=score_report,
         company_name=company_name,
         pdf_filename=Path(doc_path).name,
         output_path=output_path,
         mode=mode,
+        schema_profile=schema_profile,
     )
 
     return PipelineResult(

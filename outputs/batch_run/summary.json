@@ -1,0 +1,67 @@
+[
+  {
+    "company": "CPI Europe",
+    "report_file": "CPI_Europe_2024.pdf",
+    "report_html": "CPI_Europe_2024_report_20260314_151907.html",
+    "overall_score": 41.0,
+    "mandatory_compliance": 42.9,
+    "mandatory_missing": 2,
+    "found": 0,
+    "partial": 17,
+    "missing": 3,
+    "high_priority_gaps": 5,
+    "greenwashing_flags": 16
+  },
+  {
+    "company": "Continental Group",
+    "report_file": "Continental_Group_2024.pdf",
+    "report_html": "Continental_Group_2024_report_20260314_151907.html",
+    "overall_score": 50.6,
+    "mandatory_compliance": 50.0,
+    "mandatory_missing": 2,
+    "found": 2,
+    "partial": 13,
+    "missing": 5,
+    "high_priority_gaps": 5,
+    "greenwashing_flags": 19
+  },
+  {
+    "company": "Eni",
+    "report_file": "Eni_2024.pdf",
+    "report_html": "Eni_2024_report_20260314_151907.html",
+    "overall_score": 58.3,
+    "mandatory_compliance": 60.7,
+    "mandatory_missing": 0,
+    "found": 7,
+    "partial": 13,
+    "missing": 0,
+    "high_priority_gaps": 5,
+    "greenwashing_flags": 23
+  },
+  {
+    "company": "Lenzing",
+    "report_file": "Lenzing_2024.pdf",
+    "report_html": "Lenzing_2024_report_20260314_151907.html",
+    "overall_score": 7.1,
+    "mandatory_compliance": 10.7,
+    "mandatory_missing": 11,
+    "found": 0,
+    "partial": 3,
+    "missing": 17,
+    "high_priority_gaps": 5,
+    "greenwashing_flags": 3
+  },
+  {
+    "company": "Porsche AG",
+    "report_file": "Porsche_AG_2024.pdf",
+    "report_html": "Porsche_AG_2024_report_20260314_151907.html",
+    "overall_score": 71.4,
+    "mandatory_compliance": 71.4,
+    "mandatory_missing": 0,
+    "found": 7,
+    "partial": 13,
+    "missing": 0,
+    "high_priority_gaps": 5,
+    "greenwashing_flags": 25
+  }
+]

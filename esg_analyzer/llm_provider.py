@@ -84,8 +84,9 @@ def _detect_provider() -> str:
     import urllib.request
 
     # 1. Prefer Ollama — local, free, no key needed
+    ollama_base = _ollama_base_url()
     try:
-        urllib.request.urlopen("http://localhost:11434", timeout=1)
+        urllib.request.urlopen(f"{ollama_base}/api/tags", timeout=1)
         return "ollama"
     except Exception:
         pass
@@ -111,6 +112,71 @@ def _detect_provider() -> str:
         "    GROQ_API_KEY=gsk_...\n\n"
         "  Run 'python main.py --providers' for full provider documentation."
     )
+
+
+def _ollama_base_url() -> str:
+    return os.getenv("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+
+
+def _probe_ollama(base_url: str, timeout: float = 1.0) -> bool:
+    import urllib.request
+
+    try:
+        urllib.request.urlopen(f"{base_url}/api/tags", timeout=timeout)
+        return True
+    except Exception:
+        return False
+
+
+def get_llm_status(config: "LLMConfig") -> dict:
+    """
+    Lightweight connectivity/configuration check for UI/reporting.
+    - Ollama: verify reachability via /api/tags
+    - Cloud providers: confirm API key presence (connectivity not verified)
+    """
+    provider = config.provider
+    model = config.model
+
+    status = {
+        "provider": provider,
+        "model": model,
+        "state": "unknown",
+        "detail": "",
+        "verified": False,
+    }
+
+    if provider == "ollama":
+        base = _ollama_base_url()
+        ok = _probe_ollama(base)
+        status.update(
+            {
+                "state": "connected" if ok else "unreachable",
+                "detail": f"Ollama @ {base}",
+                "verified": True,
+                "base_url": base,
+            }
+        )
+        return status
+
+    key_env = _API_KEY_ENV.get(provider, "")
+    has_key = bool(os.environ.get(key_env, "").strip()) if key_env else False
+    if has_key:
+        status.update(
+            {
+                "state": "configured",
+                "detail": f"{key_env} present" if key_env else "API key present",
+                "verified": False,
+            }
+        )
+    else:
+        status.update(
+            {
+                "state": "missing_key",
+                "detail": f"{key_env} missing" if key_env else "API key missing",
+                "verified": False,
+            }
+        )
+    return status
 
 
 # ── Config ─────────────────────────────────────────────────────────────────────
@@ -227,6 +293,7 @@ def call_llm(
 
     for attempt in range(1, config.max_retries + 1):
         try:
+            api_base = _ollama_base_url() if config.provider == "ollama" else None
             response = litellm.completion(
                 model=config.litellm_model,
                 messages=[
@@ -235,6 +302,7 @@ def call_llm(
                 ],
                 max_tokens=2048,
                 timeout=config.timeout,
+                api_base=api_base,
             )
             content = response.choices[0].message.content
             if content is None:
@@ -300,6 +368,7 @@ async def call_llm_async(
 
     for attempt in range(1, config.max_retries + 1):
         try:
+            api_base = _ollama_base_url() if config.provider == "ollama" else None
             response = await litellm.acompletion(
                 model=config.litellm_model,
                 messages=[
@@ -308,6 +377,7 @@ async def call_llm_async(
                 ],
                 max_tokens=2048,
                 timeout=config.timeout,
+                api_base=api_base,
             )
             content = response.choices[0].message.content
             if content is None:

@@ -46,7 +46,7 @@ import logging
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from esg_analyzer.llm_provider import LLMConfig, LLMError, call_llm_async
 from esg_analyzer.parsers.document_parser import ParsedDocument
@@ -189,7 +189,7 @@ _JSON_OBJECT_RE = re.compile(r"\{.*\}", re.DOTALL)
 _FENCE_RE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
 
 
-def _parse_response(raw: str, key: str) -> Dict[str, Any]:
+def _parse_response(raw: str, key: str, warn_cb: Optional[Callable[[str], None]] = None) -> Dict[str, Any]:
     """
     Parse LLM JSON with four-stage recovery. Returns {} only if all stages fail.
 
@@ -199,7 +199,11 @@ def _parse_response(raw: str, key: str) -> Dict[str, Any]:
     Stage 4: Give up, return {} — caller will use keyword fallback
     """
     if not raw or not raw.strip():
-        logger.warning("[%s] LLM returned empty response", key)
+        msg = f"[{key}] LLM returned empty response"
+        if warn_cb:
+            warn_cb(msg)
+        else:
+            logger.warning(msg)
         return {}
 
     attempts = [
@@ -233,10 +237,11 @@ def _parse_response(raw: str, key: str) -> Dict[str, Any]:
         except (json.JSONDecodeError, ValueError):
             continue
 
-    logger.warning(
-        "[%s] All JSON parse stages failed. Using keyword fallback. raw=%r",
-        key, raw[:200],
-    )
+    msg = f"[{key}] All JSON parse stages failed. Using keyword fallback. raw={raw[:200]!r}"
+    if warn_cb:
+        warn_cb(msg)
+    else:
+        logger.warning(msg)
     return {}
 
 
@@ -248,6 +253,7 @@ async def _detect_one_async(
     doc: ParsedDocument,
     llm_config: LLMConfig,
     semaphore: asyncio.Semaphore,
+    warn_cb: Optional[Callable[[str], None]] = None,
     top_n_chunks: int = 8,
 ) -> DetectionResult:
     """
@@ -284,17 +290,27 @@ async def _detect_one_async(
     async with semaphore:
         try:
             raw = await call_llm_async(_SYSTEM_PROMPT, prompt, llm_config)
-            parsed = _parse_response(raw, key)
+            parsed = _parse_response(raw, key, warn_cb=warn_cb)
             if not parsed:
                 used_fallback = True
+                if warn_cb:
+                    warn_cb(f"[{key}] LLM response invalid JSON. Using keyword fallback.")
                 parsed = _keyword_fallback(candidates, disclosure)
         except LLMError as e:
-            logger.warning("[%s] LLM failed: %s", key, e)
+            msg = f"[{key}] LLM failed: {e}"
+            if warn_cb:
+                warn_cb(msg)
+            else:
+                logger.warning(msg)
             used_fallback = True
             parsed = _keyword_fallback(candidates, disclosure)
         except Exception as e:
             # Catch-all: never let one disclosure crash the entire run
-            logger.error("[%s] Unexpected error during detection: %s", key, e, exc_info=True)
+            msg = f"[{key}] Unexpected error during detection: {e}"
+            if warn_cb:
+                warn_cb(msg)
+            else:
+                logger.error(msg, exc_info=True)
             used_fallback = True
             parsed = _keyword_fallback(candidates, disclosure)
 
@@ -319,6 +335,8 @@ async def _detect_all_async(
     llm_config: LLMConfig,
     mode: str,
     max_concurrent: int,
+    progress_cb: Optional[Callable[[str], None]] = None,
+    warn_cb: Optional[Callable[[str], None]] = None,
 ) -> List[DetectionResult]:
     """
     Run all disclosure checks concurrently, bounded by a semaphore.
@@ -336,14 +354,22 @@ async def _detect_all_async(
 
     async def run_one(key: str, disclosure: Dict[str, Any]) -> DetectionResult:
         nonlocal completed
-        result = await _detect_one_async(key, disclosure, doc, llm_config, semaphore)
+        result = await _detect_one_async(
+            key, disclosure, doc, llm_config, semaphore, warn_cb=warn_cb
+        )
         result.is_mandatory = disclosure.get(
             f"{mode}_mandatory", disclosure.get("original_mandatory", False)
         )
         result.mode = mode
         result.cross_references = disclosure.get("cross_references", {})
         completed += 1
-        logger.info("[%d/%d] ✓ %s — %s", completed, total, key, result.status)
+        msg = f"Check {completed}/{total} — {key}: {result.status}"
+        if result.used_fallback:
+            msg += " (fallback)"
+        if progress_cb:
+            progress_cb(msg)
+        else:
+            logger.info("[%d/%d] ✓ %s — %s", completed, total, key, result.status)
         return result
 
     tasks = [run_one(key, disc) for key, disc in disclosures.items()]
@@ -357,6 +383,8 @@ def detect_all(
     llm_config: LLMConfig,
     mode: str = "original",
     max_concurrent: Optional[int] = None,
+    progress_cb: Optional[Callable[[str], None]] = None,
+    warn_cb: Optional[Callable[[str], None]] = None,
 ) -> List[DetectionResult]:
     """
     Public synchronous entry point.
@@ -382,6 +410,8 @@ def detect_all(
             llm_config=llm_config,
             mode=mode,
             max_concurrent=max_concurrent,
+            progress_cb=progress_cb,
+            warn_cb=warn_cb,
         )
     )
 

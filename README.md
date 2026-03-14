@@ -17,7 +17,7 @@ Upload any company ESG/sustainability PDF and get:
 -  **Weighted score** — 0–100 overall score with E / S / G breakdown
 -  **Greenwashing flags** — vague language, missing baselines, unsupported net-zero claims
 -  **Actionable recommendations** — prioritised list of what to fix and what to add
--  **Omnibus mode** — toggle between original ESRS 2023 and the 2026 simplified post-Omnibus framework
+-  **Omnibus mode (draft)** — toggle between official ESRS Set 1 and draft simplified ESRS proposals
 
 ---
 
@@ -28,7 +28,7 @@ CSRD (Corporate Sustainability Reporting Directive) requires thousands of EU com
 **Key differentiators vs other tools:**
 - Framework-aware, not generic: checks against specific ESRS sections (E1-6, S1-14, G1-3, etc.)
 - Evidence-backed: every finding cites the source passage, page, and quote
-- Omnibus-aware: knows which disclosures changed in the February 2026 EU Omnibus reform
+- Omnibus-aware: supports draft simplified ESRS proposals for scenario analysis
 - Open source: free, auditable, no vendor lock-in
 
 ---
@@ -89,7 +89,7 @@ python main.py --check               # verify connection
 python main.py --pdf report.pdf
 ```
 
-This produces `report_report.html` — open it in any browser.
+This produces an HTML report like `report_report_YYYYMMDD_HHMMSS.html` — open it in any browser.
 
 ### GUI — Streamlit usage
 
@@ -99,12 +99,18 @@ This produces `report_report.html` — open it in any browser.
 streamlit run streamlit_app.py
 ```
 
+Reports generated from the UI are saved under `./outputs` by default.
+You can override this with `GIRAFON_OUTPUT_DIR=/path/to/folder`.
+
 #### Option D — Streamlit Cloud (self-hosted UI)
 
 1) Push this repo to your GitHub.
 2) On Streamlit Cloud, create a new app from your repo.
 3) Add secrets in **App settings → Secrets** (see `.streamlit/secrets.toml.example`).
 4) Deploy. The app stays private to your account/team.
+
+> Note: Streamlit Cloud / Render / Hugging Face Spaces cannot access your **local** Ollama.
+> For public hosting, use a cloud LLM provider (OpenAI/Anthropic/Groq/Mistral) via API keys.
 
 #### Option E — Docker (self-hosted UI)
 
@@ -113,12 +119,55 @@ docker build -t girafon .
 docker run -p 8501:8501 girafon
 ```
 
+##### Using Ollama running on your host
+
+If you want the container to use Ollama on your host machine, set `OLLAMA_HOST` so Girafon can reach it.
+
+Linux (host networking):
+
+```bash
+docker run --network=host -e OLLAMA_HOST=http://127.0.0.1:11434 girafon
+```
+
+macOS / Windows (Docker Desktop):
+
+```bash
+docker run -p 8501:8501 -e OLLAMA_HOST=http://host.docker.internal:11434 girafon
+```
+
+---
+
+## Deployment options (self-hosted)
+
+Girafon is designed for self-deploy. Pick the path that matches your audience:
+
+- **Local (fastest):** `pip install -r requirements.txt` + `streamlit run streamlit_app.py`
+- **Docker (reproducible):** build and run the container (see Option E)
+- **Streamlit Cloud / Render / HF Spaces:** use a **cloud LLM provider**, not local Ollama
+
+If you want your visitors to deploy it themselves, these three options cover 99% of cases.
+
+---
+
+## Modes and profiles (what they mean)
+
+**ESRS mode**
+- **Original** — ESRS Set 1 as adopted in 2023 (current official baseline).
+- **Omnibus / Simplified (draft)** — proposed simplifications; use for scenario analysis.
+
+**Schema profile**
+- **Basic** — Girafon’s 20-disclosure fast scan.
+- **IG3-core** — Girafon preset: ESRS 2 + E1 + G1.
+- **IG3 full** — EFRAG Implementation Guidance datapoint list (non-authoritative).
+
 ---
 
 ## CLI options
 
 ```
 python main.py --pdf <path>           # Required: path to ESG PDF
+python main.py --input-dir <folder>  # Batch mode: folder of PDFs
+             --output-dir <folder>   # Batch mode: output folder (default: <input>/girafon_out)
                --company "Name"       # Company name for the report header
                --output report.html   # Custom output path
                --json results.json    # Also save raw results as JSON
@@ -128,7 +177,40 @@ python main.py --pdf <path>           # Required: path to ESG PDF
                --min-chunk-words 40   # Discard very short chunks (default: 40)
                --schema basic         # "basic" (20 disclosures), "ig3-core" (ESRS2+E1+G1), or "ig3" (full datapoints)
                --taxonomy-map map.json # Optional ESRS taxonomy mapping file
+             --diff-base <pdf>        # Diff mode: baseline report
+             --diff-new <pdf>         # Diff mode: comparison report
+             --diff-output <html>     # Diff mode: output HTML for diff report
 ```
+
+---
+
+## Batch analysis (cross-report screening)
+
+Batch mode scans a folder of PDFs, generates one HTML report per file, plus:
+
+- `summary.json` (aggregated metrics)
+- `comparison.html` (portable screening workspace)
+
+Example:
+
+```bash
+python main.py --input-dir ./reports --output-dir ./out
+```
+
+Output folder structure:
+
+```
+out/
+  company_a_report.html
+  company_b_report.html
+  summary.json
+  comparison.html
+```
+
+The comparison page is a **screening tool**, not a benchmark.
+
+Note: Batch mode forces a local LLM (Ollama) with `qwen2.5:14b` to avoid cloud
+API rate limits. Make sure Ollama is running before you launch batch runs.
 
 ## ESRS XBRL taxonomy mapping (optional)
 
@@ -240,6 +322,24 @@ esg-gap-detector/
 - LLM is used only to evaluate evidence — scoring is deterministic
 - No vector DB required for MVP (keyword search + cosine upgrade path built in)
 - Modular: swap any component without touching others
+
+---
+
+## Report UX Enhancements (Workspace Mode)
+
+The HTML report now includes lightweight, **client-side** workspace features
+while preserving the original structure and printability:
+
+- Sticky navigation with anchors to major sections
+- Filters (missing / partial / found, mandatory, high priority)
+- Search across IDs, titles, missing datapoints, and quotes
+- Confidence badges (high / medium / low) based on evidence presence
+- Review workflow (to review / validated / dismissed) stored in localStorage
+- Export reviewed findings to CSV/JSON
+- Clearer evidence blocks (quote + rationale + source page)
+
+These changes are purely presentational and do **not** alter the core data model
+or analysis logic. The report remains a standalone HTML file.
 
 ---
 

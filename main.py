@@ -14,9 +14,12 @@ import argparse
 import json
 import logging
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+from esg_analyzer.utils.names import clean_company_name
 
 load_dotenv()
 
@@ -54,6 +57,13 @@ def main() -> None:
         description="ESRS Gap Detector — Analyse ESG reports for CSRD compliance gaps",
     )
     parser.add_argument("--pdf",       required=False, help="Path to ESG report (.pdf or .html)")
+    parser.add_argument("--input-dir", default="", help="Batch mode: folder containing PDF reports")
+    parser.add_argument("--output-dir", default="", help="Batch mode: output folder for reports and summary")
+    parser.add_argument("--diff-base", default="", help="Diff mode: baseline PDF report")
+    parser.add_argument("--diff-new", default="", help="Diff mode: comparison PDF report")
+    parser.add_argument("--diff-output", default="", help="Diff mode: output HTML path for diff report")
+    parser.add_argument("--diff-base-label", default="Baseline", help="Diff mode: label for baseline report")
+    parser.add_argument("--diff-new-label", default="Comparison", help="Diff mode: label for comparison report")
     parser.add_argument("--company",   default="",     help="Company name for the report header")
     parser.add_argument("--output",    default="",     help="Output HTML path")
     parser.add_argument("--json",      default="",     help="Also save raw results as JSON")
@@ -88,24 +98,67 @@ def main() -> None:
         _run_check(args)
         sys.exit(0)
 
-    if not args.pdf:
-        parser.error("--pdf is required  (try --check to test your LLM, --providers to list options)")
+    diff_mode = bool(args.diff_base and args.diff_new)
+    if diff_mode and (args.pdf or args.input_dir):
+        parser.error("Diff mode cannot be combined with --pdf or --input-dir.")
 
-    doc_path = Path(args.pdf)
-    if not doc_path.exists():
-        logger.error("File not found: %s", doc_path)
-        sys.exit(1)
+    if not args.pdf and not args.input_dir and not diff_mode:
+        parser.error("--pdf, --input-dir, or --diff-base/--diff-new is required (try --check to test your LLM)")
 
-    company_name = args.company or doc_path.stem.replace("_", " ").title()
-    output_path = args.output or str(doc_path.with_suffix("")) + "_report.html"
+    batch_mode = bool(args.input_dir)
 
-    print(f"\n{'='*56}")
-    print(f"  ESRS Gap Detector")
-    print(f"  Company  : {company_name}")
-    print(f"  Mode     : {args.mode.upper()}")
-    print(f"  Source   : {doc_path.name}")
-    print(f"  Schema   : {args.schema}")
-    print(f"{'='*56}\n")
+    doc_path = None
+    if not batch_mode and not diff_mode:
+        doc_path = Path(args.pdf) if args.pdf else None
+        if not doc_path or not doc_path.exists():
+            logger.error("File not found: %s", doc_path)
+            sys.exit(1)
+
+    def _stamp() -> str:
+        return datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    if diff_mode:
+        base_path = Path(args.diff_base)
+        new_path = Path(args.diff_new)
+        if not base_path.exists() or not new_path.exists():
+            logger.error("Diff report file not found: %s or %s", base_path, new_path)
+            sys.exit(1)
+        diff_stamp = _stamp()
+        print(f"\n{'='*56}")
+        print(f"  ESRS Gap Detector — Diff")
+        print(f"  Baseline : {base_path.name}")
+        print(f"  Compare  : {new_path.name}")
+        print(f"  Mode     : {args.mode.upper()}")
+        print(f"  Schema   : {args.schema}")
+        print(f"{'='*56}\n")
+    elif not batch_mode:
+        company_name = args.company or clean_company_name(doc_path.name)
+        out_stamp = _stamp()
+        output_path = args.output or str(doc_path.with_suffix("")) + f"_report_{out_stamp}.html"
+
+        print(f"\n{'='*56}")
+        print(f"  ESRS Gap Detector")
+        print(f"  Company  : {company_name}")
+        print(f"  Mode     : {args.mode.upper()}")
+        print(f"  Source   : {doc_path.name}")
+        print(f"  Schema   : {args.schema}")
+        print(f"{'='*56}\n")
+    else:
+        input_dir = Path(args.input_dir)
+        output_dir = Path(args.output_dir) if args.output_dir else (input_dir / "girafon_out")
+        print(f"\n{'='*56}")
+        print(f"  ESRS Gap Detector — Batch")
+        print(f"  Input    : {input_dir}")
+        print(f"  Output   : {output_dir}")
+        print(f"  Mode     : {args.mode.upper()}")
+        print(f"  Schema   : {args.schema}")
+        print(f"{'='*56}\n")
+
+    if batch_mode:
+        if args.provider or args.model:
+            print("  NOTE     : Batch mode forces Ollama / qwen2.5:14b (overriding provider/model).")
+        args.provider = "ollama"
+        args.model = "qwen2.5:14b"
 
     # ── LLM config ─────────────────────────────────────────────────────────────
     from esg_analyzer.llm_provider import LLMConfig
@@ -116,6 +169,9 @@ def main() -> None:
         sys.exit(1)
     print(f"  LLM      : {llm_config.provider} / {llm_config.model}")
     from esg_analyzer.pipeline import default_concurrency, run_pipeline
+    from esg_analyzer.batch import analyze_batch
+    from esg_analyzer.diff import compute_diff_report
+    from esg_analyzer.report.diff_report import generate_diff_report
     import os as _os
     concurrent = args.concurrent or default_concurrency(llm_config)
     source = "CLI" if args.concurrent else ("env" if _os.environ.get("ESG_MAX_CONCURRENT") else "auto")
@@ -146,6 +202,94 @@ def main() -> None:
     if args.schema == "ig3-core":
         ig3_scope = {"ESRS 2", "ESRS 2 MDR", "E1", "G1"}
 
+    if diff_mode:
+        base_path = Path(args.diff_base)
+        new_path = Path(args.diff_new)
+        base_name = args.diff_base_label or "Baseline"
+        new_name = args.diff_new_label or "Comparison"
+        diff_output = (
+            Path(args.diff_output)
+            if args.diff_output
+            else (base_path.parent / f"{base_path.stem}_vs_{new_path.stem}_diff_{diff_stamp}.html")
+        )
+
+        try:
+            base_result = run_pipeline(
+                doc_path=base_path,
+                company_name=base_name,
+                mode=args.mode,
+                llm_config=llm_config,
+                schema_path=schema_path,
+                taxonomy_map_path=taxonomy_map_path,
+                ig3_scope=ig3_scope,
+                schema_profile=args.schema,
+                output_path=str(base_path.with_suffix("")) + f"_report_{diff_stamp}.html",
+                chunk_words=args.chunk_words,
+                overlap_words=args.overlap_words,
+                min_chunk_words=args.min_chunk_words,
+                max_concurrent=concurrent,
+                progress=_progress,
+                warn=_warn,
+            )
+            new_result = run_pipeline(
+                doc_path=new_path,
+                company_name=new_name,
+                mode=args.mode,
+                llm_config=llm_config,
+                schema_path=schema_path,
+                taxonomy_map_path=taxonomy_map_path,
+                ig3_scope=ig3_scope,
+                schema_profile=args.schema,
+                output_path=str(new_path.with_suffix("")) + f"_report_{diff_stamp}.html",
+                chunk_words=args.chunk_words,
+                overlap_words=args.overlap_words,
+                min_chunk_words=args.min_chunk_words,
+                max_concurrent=concurrent,
+                progress=_progress,
+                warn=_warn,
+            )
+        except Exception as e:
+            logger.error("Diff analysis failed: %s", e)
+            sys.exit(1)
+
+        diff_report = compute_diff_report(
+            base_result.score_report,
+            new_result.score_report,
+            base_label=base_name,
+            new_label=new_name,
+            base_report_html=Path(base_result.output_path).name,
+            new_report_html=Path(new_result.output_path).name,
+        )
+        generate_diff_report(diff_report, output_path=str(diff_output))
+        print(f"\n  Diff report → {diff_output}")
+        print(f"{'='*56}\n")
+        return
+
+    if batch_mode:
+        try:
+            analyze_batch(
+                input_dir=input_dir,
+                output_dir=output_dir,
+                llm_config=llm_config,
+                schema_path=schema_path,
+                taxonomy_map_path=taxonomy_map_path,
+                ig3_scope=ig3_scope,
+                schema_profile=args.schema,
+                mode=args.mode,
+                chunk_words=args.chunk_words,
+                overlap_words=args.overlap_words,
+                min_chunk_words=args.min_chunk_words,
+                max_concurrent=concurrent,
+                progress=_progress,
+                warn=_warn,
+            )
+        except Exception as e:
+            logger.error("Batch analysis failed: %s", e)
+            sys.exit(1)
+        print(f"\n  Output → {output_dir}")
+        print(f"{'='*56}\n")
+        return
+
     try:
         pipeline_result = run_pipeline(
             doc_path=doc_path,
@@ -155,6 +299,7 @@ def main() -> None:
             schema_path=schema_path,
             taxonomy_map_path=taxonomy_map_path,
             ig3_scope=ig3_scope,
+            schema_profile=args.schema,
             output_path=output_path,
             chunk_words=args.chunk_words,
             overlap_words=args.overlap_words,
