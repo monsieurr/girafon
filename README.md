@@ -149,6 +149,34 @@ If you want your visitors to deploy it themselves, these three options cover 99%
 
 ---
 
+## Public demo mode (anonymized, no LLM required)
+
+If you want a public demo without exposing real company names, you can generate
+an anonymized static showcase from existing HTML reports.
+
+1) Generate reports as usual (single or batch).
+2) Build the demo bundle:
+
+```bash
+python site/build_demo_bundle.py \
+  --input-dir outputs \
+  --summary outputs/summary.json \
+  --output-dir site/demo
+```
+
+This creates:
+
+```
+site/demo/index.html
+site/demo/company_01_report.html
+site/demo/company_02_report.html
+site/demo/comparison.html
+```
+
+You can now publish the `site/` folder on GitHub Pages, Netlify, or any static host.
+
+---
+
 ## Modes and profiles (what they mean)
 
 **ESRS mode**
