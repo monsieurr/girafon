@@ -1,4 +1,4 @@
-# 🦒 Girafon
+# 🦒 Girafon : ESRS gap lint for sustainability reports
 
 **ESRS gap lint for sustainability reports. It tells you what’s missing and shows the exact evidence.**
 
