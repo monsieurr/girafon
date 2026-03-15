@@ -83,6 +83,22 @@ def _replace_terms(text: str, term_map: List[Tuple[str, str]]) -> str:
     return text
 
 
+def _select_latest_reports(paths: List[Path]) -> List[Path]:
+    pattern = re.compile(r"^(?P<base>.+)_report_(?P<ts>\\d{8}_\\d{6})\\.html$")
+    latest: Dict[str, Tuple[str, Path]] = {}
+    for path in paths:
+        match = pattern.match(path.name)
+        if match:
+            base = match.group("base")
+            ts = match.group("ts")
+        else:
+            base = path.stem
+            ts = ""
+        if base not in latest or ts > latest[base][0]:
+            latest[base] = (ts, path)
+    return sorted((entry[1] for entry in latest.values()), key=lambda p: p.name)
+
+
 def _anonymize_html(html: str, alias: str, term_map: List[Tuple[str, str]]) -> str:
     cleaned = html
 
@@ -155,10 +171,15 @@ def build_demo_bundle(
     extra_terms: List[str],
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
+    # Clean previously generated demo files to avoid duplicates
+    for pattern in ("company_*.html", "comparison.html", "summary.json", "index.html"):
+        for old in output_dir.glob(pattern):
+            old.unlink()
 
-    html_files = sorted(
+    raw_html_files = [
         p for p in input_dir.glob("*.html") if p.name not in {"comparison.html"}
-    )
+    ]
+    html_files = _select_latest_reports(raw_html_files)
     if not html_files:
         raise SystemExit(f"No HTML reports found in {input_dir}")
 

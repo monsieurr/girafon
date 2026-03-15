@@ -1,8 +1,8 @@
 [
   {
-    "company": "Company B",
+    "company": "Company A",
     "report_file": "anonymized_report.pdf",
-    "report_html": "company_02_report.html",
+    "report_html": "company_01_report.html",
     "overall_score": 33.5,
     "mandatory_compliance": 35.7,
     "mandatory_missing": 4,
@@ -13,9 +13,9 @@
     "greenwashing_flags": 10
   },
   {
-    "company": "Company D",
+    "company": "Company B",
     "report_file": "anonymized_report.pdf",
-    "report_html": "company_04_report.html",
+    "report_html": "company_02_report.html",
     "overall_score": 50.6,
     "mandatory_compliance": 50.0,
     "mandatory_missing": 2,
@@ -26,9 +26,9 @@
     "greenwashing_flags": 19
   },
   {
-    "company": "Company F",
+    "company": "Company C",
     "report_file": "anonymized_report.pdf",
-    "report_html": "company_06_report.html",
+    "report_html": "company_03_report.html",
     "overall_score": 69.0,
     "mandatory_compliance": 67.9,
     "mandatory_missing": 0,
@@ -39,9 +39,9 @@
     "greenwashing_flags": 25
   },
   {
-    "company": "Company H",
+    "company": "Company D",
     "report_file": "anonymized_report.pdf",
-    "report_html": "company_08_report.html",
+    "report_html": "company_04_report.html",
     "overall_score": 7.1,
     "mandatory_compliance": 10.7,
     "mandatory_missing": 11,
@@ -52,9 +52,9 @@
     "greenwashing_flags": 2
   },
   {
-    "company": "Company J",
+    "company": "Company E",
     "report_file": "anonymized_report.pdf",
-    "report_html": "company_10_report.html",
+    "report_html": "company_05_report.html",
     "overall_score": 74.4,
     "mandatory_compliance": 75.0,
     "mandatory_missing": 0,

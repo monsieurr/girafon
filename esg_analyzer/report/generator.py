@@ -649,32 +649,34 @@ def _build_html(
 
     /* Score circle */
     .score-circle {{
-      width: 120px;
-      height: 120px;
+      width: 132px;
+      height: 132px;
       border-radius: 50%;
       border: 4px solid {score_color};
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 6px;
+      padding: 10px 0;
       flex-shrink: 0;
     }}
     .score-circle .score-num {{
       font-family: 'DM Serif Display', serif;
-      font-size: 36px;
+      font-size: 34px;
       font-weight: 400;
       color: white;
       line-height: 1;
     }}
     .score-circle .score-label {{
-      font-size: 10px;
+      font-size: 8px;
       color: {score_color};
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-top: 4px;
-      line-height: 1.2;
+      line-height: 1.3;
       text-align: center;
-      max-width: 90px;
+      max-width: 88px;
     }}
 
     /* ── Executive summary ── */
