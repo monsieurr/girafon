@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Girafon Demo (Anonymized)</title>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; background: #f6f2ed; color: #24180f; }
+    .wrap { max-width: 800px; margin: 0 auto; padding: 48px 20px; }
+    h1 { font-size: 28px; }
+    p { line-height: 1.6; }
+    ul { padding-left: 18px; }
+    li { margin: 8px 0; }
+    a { color: #a1581f; font-weight: 600; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Girafon Demo (Anonymized)</h1>
+    <p>These reports are generated outputs with company names removed. Use this page to
+    showcase how Girafon looks and behaves without exposing real company identities.</p>
+    <ul>
+      <li><a href="comparison.html">Comparison workspace</a></li>
+<li><a href="company_01_report.html">Company A</a></li>
+<li><a href="company_02_report.html">Company B</a></li>
+<li><a href="company_03_report.html">Company C</a></li>
+<li><a href="company_04_report.html">Company D</a></li>
+<li><a href="company_05_report.html">Company E</a></li>
+<li><a href="company_06_report.html">Company F</a></li>
+<li><a href="company_07_report.html">Company G</a></li>
+<li><a href="company_08_report.html">Company H</a></li>
+<li><a href="company_09_report.html">Company I</a></li>
+<li><a href="company_10_report.html">Company J</a></li>
+    </ul>
+    <h2 style="margin-top:32px;">Try the real tool (local)</h2>
+    <p>Girafon is meant to be deployed locally. Quick start:</p>
+    <pre style="background:#fff;border:1px solid #e6d5bf;padding:12px;border-radius:10px;">pip install -r requirements.txt
+ollama serve
+ollama pull qwen2.5:14b
+streamlit run streamlit_app.py</pre>
+    <p>CLI mode:</p>
+    <pre style="background:#fff;border:1px solid #e6d5bf;padding:12px;border-radius:10px;">python main.py --pdf path/to/report.pdf</pre>
+  </div>
+</body>
+</html>

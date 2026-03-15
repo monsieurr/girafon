@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESRS Gap Detector — Evidence-backed ESG Reporting Lint</title>
+  <meta name="description" content="Evidence-backed ESRS/CSRD gap detection for ESG reports. Pinpoint missing disclosures with cited excerpts, plus a clear overall score.">
+  <link rel="canonical" href="https://example.com/esrs-gap-detector">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%A6%92%3C/text%3E%3C/svg%3E">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ESRS Gap Detector">
+  <meta property="og:description" content="Evidence-backed ESRS/CSRD gap detection for ESG reports. Pinpoint missing disclosures with cited excerpts, plus a clear overall score.">
+  <meta property="og:url" content="https://example.com/esrs-gap-detector">
+  <meta property="og:image" content="https://example.com/esrs-gap-detector/og-image.svg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ESRS Gap Detector">
+  <meta name="twitter:description" content="Evidence-backed ESRS/CSRD gap detection for ESG reports. Pinpoint missing disclosures with cited excerpts, plus a clear overall score.">
+  <meta name="twitter:image" content="https://example.com/esrs-gap-detector/og-image.svg">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ESRS Gap Detector",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "description": "Evidence-backed ESRS/CSRD gap detection for ESG reports with disclosure-level evidence."
+  }
+  </script>
+
+  <style>
+    :root {
+      --ink: #2f241b;
+      --accent: #6b4d35;
+      --cream: #f6efe5;
+      --sand: #e6d5bf;
+    }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 80px;
+    }
+    h1 {
+      font-family: "Satoshi", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-size: 42px;
+      margin: 0 0 12px;
+    }
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 0 0 20px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--sand);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .cta {
+      display: inline-block;
+      margin-top: 12px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .small {
+      font-size: 13px;
+      color: #6e5a47;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>ESRS Gap Detector</h1>
+    <p>Evidence-backed ESRS/CSRD gap detection for ESG reports. Find missing disclosures with cited excerpts, plus a clean overall score.</p>
+    <div class="card">
+      <strong>What it does</strong>
+      <p>Upload a report → detect ESRS gaps → review evidence → export results.</p>
+      <a class="cta" href="demo/">View anonymized demo</a>
+      <div class="small">This demo contains anonymized sample reports. No LLM key required.</div>
+    </div>
+    <div class="card">
+      <strong>Run it locally (fast)</strong>
+      <p>Girafon is meant to be deployed locally. Quick start:</p>
+      <pre style="background:#fff;border:1px solid var(--sand);padding:12px;border-radius:10px;">pip install -r requirements.txt
+ollama serve
+ollama pull qwen2.5:14b
+streamlit run streamlit_app.py</pre>
+      <p>CLI mode:</p>
+      <pre style="background:#fff;border:1px solid var(--sand);padding:12px;border-radius:10px;">python main.py --pdf path/to/report.pdf</pre>
+    </div>
+  </div>
+</body>
+</html>

@@ -5,6 +5,10 @@ __pycache__/
 .DS_Store
 *.pdf
 *.html
+!site/**/*.html
+!site/**/*.svg
+!site/**/*.xml
+!site/**/*.txt
 results/
 venv/
 .venv/

@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESRS Gap Analysis - Company I</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0d1b2a;
+      --ink:     #1e293b;
+      --muted:   #64748b;
+      --border:  #e2e8f0;
+      --bg:      #f8fafc;
+      --white:   #ffffff;
+      --found:   #22c55e;
+      --partial: #f59e0b;
+      --missing: #ef4444;
+      --accent:  #3b82f6;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    /* ── Top navigation ── */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(13, 27, 42, 0.98);
+      color: white;
+      padding: 10px 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+    }
+    .nav-links a {
+      color: #dbeafe;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .nav-links a:hover {
+      color: white;
+    }
+
+    /* ── Header ── */
+    .report-header {
+      background: var(--navy);
+      color: white;
+      padding: 48px 64px 40px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: start;
+    }
+    .header-left .label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    .header-left h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .header-left .meta {
+      font-size: 13px;
+      color: #94a3b8;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .header-left .meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* Score circle */
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #f59e0b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .score-circle .score-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      font-weight: 400;
+      color: white;
+      line-height: 1;
+    }
+    .score-circle .score-label {
+      font-size: 11px;
+      color: #f59e0b;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* ── Executive summary ── */
+    .exec-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 24px 64px 0;
+    }
+    .summary-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+    }
+    .summary-card h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+    .fix-list, .risk-list {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .fix-priority {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+    .fix-priority.high { background: #fee2e2; color: #991b1b; }
+    .fix-priority.medium { background: #fef9c3; color: #854d0e; }
+    .fix-section {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-right: 6px;
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 20px 64px;
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Materiality summary ── */
+    .materiality-summary {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 64px 14px;
+    }
+    .ms-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .ms-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 6px;
+      color: #475569;
+      font-size: 12px;
+    }
+    .ms-list li strong {
+      font-family: 'DM Mono', monospace;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .ms-empty {
+      color: #94a3b8;
+      font-size: 12px;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-val {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--ink);
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .stat-val.green { color: var(--found); }
+    .stat-val.amber { color: var(--partial); }
+    .stat-val.red   { color: var(--missing); }
+
+    /* ── Main content ── */
+    .main-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 64px 80px;
+    }
+    .category-sidebar {
+      position: sticky;
+      top: 88px;
+      float: right;
+      width: 170px;
+      margin: 0 0 20px 24px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #f8fafc;
+      font-size: 12px;
+    }
+    .category-sidebar .sidebar-title {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .category-sidebar a {
+      display: block;
+      text-decoration: none;
+      color: var(--ink);
+      padding: 4px 0;
+      font-weight: 600;
+    }
+    @media (max-width: 1200px) {
+      .category-sidebar {
+        position: static;
+        float: none;
+        width: auto;
+        margin: 0 0 16px 0;
+      }
+    }
+
+    /* ── Disclosure tools ── */
+    .disclosure-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: end;
+      padding: 12px 0 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .tool-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .tool-group.filter-buttons {
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+    .tool-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    .tool-group.search {
+      flex: 1;
+      min-width: 220px;
+    }
+    .tool-group label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .tool-group input[type="text"],
+    .tool-group select {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .tool-group button {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      background: #f8fafc;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .details-toggle {
+      display: flex;
+      gap: 6px;
+    }
+    .details-toggle button {
+      padding: 6px 8px;
+      font-size: 11px;
+    }
+    .filter-btn {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .tool-group.export {
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+    }
+    .tool-group.export button {
+      background: var(--navy);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tool-group.export button:hover {
+      background: #111827;
+    }
+    .tool-group input[type="text"]:focus,
+    .tool-group select:focus,
+    .tool-group button:focus,
+    .review-select:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .tool-group.results {
+      min-width: 130px;
+    }
+    #filter-count {
+      font-size: 12px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .category-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 6px 0 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .category-jump .cat-link {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--ink);
+      background: #f8fafc;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .category-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .category-dot.env { background: #22c55e; }
+    .category-dot.soc { background: #3b82f6; }
+    .category-dot.gov { background: #f59e0b; }
+    .category-dot.gen { background: #64748b; }
+
+    .weight-legend {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 8px 0 4px;
+    }
+
+    /* ── Recommendations ── */
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .recs-section { margin-bottom: 48px; }
+    .rec-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rec-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .rec-body { flex: 1; }
+    .rec-action { font-size: 14px; color: var(--ink); margin-top: 4px; }
+    .rec-section {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: var(--muted);
+      margin-left: 6px;
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+    .chip.high   { background: #fee2e2; color: #991b1b; }
+    .chip.medium { background: #fef9c3; color: #854d0e; }
+
+    /* ── Category sections ── */
+    .category-section {
+      margin-bottom: 48px;
+    }
+    .category-section.collapsed .disclosure-table,
+    .category-section.collapsed .weight-legend {
+      display: none;
+    }
+    .category-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .category-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      font-weight: 400;
+    }
+    .category-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cat-score {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+    }
+    .cat-counts {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .found-count   { color: var(--found); font-weight: 500; }
+    .partial-count { color: var(--partial); font-weight: 500; }
+    .missing-count { color: var(--missing); font-weight: 500; }
+
+    .progress-bar-wrap {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    /* ── Disclosure table ── */
+    .disclosure-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .disclosure-table thead tr {
+      border-bottom: 2px solid var(--border);
+    }
+    .disclosure-table th {
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .disclosure-table th abbr {
+      text-decoration: underline dotted;
+      cursor: help;
+    }
+    .disclosure-table td {
+      padding: 12px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+    .disclosure-row:hover { background: #f8fafc; }
+
+    .col-section { width: 120px; }
+    .col-status  { width: 110px; }
+    .col-weight  { width: 60px; text-align: center; color: var(--muted); }
+
+    .section-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .mandatory-tag {
+      font-size: 9px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 1px 5px;
+      border-radius: 2px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .mode-pill {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+    }
+    .conf-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .conf-badge.high { background: #dcfce7; color: #166534; }
+    .conf-badge.medium { background: #fef9c3; color: #854d0e; }
+    .conf-badge.low { background: #fee2e2; color: #991b1b; }
+
+    .quote {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-left: 3px solid var(--accent);
+      font-size: 12px;
+      color: #334155;
+      font-style: italic;
+      border-radius: 0 4px 4px 0;
+    }
+    .flag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .flag-chip {
+      font-size: 10px;
+      color: #b45309;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+    .evidence-block {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-left: 3px solid #cbd5f5;
+      border-radius: 0 4px 4px 0;
+    }
+    .evidence-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .evidence-body {
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .evidence-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .row-details {
+      margin-top: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 6px 10px;
+    }
+    .row-details summary {
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      list-style: none;
+    }
+    .row-details summary::-webkit-details-marker {
+      display: none;
+    }
+    .detail-block {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+    }
+    .detail-block:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+    .detail-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .detail-body {
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    mark.search-hit {
+      background: #fde68a;
+      color: #92400e;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    /* ── GRI cross-references ── */
+    .gri-ref {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .gri-badge {
+      display: inline-block;
+      background: #1e3a5f;
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-right: 4px;
+    }
+    .gri-standards {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #1e3a5f;
+      margin-right: 6px;
+    }
+    .gri-align {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+    .gri-delta {
+      margin-top: 3px;
+      padding: 4px 8px;
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      font-size: 11px;
+      color: #78350f;
+      white-space: normal;
+      border-radius: 0 3px 3px 0;
+    }
+    .materiality-note {
+      margin-top: 6px;
+      padding: 6px 8px;
+      background: #f1f5f9;
+      border-left: 3px solid #94a3b8;
+      color: #475569;
+      font-size: 12px;
+      border-radius: 0 3px 3px 0;
+    }
+    .review-block {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+    }
+    .review-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .review-select {
+      font-size: 12px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: var(--ink);
+    }
+
+    /* ── Greenwashing flags ── */
+    .flags-section { margin-bottom: 48px; }
+    .qf-item {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .qf-disc {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .no-flags {
+      color: var(--found);
+      font-size: 14px;
+      padding: 12px 0;
+    }
+
+    /* ── Footer ── */
+    .report-footer {
+      background: var(--navy);
+      color: #64748b;
+      padding: 24px 64px;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .stats-bar, .report-header { break-inside: avoid; }
+      .category-section { break-inside: avoid; }
+      .top-nav, .disclosure-tools, .review-block, .tool-group.export { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-brand">ESRS Gap Detector</div>
+  <div class="nav-links">
+    <a href="#executive-summary">Summary</a>
+    <a href="#statistics">Statistics</a>
+    <a href="#improvement-actions">Improvements</a>
+    <a href="#disclosure-detail">Disclosures</a>
+    <a href="#methodology">Methodology</a>
+  </div>
+</nav>
+
+<!-- ── Header ── -->
+<header class="report-header" id="executive-summary">
+  <div class="header-left">
+    <div class="label">ESRS Gap Analysis Report</div>
+    <h1>Company I</h1>
+    <div class="meta">
+      <span>📅 14 March 2026</span>
+      <span>📋 Framework: ESRS Set 1 (Delegated Act 2023) </span>
+      <span>🧭 Profile: Basic (Girafon 20-key disclosures)</span>
+      
+      <span>🔍 20 disclosures analysed</span>
+      <span>🤖 LLM: ollama / qwen2.5:14b - connected · fallback 0/20</span>
+    </div>
+  </div>
+  <div class="score-circle">
+    <span class="score-num">71.4</span>
+    <span class="score-label">Good</span>
+  </div>
+</header>
+
+<div class="materiality-summary"><div class="ms-title">Non-material topics (explicit)</div><ul class="ms-list"><li><strong>E1</strong> - Climate Change (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of A…"</li><li><strong>E2</strong> - Pollution (p.106) - "relevant internal experts. With the **→ Site-based environmental strategy**, Company I and selected group companies aim to reduce water wit…"</li><li><strong>E3</strong> - Water and Marine Resources (p.159) - "- **Not material** Combined Management Report with **Non-Financial Statement** Annex 315 ESRS E1-7 GHG removals and carbon credits paragrap…"</li><li><strong>E4</strong> - Biodiversity and Ecosystems (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of A…"</li><li><strong>E5</strong> - Resource Use and Circular Economy (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of A…"</li><li><strong>S1</strong> - Own Workforce (p.157) - "p. 209 ESRS E5-5, p. 226 – 228 **List of datapoints in cross-cutting and topical standards that derive from other EU legislation** **Materia…"</li><li><strong>S2</strong> - Workers in the Value Chain (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to…"</li><li><strong>S3</strong> - Affected Communities (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of A…"</li><li><strong>S4</strong> - Consumers and End Users (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to…"</li><li><strong>G1</strong> - Business Conduct (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to…"</li></ul></div>
+
+<!-- ── Stats bar ── -->
+<div class="stats-bar" id="statistics">
+  <div class="stat">
+    <span class="stat-val green">7</span>
+    <span class="stat-lbl">Disclosures Found</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val amber">13</span>
+    <span class="stat-lbl">Partial</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val red">0</span>
+    <span class="stat-lbl">Missing</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val" style="color:var(--accent)">71.4%</span>
+    <span class="stat-lbl">Mandatory Compliance</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val red">0</span>
+    <span class="stat-lbl">Mandatory Missing</span>
+  </div>
+  <div class="stat">
+    <span class="stat-val" style="color:#1e3a5f">9</span>
+    <span class="stat-lbl">GRI Stricter Gaps</span>
+  </div>
+</div>
+
+
+    <section class="exec-summary">
+      <div class="summary-card">
+        <h3>What to fix first</h3>
+        <ul class="fix-list"><li><span class="fix-priority high">HIGH</span> <span class="fix-section">E1-6</span> Improve Gross Scope 2 GHG Emissions (E1-6). Missing: market-based value, location-based value, methodology</li><li><span class="fix-priority high">HIGH</span> <span class="fix-section">E1-6</span> Improve GHG Emissions Intensity (E1-6). Missing: Total GHG emissions per unit of net revenue</li><li><span class="fix-priority high">HIGH</span> <span class="fix-section">E1-4</span> Improve Climate Targets (E1-4). Missing: baseline year, target year, reduction % vs baseline</li></ul>
+      </div>
+      <div class="summary-card">
+        <h3>Audit risk summary</h3>
+        <ul class="risk-list"><li>Mandatory missing: 0</li><li>Compliance rate: 71.4%</li><li>High priority gaps: 4</li><li>Greenwashing flags: 25</li></ul>
+      </div>
+    </section>
+    
+
+<main class="main-content">
+  
+        <aside class="category-sidebar" aria-label="Category navigation">
+          <div class="sidebar-title">Sections</div>
+          <a href="#cat-environment">Environment</a><a href="#cat-social">Social</a><a href="#cat-governance">Governance</a>
+        </aside>
+        
+
+  <!-- ── Recommendations ── -->
+  <section class="recs-section" id="improvement-actions">
+    <h2 class="section-title">Top Improvement Actions</h2>
+    
+        <div class="rec-item">
+          <div class="rec-num">1</div>
+          <div class="rec-body">
+            <span class="chip high">HIGH PRIORITY</span>
+            <span class="rec-section">E1-6</span>
+            <p class="rec-action">Improve Gross Scope 2 GHG Emissions (E1-6). Missing: market-based value, location-based value, methodology</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">2</div>
+          <div class="rec-body">
+            <span class="chip high">HIGH PRIORITY</span>
+            <span class="rec-section">E1-6</span>
+            <p class="rec-action">Improve GHG Emissions Intensity (E1-6). Missing: Total GHG emissions per unit of net revenue</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">3</div>
+          <div class="rec-body">
+            <span class="chip high">HIGH PRIORITY</span>
+            <span class="rec-section">E1-4</span>
+            <p class="rec-action">Improve Climate Targets (E1-4). Missing: baseline year, target year, reduction % vs baseline</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">4</div>
+          <div class="rec-body">
+            <span class="chip high">HIGH PRIORITY</span>
+            <span class="rec-section">E1-5</span>
+            <p class="rec-action">Improve Energy Consumption and Mix (E1-5). Missing: Total energy consumption in MWh or GJ, Renewable share %, Non-renewable share %</p>
+          </div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-num">5</div>
+          <div class="rec-body">
+            <span class="chip high">HIGH PRIORITY</span>
+            <span class="rec-section">E1-1</span>
+            <p class="rec-action">Improve Transition Plan for Climate Change Mitigation (E1-1). Missing: key actions list, timelines per action, investment/capex amounts</p>
+          </div>
+        </div>
+  </section>
+
+  <!-- ── Greenwashing flags ── -->
+  <section class="flags-section">
+    <h2 class="section-title">Greenwashing Risk Signals</h2>
+    <div class="qf-item"><span class="qf-disc">Gross Scope 1 GHG Emissions</span> - Missing consolidation approach</div><div class="qf-item"><span class="qf-disc">Gross Scope 2 GHG Emissions</span> - Missing baseline year for a target</div><div class="qf-item"><span class="qf-disc">Gross Scope 2 GHG Emissions</span> - Missing methodology for emissions calculation</div><div class="qf-item"><span class="qf-disc">Gross Scope 2 GHG Emissions</span> - Vague commitment without numbers</div><div class="qf-item"><span class="qf-disc">Gross Scope 3 GHG Emissions</span> - Scope 3 total disclosed but categories not enumerated</div><div class="qf-item"><span class="qf-disc">GHG Emissions Intensity</span> - Missing baseline year for a target</div><div class="qf-item"><span class="qf-disc">GHG Emissions Intensity</span> - Missing methodology for emissions calculation</div><div class="qf-item"><span class="qf-disc">Climate Targets</span> - Missing baseline year for a target</div>
+  </section>
+
+  <!-- ── Per-category disclosure tables ── -->
+  <section id="disclosure-detail">
+    <h2 class="section-title">Disclosure Detail</h2>
+    
+    <div class="disclosure-tools" id="disclosure-tools">
+      <div class="tool-group filter-buttons">
+        <span class="tool-label">Status</span>
+        <button type="button" class="filter-btn active" data-filter-status="all">All</button>
+        <button type="button" class="filter-btn" data-filter-status="found">Found</button>
+        <button type="button" class="filter-btn" data-filter-status="partial">Partial</button>
+        <button type="button" class="filter-btn" data-filter-status="missing">Missing</button>
+      </div>
+      <div class="tool-group">
+        <label>Details</label>
+        <div class="details-toggle">
+          <button id="expand-details" type="button">Expand all</button>
+          <button id="collapse-details" type="button">Collapse all</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <label>Sections</label>
+        <div class="details-toggle">
+          <button id="expand-sections" type="button">Expand sections</button>
+          <button id="collapse-sections" type="button">Collapse sections</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <label><input type="checkbox" id="filter-mandatory"> Mandatory only</label>
+      </div>
+      <div class="tool-group">
+        <label><input type="checkbox" id="filter-priority"> High priority only</label>
+      </div>
+      <div class="tool-group search">
+        <label for="filter-search">Search</label>
+        <input type="text" id="filter-search" placeholder="ID, title, missing datapoints, quotes" aria-label="Search disclosures">
+      </div>
+      <div class="tool-group">
+        <label for="filter-reset">Reset</label>
+        <button id="filter-reset" type="button" aria-label="Reset filters">Reset filters</button>
+      </div>
+      <div class="tool-group results">
+        <label>Results</label>
+        <div id="filter-count" aria-live="polite">0 of 0</div>
+      </div>
+      <div class="tool-group export">
+        <button id="export-json" aria-label="Export reviewed findings as JSON">Export reviewed (JSON)</button>
+        <button id="export-csv" aria-label="Export reviewed findings as CSV">Export reviewed (CSV)</button>
+      </div>
+    </div>
+    <div class="category-jump">Jump to: <a class="cat-link" href="#cat-environment">Environment</a><a class="cat-link" href="#cat-social">Social</a><a class="cat-link" href="#cat-governance">Governance</a></div>
+    
+    
+        <section class="category-section" id="cat-environment">
+          <div class="category-header">
+            <h2><span class="category-dot env"></span>Environment</h2>
+            <div class="category-meta">
+              <span class="cat-score" style="color:#84cc16">67.6/100</span>
+              <span class="cat-counts">
+                <span class="found-count">3 found</span> ·
+                <span class="partial-count">8 partial</span> ·
+                <span class="missing-count">0 missing</span>
+              </span>
+            </div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width:67.6%;background:#84cc16"></div>
+          </div>
+          <div class="weight-legend">Weight = contribution to overall score (higher = more impact).</div>
+          <table class="disclosure-table">
+            <thead>
+              <tr>
+                <th class="col-section">Section</th>
+                <th class="col-name">Disclosure</th>
+                <th class="col-status">Status</th>
+                <th class="col-weight"><abbr title="Importance weight in scoring (higher = more impact)">Weight</abbr></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+        <tr class="disclosure-row status-found"
+            data-key="E1-6_Scope1"
+            data-section="E1-6"
+            data-name="Gross Scope 1 GHG Emissions"
+            data-status="found"
+            data-mandatory="true"
+            data-priority="high"
+            data-page="95"
+            data-quote="Scope 1 GHG emissions amounted to 44,405 tCO₂e in the reporting year (2024: 76,989 tCO₂e)."
+            data-search="e1-6 gross scope 1 ghg emissions missing consolidation approach consolidation approach scope 1 ghg emissions amounted to 44,405 tco₂e in the reporting year (2024: 76,989 tco₂e).">
+          <td class="col-section">
+            <span class="section-id">E1-6</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Gross Scope 1 GHG Emissions</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report provides specific numbers for Scope 1 emissions and mentions the GHG Protocol methodology.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"Scope 1 GHG emissions amounted to 44,405 tCO₂e in the reporting year (2024: 76,989 tCO₂e)."</div><div class="evidence-meta">Source: p.95</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing consolidation approach</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">consolidation approach</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 305-1</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained as mandatory — Scope 1 is a core climate metric under all regimes.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-6_Scope1">Review</label>
+          <select class="review-select" id="review-E1-6_Scope1" data-review-key="E1-6_Scope1" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">8</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E1-6_Scope2"
+            data-section="E1-6"
+            data-name="Gross Scope 2 GHG Emissions"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="high"
+            data-page="96"
+            data-quote="There were no significant Scope 1 and Scope 2 GHG emissions outside the Company I financial consolidated group in the reporting year."
+            data-search="e1-6 gross scope 2 ghg emissions missing baseline year for a target missing methodology for emissions calculation vague commitment without numbers market-based value location-based value methodology there were no significant scope 1 and scope 2 ghg emissions outside the Company I financial consolidated group in the reporting year.">
+          <td class="col-section">
+            <span class="section-id">E1-6</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Gross Scope 2 GHG Emissions</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions Scope 2 emissions but does not provide specific market-based or location-based values or methodologies.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"There were no significant Scope 1 and Scope 2 GHG emissions outside the Company I financial consolidated group in the reporting year."</div><div class="evidence-meta">Source: p.96</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span><span class="flag-chip">Missing methodology for emissions calculation</span><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">market-based value, location-based value, methodology</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 305-2</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained. Simplified ESRS still requires both market-based and location-based.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-6_Scope2">Review</label>
+          <select class="review-select" id="review-E1-6_Scope2" data-review-key="E1-6_Scope2" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">8</td>
+        </tr>
+        <tr class="disclosure-row status-found"
+            data-key="E1-6_Scope3"
+            data-section="E1-6"
+            data-name="Gross Scope 3 GHG Emissions"
+            data-status="found"
+            data-mandatory="true"
+            data-priority="high"
+            data-page="96"
+            data-quote="Total gross indirect (Scope 3) GHG emissions (2024 without BYR: 19,981,165 tCO2e)"
+            data-search="e1-6 gross scope 3 ghg emissions scope 3 total disclosed but categories not enumerated breakdown by individual ghg protocol categories (1–15) estimation methodology for each category significant categories identified total gross indirect (scope 3) ghg emissions (2024 without byr: 19,981,165 tco2e)">
+          <td class="col-section">
+            <span class="section-id">E1-6</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Gross Scope 3 GHG Emissions</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report discloses total Scope 3 GHG emissions with specific categories and methodologies.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"Total gross indirect (Scope 3) GHG emissions (2024 without BYR: 19,981,165 tCO2e)"</div><div class="evidence-meta">Source: p.96</div></div>
+            <div class="flag-row"><span class="flag-chip">Scope 3 total disclosed but categories not enumerated</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Breakdown by individual GHG Protocol categories (1–15), Estimation methodology for each category, Significant categories identified</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 305-3</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained but simplified — companies may now report only significant Scope 3 categories rather than all 15, provided they justify exclusions.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-6_Scope3">Review</label>
+          <select class="review-select" id="review-E1-6_Scope3" data-review-key="E1-6_Scope3" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">10</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E1-6_Intensity"
+            data-section="E1-6"
+            data-name="GHG Emissions Intensity"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="high"
+            data-page=""
+            data-quote="The methods and assumptions used to calculate Scope 3 emissions are documented in an internal manual and updated annually."
+            data-search="e1-6 ghg emissions intensity missing baseline year for a target missing methodology for emissions calculation total ghg emissions per unit of net revenue the methods and assumptions used to calculate scope 3 emissions are documented in an internal manual and updated annually.">
+          <td class="col-section">
+            <span class="section-id">E1-6</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>GHG Emissions Intensity</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The passage mentions Scope 3 emissions but lacks specific data on GHG emissions intensity ratio.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The methods and assumptions used to calculate Scope 3 emissions are documented in an internal manual and updated annually."</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span><span class="flag-chip">Missing methodology for emissions calculation</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Total GHG emissions per unit of net revenue</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 305-4</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Moved to voluntary under the Omnibus simplification — intensity ratios are no longer mandatory but remain best practice.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-6_Intensity">Review</label>
+          <select class="review-select" id="review-E1-6_Intensity" data-review-key="E1-6_Intensity" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">5</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E1-4_Targets"
+            data-section="E1-4"
+            data-name="Climate Targets"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="high"
+            data-page="96"
+            data-quote="In cooperation with the Volkswagen Group, Company I and selected group companies calculate the volume of greenhouse gas emissions, in tons of CO₂ per vehicle, along the value chain using the decarbonization index (DCI)."
+            data-search="e1-4 climate targets missing baseline year for a target missing target year missing reduction percentage baseline year target year reduction % vs baseline scope coverage of target sbti validation status in cooperation with the volkswagen group, Company I and selected group companies calculate the volume of greenhouse gas emissions, in tons of co₂ per vehicle, along the value chain using the decarbonization index (dci).">
+          <td class="col-section">
+            <span class="section-id">E1-4</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Climate Targets</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions GHG emissions calculation but lacks specific climate targets with baseline and target years and reduction percentages.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"In cooperation with the Volkswagen Group, Company I and selected group companies calculate the volume of greenhouse gas emissions, in tons of CO₂ per vehicle, along the value chain using the decarbonization index (DCI)."</div><div class="evidence-meta">Source: p.96</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span><span class="flag-chip">Missing target year</span><span class="flag-chip">Missing reduction percentage</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">baseline year, target year, reduction % vs baseline, scope coverage of target, SBTi validation status</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 305-5</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained as mandatory. However, Omnibus removed the requirement to align targets with EU Climate Law pathways — companies now set their own trajectories.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-4_Targets">Review</label>
+          <select class="review-select" id="review-E1-4_Targets" data-review-key="E1-4_Targets" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">8</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E1-5_Energy"
+            data-section="E1-5"
+            data-name="Energy Consumption and Mix"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="high"
+            data-page="96"
+            data-quote="Purchased energy volumes are multiplied by uniform group-wide emissions factors"
+            data-search="e1-5 energy consumption and mix missing baseline year for a target missing methodology for emissions calculation total energy consumption in mwh or gj renewable share % non-renewable share % energy intensity ratio purchased energy volumes are multiplied by uniform group-wide emissions factors">
+          <td class="col-section">
+            <span class="section-id">E1-5</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Energy Consumption and Mix</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions energy consumption calculation but lacks specific data points such as total consumption, renewable and non-renewable shares, and energy intensity ratio.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"Purchased energy volumes are multiplied by uniform group-wide emissions factors"</div><div class="evidence-meta">Source: p.96</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span><span class="flag-chip">Missing methodology for emissions calculation</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Total energy consumption in MWh or GJ, Renewable share %, Non-renewable share %, Energy intensity ratio</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 302-1, GRI 302-3, GRI 302-4</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span><div class="gri-delta">GRI stricter: GRI 302-1 requires energy breakdown by fuel type and by renewable/non-renewable per source. ESRS E1-5 allows aggregated totals — GRI is more granular here.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained. Renewable share and total consumption remain mandatory.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-5_Energy">Review</label>
+          <select class="review-select" id="review-E1-5_Energy" data-review-key="E1-5_Energy" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">6</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E1-1_TransitionPlan"
+            data-section="E1-1"
+            data-name="Transition Plan for Climate Change Mitigation"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="high"
+            data-page="88"
+            data-quote="The Company I Group devised a transition plan based on the existing decarbonization approach of its Sustainability strategy"
+            data-search="e1-1 transition plan for climate change mitigation vague commitment without numbers key actions list timelines per action investment/capex amounts paris alignment statement the Company I group devised a transition plan based on the existing decarbonization approach of its sustainability strategy">
+          <td class="col-section">
+            <span class="section-id">E1-1</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Transition Plan for Climate Change Mitigation</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions a transition plan but lacks specific actions, timelines, and investment amounts.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The Company I Group devised a transition plan based on the existing decarbonization approach of its Sustainability strategy"</div><div class="evidence-meta">Source: p.88</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">key actions list, timelines per action, investment/capex amounts, Paris alignment statement</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 201-2</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Significantly relaxed under Omnibus. Transition plans are now voluntary for most companies; only financial sector entities face stricter requirements.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E1-1_TransitionPlan">Review</label>
+          <select class="review-select" id="review-E1-1_TransitionPlan" data-review-key="E1-1_TransitionPlan" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">6</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E2-4_Pollution"
+            data-section="E2-4"
+            data-name="Emissions to Air, Water and Soil"
+            data-status="partial"
+            data-mandatory="false"
+            data-priority="normal"
+            data-page="105"
+            data-quote="Water use in the upstream value chain... The Company I Group records the use of water resources as part of overarching environmental indicators."
+            data-search="e2-4 emissions to air, water and soil vague commitment without numbers pollutant type emission medium absolute quantity water use in the upstream value chain... the Company I group records the use of water resources as part of overarching environmental indicators.">
+          <td class="col-section">
+            <span class="section-id">E2-4</span>
+            
+          </td>
+          <td class="col-name">
+            <strong>Emissions to Air, Water and Soil</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The passage discusses water use and withdrawal but lacks specific quantified pollutant emissions data.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"Water use in the upstream value chain... The Company I Group records the use of water resources as part of overarching environmental indicators."</div><div class="evidence-meta">Source: p.105</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.106) - "relevant internal experts. With the **→ Site-based environmental strategy**, Company I and selected group companies aim to reduce water withdrawal, water consumption, the amount of water discharged and emissions into wastewater at all Pors"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">pollutant type, emission medium, absolute quantity</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 305-7</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span><div class="gri-delta">GRI stricter: GRI 305-7 requires NOx, SOx and other air emissions by weight. ESRS E2-4 covers air, water and soil but GRI 305-7 requires a more specific pollutant-by-pollutant breakdown.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Remains subject to materiality assessment. Mandatory only if pollution is identified as a material topic.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E2-4_Pollution">Review</label>
+          <select class="review-select" id="review-E2-4_Pollution" data-review-key="E2-4_Pollution" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+        <tr class="disclosure-row status-found"
+            data-key="E3-4_Water"
+            data-section="E3-4"
+            data-name="Water Consumption"
+            data-status="found"
+            data-mandatory="false"
+            data-priority="normal"
+            data-page="106"
+            data-quote="This results in a water intensity at the Company I Group of 4.4 m [3] per € million (2024: 4.1 m [3] per € million). Water consumption in areas with high water stress amounted to 160,201 m³ in the reporting year (2024: 25,362 m [3] )."
+            data-search="e3-4 water consumption missing baseline year for a target total water withdrawal and consumption figures not provided for all areas this results in a water intensity at the Company I group of 4.4 m [3] per € million (2024: 4.1 m [3] per € million). water consumption in areas with high water stress amounted to 160,201 m³ in the reporting year (2024: 25,362 m [3] ).">
+          <td class="col-section">
+            <span class="section-id">E3-4</span>
+            
+          </td>
+          <td class="col-name">
+            <strong>Water Consumption</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report provides specific water consumption data for high water-stressed areas, and discusses methodology.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"This results in a water intensity at the Company I Group of 4.4 m [3] per € million (2024: 4.1 m [3] per € million). Water consumption in areas with high water stress amounted to 160,201 m³ in the reporting year (2024: 25,362 m [3] )."</div><div class="evidence-meta">Source: p.106</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "- **Not material** Combined Management Report with **Non-Financial Statement** Annex 315 ESRS E1-7 GHG removals and carbon credits paragraph 56 Regulation (EU) 2021/1119, Article 2(1) ESRS E1-9 Exposure of the benchmark portfolio to clima"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Total water withdrawal and consumption figures not provided for all areas</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 303-3, GRI 303-4, GRI 303-5</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span><div class="gri-delta">GRI stricter: GRI 303-3 requires breakdown of water withdrawal by source (surface water, groundwater, seawater, produced water, third-party water). ESRS E3-4 does not require this source-level granularity — GRI is stricter here.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Remains subject to materiality. Mandatory only if water is material — e.g., manufacturing, food &amp; beverage, semiconductors.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E3-4_Water">Review</label>
+          <select class="review-select" id="review-E3-4_Water" data-review-key="E3-4_Water" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E4-1_Biodiversity"
+            data-section="E4-1"
+            data-name="Biodiversity and Ecosystem Policies"
+            data-status="partial"
+            data-mandatory="false"
+            data-priority="normal"
+            data-page="110"
+            data-quote="The Company I Group has not identified any sites that are located in or close to biodiversity-sensitive areas that are negatively impacted."
+            data-search="e4-1 biodiversity and ecosystem policies vague commitment without numbers policies and transition plans related to biodiversity conservation sites near natura 2000 or protected areas biodiversity metrics or targets the Company I group has not identified any sites that are located in or close to biodiversity-sensitive areas that are negatively impacted.">
+          <td class="col-section">
+            <span class="section-id">E4-1</span>
+            
+          </td>
+          <td class="col-name">
+            <strong>Biodiversity and Ecosystem Policies</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions the absence of sites near biodiversity-sensitive areas but lacks concrete policies or biodiversity metrics.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The Company I Group has not identified any sites that are located in or close to biodiversity-sensitive areas that are negatively impacted."</div><div class="evidence-meta">Source: p.110</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Policies and transition plans related to biodiversity conservation, Sites near Natura 2000 or protected areas, Biodiversity metrics or targets</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 304-1, GRI 304-2, GRI 304-3, GRI 304-4</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span><div class="gri-delta">GRI stricter: GRI 304-1 requires the size of each operational site in or near protected areas. ESRS E4 allows aggregated figures. GRI 304-4 requires a count of IUCN Red List species affected — ESRS has no equivalent requirement.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Moved to fully voluntary for most sectors under Omnibus. Remains mandatory only for companies with significant land-use impacts.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E4-1_Biodiversity">Review</label>
+          <select class="review-select" id="review-E4-1_Biodiversity" data-review-key="E4-1_Biodiversity" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">3</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="E5-5_Waste"
+            data-section="E5-5"
+            data-name="Resource Use and Waste"
+            data-status="partial"
+            data-mandatory="false"
+            data-priority="normal"
+            data-page="114"
+            data-quote="The Company I Group is working to continuously increase its use of secondary materials and renewable raw materials"
+            data-search="e5-5 resource use and waste vague commitment without numbers total waste metric tons hazardous waste % recycling/reuse rate disposal method breakdown the Company I group is working to continuously increase its use of secondary materials and renewable raw materials">
+          <td class="col-section">
+            <span class="section-id">E5-5</span>
+            
+          </td>
+          <td class="col-name">
+            <strong>Resource Use and Waste</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The passage mentions waste management and circular economy goals but lacks specific quantitative data on total waste generated, hazardous vs non-hazardous waste, or disposal method breakdown.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The Company I Group is working to continuously increase its use of secondary materials and renewable raw materials"</div><div class="evidence-meta">Source: p.114</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.159) - "of Annex 1 - p. 211 – 212 ESRS E4-2 Sustainable land / agriculture practices or policies paragraph 24 (b) Indicator number 11 Table #2 of Annex 1 ESRS E4-2 Sustainable oceans / seas practices or policies paragraph 24 (c) Indicator number "</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Total waste metric tons, Hazardous waste %, Recycling/reuse rate, Disposal method breakdown</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 306-3, GRI 306-4, GRI 306-5</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span><div class="gri-delta">GRI stricter: GRI 306-3 requires waste disclosed by hazardous / non-hazardous AND by disposal method (landfill, incineration, recycling, etc.) simultaneously. ESRS E5-5 allows these to be reported separately — GRI requires the cross-tabulation.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Subject to materiality. Mandatory if resource use is identified as material.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-E5-5_Waste">Review</label>
+          <select class="review-select" id="review-E5-5_Waste" data-review-key="E5-5_Waste" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+            </tbody>
+          </table>
+        </section>
+        <section class="category-section" id="cat-social">
+          <div class="category-header">
+            <h2><span class="category-dot soc"></span>Social</h2>
+            <div class="category-meta">
+              <span class="cat-score" style="color:#84cc16">72.2/100</span>
+              <span class="cat-counts">
+                <span class="found-count">2 found</span> ·
+                <span class="partial-count">3 partial</span> ·
+                <span class="missing-count">0 missing</span>
+              </span>
+            </div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width:72.2%;background:#84cc16"></div>
+          </div>
+          <div class="weight-legend">Weight = contribution to overall score (higher = more impact).</div>
+          <table class="disclosure-table">
+            <thead>
+              <tr>
+                <th class="col-section">Section</th>
+                <th class="col-name">Disclosure</th>
+                <th class="col-status">Status</th>
+                <th class="col-weight"><abbr title="Importance weight in scoring (higher = more impact)">Weight</abbr></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+        <tr class="disclosure-row status-partial"
+            data-key="S1-9_Diversity"
+            data-section="S1-9"
+            data-name="Diversity and Equal Opportunities"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="133"
+            data-quote="The statutory gender quota came to 29.1% (2024: 22%) at the first management level and 18.7% (2024: 18.8%) at the second management level"
+            data-search="s1-9 diversity and equal opportunities vague commitment without numbers missing baseline year for a target % female employees total % female on board gender pay gap % the statutory gender quota came to 29.1% (2024: 22%) at the first management level and 18.7% (2024: 18.8%) at the second management level">
+          <td class="col-section">
+            <span class="section-id">S1-9</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Diversity and Equal Opportunities</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions gender quotas for management levels but does not provide the required data points for all dimensions such as total employees, management level, and board.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The statutory gender quota came to 29.1% (2024: 22%) at the first management level and 18.7% (2024: 18.8%) at the second management level"</div><div class="evidence-meta">Source: p.133</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span><span class="flag-chip">Missing baseline year for a target</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.157) - "p. 209 ESRS E5-5, p. 226 – 228 **List of datapoints in cross-cutting and topical standards that derive from other EU legislation** **Material/** **Paragraph or** **Disclosure requirement and related datapoint** **SFDR reference** **Pillar 3"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">% female employees total, % female on board, gender pay gap %</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 405-1</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span><div class="gri-delta">GRI stricter: GRI 405-1 requires diversity breakdown by employee category (board, senior management, middle management, employees). ESRS S1-9 requires board and total employees but not the full category ladder — GRI is more granular.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained. Gender diversity metrics remain mandatory under simplified ESRS.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-S1-9_Diversity">Review</label>
+          <select class="review-select" id="review-S1-9_Diversity" data-review-key="S1-9_Diversity" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">5</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="S1-14_HealthSafety"
+            data-section="S1-14"
+            data-name="Health and Safety"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="127"
+            data-quote="The Company I Group has drafted a conceptual target for occupational health and safety"
+            data-search="s1-14 health and safety vague commitment without numbers fatalities count ltifr value recordable injury rate ill health cases coverage scope the Company I group has drafted a conceptual target for occupational health and safety">
+          <td class="col-section">
+            <span class="section-id">S1-14</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Health and Safety</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The passage mentions health and safety targets but lacks specific data points like fatalities count, LTIFR value, or recordable injury rate.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The Company I Group has drafted a conceptual target for occupational health and safety"</div><div class="evidence-meta">Source: p.127</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.157) - "p. 209 ESRS E5-5, p. 226 – 228 **List of datapoints in cross-cutting and topical standards that derive from other EU legislation** **Material/** **Paragraph or** **Disclosure requirement and related datapoint** **SFDR reference** **Pillar 3"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">fatalities count, LTIFR value, recordable injury rate, ill health cases, coverage scope</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 403-9, GRI 403-10</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span><div class="gri-delta">GRI stricter: GRI 403-9 covers employees AND workers not employed by the organisation whose work is controlled by the company. ESRS S1-14 covers a narrower scope of non-employee workers — GRI is broader here.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained. LTIFR and fatalities remain mandatory.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-S1-14_HealthSafety">Review</label>
+          <select class="review-select" id="review-S1-14_HealthSafety" data-review-key="S1-14_HealthSafety" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">5</td>
+        </tr>
+        <tr class="disclosure-row status-found"
+            data-key="S1-13_Training"
+            data-section="S1-13"
+            data-name="Training and Skills Development"
+            data-status="found"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="133"
+            data-quote="The average number of training hours per employee was 19.7 hours (2024: 21.0 hours)."
+            data-search="s1-13 training and skills development   the average number of training hours per employee was 19.7 hours (2024: 21.0 hours).">
+          <td class="col-section">
+            <span class="section-id">S1-13</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Training and Skills Development</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report provides the average number of training hours per employee and breaks down by employee category.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The average number of training hours per employee was 19.7 hours (2024: 21.0 hours)."</div><div class="evidence-meta">Source: p.133</div></div>
+            
+            <div class="materiality-note">Non-material (explicit) (p.157) - "p. 209 ESRS E5-5, p. 226 – 228 **List of datapoints in cross-cutting and topical standards that derive from other EU legislation** **Material/** **Paragraph or** **Disclosure requirement and related datapoint** **SFDR reference** **Pillar 3"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 404-1</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Moved to voluntary under Omnibus simplification — training hours are no longer a mandatory disclosure.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-S1-13_Training">Review</label>
+          <select class="review-select" id="review-S1-13_Training" data-review-key="S1-13_Training" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+        <tr class="disclosure-row status-found"
+            data-key="S1-8_CollectiveBargaining"
+            data-section="S1-8"
+            data-name="Collective Bargaining Coverage"
+            data-status="found"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="129"
+            data-quote="In the reporting year, 76.5% of all employees in the Company I Group were covered by collective bargaining agreements (2024: 76.8%)"
+            data-search="s1-8 collective bargaining coverage missing baseline year for a target countries where cbas apply worker representation type in the reporting year, 76.5% of all employees in the Company I group were covered by collective bargaining agreements (2024: 76.8%)">
+          <td class="col-section">
+            <span class="section-id">S1-8</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Collective Bargaining Coverage</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report provides the percentage of employees covered by collective bargaining agreements with specific figures and mentions the coverage in Germany and the overall group.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"In the reporting year, 76.5% of all employees in the Company I Group were covered by collective bargaining agreements (2024: 76.8%)"</div><div class="evidence-meta">Source: p.129</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.157) - "p. 209 ESRS E5-5, p. 226 – 228 **List of datapoints in cross-cutting and topical standards that derive from other EU legislation** **Material/** **Paragraph or** **Disclosure requirement and related datapoint** **SFDR reference** **Pillar 3"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">countries where CBAs apply, worker representation type</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 402-1, GRI 407-1</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained as mandatory.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-S1-8_CollectiveBargaining">Review</label>
+          <select class="review-select" id="review-S1-8_CollectiveBargaining" data-review-key="S1-8_CollectiveBargaining" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="S2-1_SupplyChain"
+            data-section="S2-1"
+            data-name="Value Chain Workers — Due Diligence"
+            data-status="partial"
+            data-mandatory="false"
+            data-priority="normal"
+            data-page="243"
+            data-quote="Company I is also an active member of the Responsible Mica Initiative."
+            data-search="s2-1 value chain workers — due diligence vague commitment without numbers human rights policy supplier code of conduct due diligence process description remediation mechanism Company I is also an active member of the responsible mica initiative.">
+          <td class="col-section">
+            <span class="section-id">S2-1</span>
+            
+          </td>
+          <td class="col-name">
+            <strong>Value Chain Workers — Due Diligence</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The passage mentions commitments to due diligence and responsible sourcing, but lacks a detailed description of the due diligence process and remediation mechanism.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"Company I is also an active member of the Responsible Mica Initiative."</div><div class="evidence-meta">Source: p.243</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to Stage 1 7 –4 –3 - **–** Stage 2 –43 43 - - **–** Stage 3 –53 - 53 - **–** Financial instruments der"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Human rights policy, Supplier code of conduct, Due diligence process description, Remediation mechanism</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 408-1, GRI 409-1, GRI 414-1</span> <span class="gri-align" style="background:#fef9c3;color:#854d0e">partial</span><div class="gri-delta">GRI stricter: GRI 408-1 (child labour) and GRI 409-1 (forced labour) require identification of specific operations and suppliers at significant risk. ESRS S2-1 requires policies and due diligence process — GRI demands more operational specificity.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Remains subject to materiality. Note: CSDDD (CS3D) companion directive also addresses supply chain due diligence obligations separately.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-S2-1_SupplyChain">Review</label>
+          <select class="review-select" id="review-S2-1_SupplyChain" data-review-key="S2-1_SupplyChain" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+            </tbody>
+          </table>
+        </section>
+        <section class="category-section" id="cat-governance">
+          <div class="category-header">
+            <h2><span class="category-dot gov"></span>Governance</h2>
+            <div class="category-meta">
+              <span class="cat-score" style="color:#22c55e">83.3/100</span>
+              <span class="cat-counts">
+                <span class="found-count">2 found</span> ·
+                <span class="partial-count">2 partial</span> ·
+                <span class="missing-count">0 missing</span>
+              </span>
+            </div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" style="width:83.3%;background:#22c55e"></div>
+          </div>
+          <div class="weight-legend">Weight = contribution to overall score (higher = more impact).</div>
+          <table class="disclosure-table">
+            <thead>
+              <tr>
+                <th class="col-section">Section</th>
+                <th class="col-name">Disclosure</th>
+                <th class="col-status">Status</th>
+                <th class="col-weight"><abbr title="Importance weight in scoring (higher = more impact)">Weight</abbr></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+        <tr class="disclosure-row status-partial"
+            data-key="G1-1_Governance"
+            data-section="G1-1"
+            data-name="Governance Structure and ESG Oversight"
+            data-status="partial"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="84"
+            data-quote="Since 2023, ESG targets have also been firmly anchored in the remuneration system for the management of Company I and selected national group companies."
+            data-search="g1-1 governance structure and esg oversight vague commitment without numbers board composition description esg committee existence oversight mechanism since 2023, esg targets have also been firmly anchored in the remuneration system for the management of Company I and selected national group companies.">
+          <td class="col-section">
+            <span class="section-id">G1-1</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Governance Structure and ESG Oversight</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions ESG targets in remuneration but lacks details on board composition and ESG committee existence.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"Since 2023, ESG targets have also been firmly anchored in the remuneration system for the management of Company I and selected national group companies."</div><div class="evidence-meta">Source: p.84</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to Stage 1 7 –4 –3 - **–** Stage 2 –43 43 - - **–** Stage 3 –53 - 53 - **–** Financial instruments der"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">Board composition description, ESG committee existence, Oversight mechanism</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 2-9, GRI 2-10, GRI 2-11</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained. Governance structure disclosure remains a core requirement.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-G1-1_Governance">Review</label>
+          <select class="review-select" id="review-G1-1_Governance" data-review-key="G1-1_Governance" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">5</td>
+        </tr>
+        <tr class="disclosure-row status-found"
+            data-key="G1-3_AntiCorruption"
+            data-section="G1-3"
+            data-name="Anti-Corruption and Anti-Bribery"
+            data-status="found"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="151"
+            data-quote="The share of trained indirect employees at companies with increased risk was 82.4%"
+            data-search="g1-3 anti-corruption and anti-bribery missing baseline year for a target baseline year for training coverage the share of trained indirect employees at companies with increased risk was 82.4%">
+          <td class="col-section">
+            <span class="section-id">G1-3</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Anti-Corruption and Anti-Bribery</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report provides specific data on anti-corruption training coverage and mentions whistleblower protection and reporting mechanism.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The share of trained indirect employees at companies with increased risk was 82.4%"</div><div class="evidence-meta">Source: p.151</div></div>
+            <div class="flag-row"><span class="flag-chip">Missing baseline year for a target</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to Stage 1 7 –4 –3 - **–** Stage 2 –43 43 - - **–** Stage 3 –53 - 53 - **–** Financial instruments der"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">baseline year for training coverage</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 205-2</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span><div class="gri-delta">GRI stricter: GRI 205-2 requires % of governance body members AND employees trained on anti-corruption policies, broken down by region. ESRS G1-3 requires training coverage % but does not mandate regional breakdown.</div></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained. Anti-corruption remains a core governance disclosure.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-G1-3_AntiCorruption">Review</label>
+          <select class="review-select" id="review-G1-3_AntiCorruption" data-review-key="G1-3_AntiCorruption" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">6</td>
+        </tr>
+        <tr class="disclosure-row status-found"
+            data-key="G1-4_CorruptionIncidents"
+            data-section="G1-4"
+            data-name="Confirmed Corruption and Bribery Incidents"
+            data-status="found"
+            data-mandatory="true"
+            data-priority="normal"
+            data-page="151"
+            data-quote="As in the prior year, there were no known matters that led to convictions for violations of anti-corruption and anti-bribery laws or any fines within the Company I Group in the reporting year."
+            data-search="g1-4 confirmed corruption and bribery incidents   as in the prior year, there were no known matters that led to convictions for violations of anti-corruption and anti-bribery laws or any fines within the Company I group in the reporting year.">
+          <td class="col-section">
+            <span class="section-id">G1-4</span>
+            <span class="mandatory-tag">MANDATORY</span>
+          </td>
+          <td class="col-name">
+            <strong>Confirmed Corruption and Bribery Incidents</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report explicitly states there were no confirmed incidents of corruption or bribery, nor any fines, in the reporting year.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"As in the prior year, there were no known matters that led to convictions for violations of anti-corruption and anti-bribery laws or any fines within the Company I Group in the reporting year."</div><div class="evidence-meta">Source: p.151</div></div>
+            
+            <div class="materiality-note">Non-material (explicit) (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to Stage 1 7 –4 –3 - **–** Stage 2 –43 43 - - **–** Stage 3 –53 - 53 - **–** Financial instruments der"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 205-3</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Retained.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-G1-4_CorruptionIncidents">Review</label>
+          <select class="review-select" id="review-G1-4_CorruptionIncidents" data-review-key="G1-4_CorruptionIncidents" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#dcfce7;color:#166534">✓ FOUND</span>
+            <span class="conf-badge high">High confidence</span>
+          </td>
+          <td class="col-weight">4</td>
+        </tr>
+        <tr class="disclosure-row status-partial"
+            data-key="G1-5_PoliticalInfluence"
+            data-section="G1-5"
+            data-name="Political Influence and Lobbying"
+            data-status="partial"
+            data-mandatory="false"
+            data-priority="normal"
+            data-page="152"
+            data-quote="The Company I Group has not formulated a measurable, outcome-oriented and time-bound target within the meaning of the ESRS"
+            data-search="g1-5 political influence and lobbying vague commitment without numbers total financial contributions lobbying topics trade associations and their esg positions the Company I group has not formulated a measurable, outcome-oriented and time-bound target within the meaning of the esrs">
+          <td class="col-section">
+            <span class="section-id">G1-5</span>
+            
+          </td>
+          <td class="col-name">
+            <strong>Political Influence and Lobbying</strong>
+            <div class="evidence-block"><div class="evidence-label">Rationale</div><div class="evidence-body">The report mentions lobbying activities but does not provide specific financial contributions or detailed lobbying topics and amounts.</div></div>
+            <div class="evidence-block"><div class="evidence-label">Evidence</div><div class="quote">"The Company I Group has not formulated a measurable, outcome-oriented and time-bound target within the meaning of the ESRS"</div><div class="evidence-meta">Source: p.152</div></div>
+            <div class="flag-row"><span class="flag-chip">Vague commitment without numbers</span></div>
+            <div class="materiality-note">Non-material (explicit) (p.199) - "0 - - 0 **0** Newly extended/purchased financial assets (additions) 98 - - 8 **106** Other changes within a stage 0 - 0 - **0** Transfers to Stage 1 7 –4 –3 - **–** Stage 2 –43 43 - - **–** Stage 3 –53 - 53 - **–** Financial instruments der"</div>
+            <details class="row-details"><summary>Details</summary><div class="detail-block"><div class="detail-label">Missing data points</div><div class="detail-body">total financial contributions, lobbying topics, trade associations and their ESG positions</div></div><div class="detail-block"><div class="detail-label">GRI cross-reference</div><div class="gri-ref"><span class="gri-badge">GRI</span> <span class="gri-standards">GRI 415-1</span> <span class="gri-align" style="background:#dcfce7;color:#166534">full</span></div></div><div class="detail-block"><div class="detail-label">Omnibus note</div><div class="detail-body">Subject to materiality. Voluntary under Omnibus for most companies.</div></div></details>
+            
+        <div class="review-block">
+          <label class="review-label" for="review-G1-5_PoliticalInfluence">Review</label>
+          <select class="review-select" id="review-G1-5_PoliticalInfluence" data-review-key="G1-5_PoliticalInfluence" aria-label="Review status">
+            <option value="to-review">To review</option>
+            <option value="validated">Validated</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        
+          </td>
+          <td class="col-status">
+            <span class="badge" style="background:#fef9c3;color:#854d0e">⚠ PARTIAL</span>
+            <span class="conf-badge medium">Medium confidence</span>
+          </td>
+          <td class="col-weight">3</td>
+        </tr>
+            </tbody>
+          </table>
+        </section>
+  </section>
+
+</main>
+
+<footer class="report-footer" id="methodology">
+  <strong style="color:#94a3b8">ESRS Gap Detector</strong> - Open source tool · github.com/monsieurr/girafon<br>
+  ⚠️ This report is advisory only and does not constitute a legal compliance certificate. ESRS rules can evolve and should be validated with a qualified auditor.<br>
+  
+  Profile note: Basic is Girafon’s fast-scan subset for quick triage.<br>
+  Framework reference: ESRS Set 1 Delegated Act (EU) 2023/2772 · GHG Protocol Corporate Standard
+</footer>
+
+<script>
+(() => {
+  const rows = Array.from(document.querySelectorAll('.disclosure-row'));
+  const statusButtons = Array.from(document.querySelectorAll('[data-filter-status]'));
+  const mandatoryOnly = document.getElementById('filter-mandatory');
+  const priorityOnly = document.getElementById('filter-priority');
+  const searchInput = document.getElementById('filter-search');
+  const exportJson = document.getElementById('export-json');
+  const exportCsv = document.getElementById('export-csv');
+  const expandDetailsBtn = document.getElementById('expand-details');
+  const collapseDetailsBtn = document.getElementById('collapse-details');
+  const expandSectionsBtn = document.getElementById('expand-sections');
+  const collapseSectionsBtn = document.getElementById('collapse-sections');
+  const categorySections = Array.from(document.querySelectorAll('.category-section'));
+  const resetBtn = document.getElementById('filter-reset');
+  const resultCount = document.getElementById('filter-count');
+
+  const storagePrefix = 'girafon_review_';
+
+  const safeGet = (key) => {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const safeSet = (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      /* ignore */
+    }
+  };
+
+  let activeStatus = 'all';
+
+  const setActiveStatus = (status) => {
+    activeStatus = status || 'all';
+    statusButtons.forEach(btn => {
+      if (btn.getAttribute('data-filter-status') === activeStatus) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  };
+
+  const updateCount = () => {
+    if (!resultCount) return;
+    const visible = rows.filter(row => row.style.display !== 'none').length;
+    resultCount.textContent = `${visible} of ${rows.length}`;
+  };
+
+  const clearHighlights = () => {
+    document.querySelectorAll('mark.search-hit').forEach(mark => {
+      const text = document.createTextNode(mark.textContent || '');
+      mark.replaceWith(text);
+    });
+  };
+
+  const highlightTerm = (term) => {
+    if (!term) return;
+    const needle = term.toLowerCase();
+    const shouldSkip = (el) => {
+      if (!el) return false;
+      return el.closest('select, option, button, input, textarea, label');
+    };
+    rows.forEach(row => {
+      if (row.style.display === 'none') return;
+      const cell = row.querySelector('.col-name');
+      if (!cell) return;
+      const walker = document.createTreeWalker(
+        cell,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+            if (node.parentElement && node.parentElement.tagName === 'MARK') return NodeFilter.FILTER_REJECT;
+            if (shouldSkip(node.parentElement)) return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        }
+      );
+      const textNodes = [];
+      while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+      }
+      textNodes.forEach(node => {
+        const text = node.nodeValue || '';
+        const lower = text.toLowerCase();
+        if (!lower.includes(needle)) return;
+        const frag = document.createDocumentFragment();
+        let idx = 0;
+        while (true) {
+          const i = lower.indexOf(needle, idx);
+          if (i === -1) break;
+          if (i > idx) {
+            frag.appendChild(document.createTextNode(text.slice(idx, i)));
+          }
+          const mark = document.createElement('mark');
+          mark.className = 'search-hit';
+          mark.textContent = text.slice(i, i + term.length);
+          frag.appendChild(mark);
+          idx = i + term.length;
+        }
+        if (idx < text.length) {
+          frag.appendChild(document.createTextNode(text.slice(idx)));
+        }
+        node.parentNode.replaceChild(frag, node);
+      });
+    });
+  };
+
+  const scrollToFirstHit = () => {
+    const first = document.querySelector('mark.search-hit');
+    if (first) {
+      first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const applyFilters = () => {
+    const statusVal = activeStatus;
+    const mustMandatory = mandatoryOnly ? mandatoryOnly.checked : false;
+    const mustPriority = priorityOnly ? priorityOnly.checked : false;
+    const term = (searchInput && searchInput.value ? searchInput.value : '').toLowerCase().trim();
+
+    rows.forEach(row => {
+      const rowStatus = row.dataset.status || '';
+      const rowMandatory = row.dataset.mandatory === 'true';
+      const rowPriority = row.dataset.priority === 'high';
+      const haystack = row.dataset.search || '';
+
+      let visible = true;
+      if (statusVal !== 'all' && rowStatus !== statusVal) visible = false;
+      if (mustMandatory && !rowMandatory) visible = false;
+      if (mustPriority && !rowPriority) visible = false;
+      if (term && !haystack.includes(term)) visible = false;
+
+      row.style.display = visible ? '' : 'none';
+    });
+    updateCount();
+    clearHighlights();
+    if (term.length >= 2) {
+      highlightTerm(term);
+      scrollToFirstHit();
+    }
+  };
+
+  const resetFilters = () => {
+    setActiveStatus('all');
+    if (mandatoryOnly) mandatoryOnly.checked = false;
+    if (priorityOnly) priorityOnly.checked = false;
+    if (searchInput) searchInput.value = '';
+    applyFilters();
+  };
+
+  const restoreReviewState = () => {
+    rows.forEach(row => {
+      const key = row.dataset.key;
+      const select = row.querySelector('.review-select');
+      if (!key || !select) return;
+      const stored = safeGet(storagePrefix + key);
+      if (stored) select.value = stored;
+      select.addEventListener('change', () => {
+        safeSet(storagePrefix + key, select.value);
+      });
+    });
+  };
+
+  const getReviewedRows = () => {
+    return rows
+      .map(row => {
+        const select = row.querySelector('.review-select');
+        const review = select ? select.value : 'to-review';
+        return {
+          key: row.dataset.key || '',
+          section: row.dataset.section || '',
+          name: row.dataset.name || '',
+          status: row.dataset.status || '',
+          mandatory: row.dataset.mandatory || '',
+          priority: row.dataset.priority || '',
+          page: row.dataset.page || '',
+          quote: row.dataset.quote || '',
+          review_status: review,
+        };
+      })
+      .filter(item => item.review_status === 'validated' || item.review_status === 'dismissed');
+  };
+
+  const downloadFile = (filename, content, type) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const toCsv = (items) => {
+    const header = ['key','section','name','status','mandatory','priority','page','quote','review_status'];
+    const escape = (v) => {
+      const s = String(v ?? '');
+      return '"' + s.replace(/"/g, '""') + '"';
+    };
+    const lines = [
+      header.join(','),
+      ...items.map(item => header.map(k => escape(item[k])).join(','))
+    ];
+    return lines.join('\n');
+  };
+
+  const exportReviewedJson = () => {
+    const items = getReviewedRows();
+    downloadFile('girafon_reviewed.json', JSON.stringify(items, null, 2), 'application/json');
+  };
+
+  const exportReviewedCsv = () => {
+    const items = getReviewedRows();
+    downloadFile('girafon_reviewed.csv', toCsv(items), 'text/csv');
+  };
+
+  if (statusButtons.length) {
+    statusButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        setActiveStatus(btn.getAttribute('data-filter-status') || 'all');
+        applyFilters();
+      });
+    });
+  }
+  if (mandatoryOnly) mandatoryOnly.addEventListener('change', applyFilters);
+  if (priorityOnly) priorityOnly.addEventListener('change', applyFilters);
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+  if (resetBtn) resetBtn.addEventListener('click', resetFilters);
+  if (exportJson) exportJson.addEventListener('click', exportReviewedJson);
+  if (exportCsv) exportCsv.addEventListener('click', exportReviewedCsv);
+  if (expandDetailsBtn) expandDetailsBtn.addEventListener('click', () => {
+    document.querySelectorAll('.row-details').forEach(d => d.open = true);
+  });
+  if (collapseDetailsBtn) collapseDetailsBtn.addEventListener('click', () => {
+    document.querySelectorAll('.row-details').forEach(d => d.open = false);
+  });
+  if (expandSectionsBtn) expandSectionsBtn.addEventListener('click', () => {
+    categorySections.forEach(section => section.classList.remove('collapsed'));
+  });
+  if (collapseSectionsBtn) collapseSectionsBtn.addEventListener('click', () => {
+    categorySections.forEach(section => section.classList.add('collapsed'));
+  });
+
+  setActiveStatus('all');
+  restoreReviewState();
+  applyFilters();
+})();
+</script>
+
+</body>
+</html>

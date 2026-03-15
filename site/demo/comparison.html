@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Girafon — Cross-report Screening</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:    #0d1b2a;
+      --ink:     #1e293b;
+      --muted:   #64748b;
+      --border:  #e2e8f0;
+      --bg:      #f8fafc;
+      --white:   #ffffff;
+      --found:   #22c55e;
+      --partial: #f59e0b;
+      --missing: #ef4444;
+      --accent:  #3b82f6;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    .top-bar {
+      background: var(--navy);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .top-bar h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+    }
+    .top-bar p {
+      color: #cbd5f5;
+      font-size: 12px;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 32px 60px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: end;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .control {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .control label {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .control input, .control select {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .control button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .control button:hover {
+      background: #eef2f7;
+    }
+    .control input:focus, .control select:focus, .control button:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .result-count {
+      font-size: 12px;
+      color: var(--ink);
+      font-weight: 600;
+      margin-left: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    thead {
+      background: #f1f5f9;
+    }
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    th[data-sort]::after {
+      content: " ⇅";
+      font-size: 10px;
+      color: #94a3b8;
+    }
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+    .score {
+      font-weight: 700;
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .pill.ok { background: #dcfce7; color: #166534; }
+    .pill.warn { background: #fef9c3; color: #854d0e; }
+    .pill.bad { background: #fee2e2; color: #991b1b; }
+    .pill.fail { background: #fee2e2; color: #991b1b; }
+    .row-failed td { color: #94a3b8; }
+    .muted {
+      color: var(--muted);
+    }
+    .footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .no-data {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: white; }
+      .controls { display: none; }
+      th[data-sort]::after { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div>
+      <h1>Girafon — Cross-report screening</h1>
+      <p>Screening tool for comparing compliance gaps across analyzed reports.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="controls">
+      <div class="control">
+        <label for="search">Search</label>
+        <input id="search" type="text" placeholder="Company name" aria-label="Search companies">
+      </div>
+      <div class="control">
+        <label for="filter">Filter</label>
+        <select id="filter" aria-label="Filter companies">
+          <option value="all">All</option>
+          <option value="mandatory-missing">Mandatory missing</option>
+          <option value="high-priority">High priority gaps</option>
+          <option value="greenwashing">Greenwashing flags</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="reset">Reset</label>
+        <button id="reset" type="button">Reset</button>
+      </div>
+      <div class="result-count" id="result-count">0 reports</div>
+    </div>
+
+    <div id="table-wrap"></div>
+
+    <div class="footer">
+      This comparison is a screening aid, not a benchmark or certification.
+    </div>
+  </div>
+
+  <script id="summary-data" type="application/json">[{"company": "Company B", "report_file": "anonymized_report.pdf", "report_html": "company_02_report.html", "overall_score": 33.5, "mandatory_compliance": 35.7, "mandatory_missing": 4, "found": 0, "partial": 15, "missing": 5, "high_priority_gaps": 5, "greenwashing_flags": 10}, {"company": "Company D", "report_file": "anonymized_report.pdf", "report_html": "company_04_report.html", "overall_score": 50.6, "mandatory_compliance": 50.0, "mandatory_missing": 2, "found": 2, "partial": 13, "missing": 5, "high_priority_gaps": 5, "greenwashing_flags": 19}, {"company": "Company F", "report_file": "anonymized_report.pdf", "report_html": "company_06_report.html", "overall_score": 69.0, "mandatory_compliance": 67.9, "mandatory_missing": 0, "found": 9, "partial": 11, "missing": 0, "high_priority_gaps": 5, "greenwashing_flags": 25}, {"company": "Company H", "report_file": "anonymized_report.pdf", "report_html": "company_08_report.html", "overall_score": 7.1, "mandatory_compliance": 10.7, "mandatory_missing": 11, "found": 0, "partial": 3, "missing": 17, "high_priority_gaps": 5, "greenwashing_flags": 2}, {"company": "Company J", "report_file": "anonymized_report.pdf", "report_html": "company_10_report.html", "overall_score": 74.4, "mandatory_compliance": 75.0, "mandatory_missing": 0, "found": 8, "partial": 12, "missing": 0, "high_priority_gaps": 5, "greenwashing_flags": 19}]</script>
+  <script>
+  (() => {
+    const dataEl = document.getElementById('summary-data');
+    let rows = [];
+
+    const parseEmbedded = () => {
+      if (!dataEl) return [];
+      try {
+        return JSON.parse(dataEl.textContent || '[]');
+      } catch (e) {
+        return [];
+      }
+    };
+
+    const fetchSummary = async () => {
+      try {
+        const res = await fetch('summary.json', { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (e) {
+        return null;
+      }
+    };
+
+    const state = {
+      sortKey: 'overall_score',
+      sortDir: 'desc',
+      search: '',
+      filter: 'all'
+    };
+
+    const elSearch = document.getElementById('search');
+    const elFilter = document.getElementById('filter');
+    const elReset = document.getElementById('reset');
+    const elCount = document.getElementById('result-count');
+    const tableWrap = document.getElementById('table-wrap');
+
+    const normalize = (val) => String(val ?? '').toLowerCase();
+
+    const filteredRows = () => {
+      return rows.filter(row => {
+        const name = normalize(row.company);
+        if (state.search && !name.includes(state.search)) return false;
+        if (state.filter === 'mandatory-missing' && !(row.mandatory_missing > 0)) return false;
+        if (state.filter === 'high-priority' && !(row.high_priority_gaps > 0)) return false;
+        if (state.filter === 'greenwashing' && !(row.greenwashing_flags > 0)) return false;
+        return true;
+      });
+    };
+
+    const sortRows = (data) => {
+      const dir = state.sortDir === 'asc' ? 1 : -1;
+      return [...data].sort((a, b) => {
+        const av = a[state.sortKey];
+        const bv = b[state.sortKey];
+        if (typeof av === 'number' && typeof bv === 'number') {
+          return (av - bv) * dir;
+        }
+        return normalize(av).localeCompare(normalize(bv)) * dir;
+      });
+    };
+
+    const pill = (value, type) => {
+      const span = document.createElement('span');
+      span.className = `pill ${type}`;
+      span.textContent = value;
+      return span;
+    };
+
+    const renderTable = () => {
+      const data = sortRows(filteredRows());
+      tableWrap.innerHTML = '';
+      if (!data.length) {
+        const empty = document.createElement('div');
+        empty.className = 'no-data';
+        empty.textContent = 'No reports match the current filters.';
+        tableWrap.appendChild(empty);
+        if (elCount) elCount.textContent = '0 reports';
+        return;
+      }
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      const headers = [
+        { key: 'company', label: 'Company', sort: 'company' },
+        { key: 'overall_score', label: 'Overall score', sort: 'overall_score' },
+        { key: 'mandatory_compliance', label: 'Mandatory compliance', sort: 'mandatory_compliance' },
+        { key: 'mandatory_missing', label: 'Mandatory missing', sort: 'mandatory_missing' },
+        { key: 'high_priority_gaps', label: 'High priority gaps', sort: 'high_priority_gaps' },
+        { key: 'greenwashing_flags', label: 'Greenwashing flags', sort: 'greenwashing_flags' },
+        { key: 'report_html', label: 'Report', sort: null },
+      ];
+      headers.forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h.label;
+        if (h.sort) {
+          th.dataset.sort = h.sort;
+          th.addEventListener('click', () => {
+            if (state.sortKey === h.sort) {
+              state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+              state.sortKey = h.sort;
+              state.sortDir = 'desc';
+            }
+            renderTable();
+          });
+        }
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        const isFailed = Boolean(row.error) || row.status === 'failed';
+        const score = Number(row.overall_score ?? 0);
+        const compliance = Number(row.mandatory_compliance ?? 0);
+        if (isFailed) {
+          tr.classList.add('row-failed');
+          if (row.error) tr.title = row.error;
+        }
+
+        const tdCompany = document.createElement('td');
+        tdCompany.textContent = row.company || 'Unknown';
+        if (isFailed) {
+          const fail = pill('Failed', 'fail');
+          fail.textContent = 'Failed';
+          fail.style.marginLeft = '8px';
+          tdCompany.appendChild(fail);
+        }
+        tr.appendChild(tdCompany);
+
+        const tdScore = document.createElement('td');
+        tdScore.className = 'score';
+        tdScore.textContent = isFailed ? '—' : `${score}`;
+        tr.appendChild(tdScore);
+
+        const tdCompliance = document.createElement('td');
+        tdCompliance.textContent = isFailed ? '—' : `${compliance}%`;
+        tr.appendChild(tdCompliance);
+
+        const tdMissing = document.createElement('td');
+        if (isFailed) {
+          tdMissing.textContent = '—';
+        } else {
+          const missPill = pill(row.mandatory_missing ?? 0, row.mandatory_missing > 0 ? 'bad' : 'ok');
+          tdMissing.appendChild(missPill);
+        }
+        tr.appendChild(tdMissing);
+
+        const tdPriority = document.createElement('td');
+        if (isFailed) {
+          tdPriority.textContent = '—';
+        } else {
+          const prioPill = pill(row.high_priority_gaps ?? 0, row.high_priority_gaps > 0 ? 'warn' : 'ok');
+          tdPriority.appendChild(prioPill);
+        }
+        tr.appendChild(tdPriority);
+
+        const tdFlags = document.createElement('td');
+        if (isFailed) {
+          tdFlags.textContent = '—';
+        } else {
+          const flagPill = pill(row.greenwashing_flags ?? 0, row.greenwashing_flags > 0 ? 'warn' : 'ok');
+          tdFlags.appendChild(flagPill);
+        }
+        tr.appendChild(tdFlags);
+
+        const tdReport = document.createElement('td');
+        if (row.report_html) {
+          const link = document.createElement('a');
+          link.href = row.report_html;
+          link.textContent = 'Open report';
+          link.className = 'muted';
+          tdReport.appendChild(link);
+        } else {
+          tdReport.textContent = 'No report';
+        }
+        tr.appendChild(tdReport);
+
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      tableWrap.appendChild(table);
+
+      if (elCount) elCount.textContent = `${data.length} reports`;
+    };
+
+    const bindControls = () => {
+      if (elSearch) {
+        elSearch.addEventListener('input', (e) => {
+          state.search = normalize(e.target.value || '');
+          renderTable();
+        });
+      }
+      if (elFilter) {
+        elFilter.addEventListener('change', (e) => {
+          state.filter = e.target.value;
+          renderTable();
+        });
+      }
+      if (elReset) {
+        elReset.addEventListener('click', () => {
+          state.search = '';
+          state.filter = 'all';
+          if (elSearch) elSearch.value = '';
+          if (elFilter) elFilter.value = 'all';
+          renderTable();
+        });
+      }
+    };
+
+    const init = async () => {
+      rows = parseEmbedded();
+      const fetched = await fetchSummary();
+      if (Array.isArray(fetched)) {
+        rows = fetched;
+      }
+      rows = rows || [];
+      bindControls();
+      renderTable();
+    };
+
+    init();
+  })();
+  </script>
+</body>
+</html>
