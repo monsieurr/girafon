@@ -76,7 +76,7 @@ def _auto_chunk_settings(speed_reliability: int) -> tuple[int, int, int]:
 
 
 def main() -> None:
-    st.set_page_config(page_title="ESRS Gap Detector", page_icon="🦒", layout="wide")
+    st.set_page_config(page_title="Girafon — ESRS Gap Detector", page_icon="🦒", layout="wide")
     _hydrate_env_from_secrets()
     if "report_history" not in st.session_state:
         st.session_state.report_history = []
@@ -143,23 +143,24 @@ def main() -> None:
     }
     css = Template(
         """
-        <style>
+<style>
           @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap');
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
+          /* Root tokens (prefer Streamlit theme vars; fall back to template values) */
           :root {
-            --giraffe-ink: $ink;
+            --giraffe-ink: var(--text-color, $ink);
             --giraffe-brown: $brown;
             --giraffe-tan: $tan;
-            --giraffe-cream: $cream;
-            --giraffe-sand: $sand;
+            --giraffe-cream: var(--background-color, $cream);
+            --giraffe-sand: var(--secondary-background-color, $sand);
             --giraffe-mist: $mist;
-            --giraffe-accent: $accent;
+            --giraffe-accent: var(--primary-color, $accent);
             --giraffe-accent-dark: $accent_dark;
             --giraffe-accent-pressed: $accent_pressed;
             --giraffe-shadow: $shadow;
-            --giraffe-sidebar: $sidebar;
-            --giraffe-surface: $surface;
+            --giraffe-sidebar: var(--secondary-background-color, $sidebar);
+            --giraffe-surface: var(--secondary-background-color, $surface);
             --giraffe-border: $border;
             --giraffe-muted: $muted;
             --giraffe-file-bg: $file_bg;
@@ -172,24 +173,40 @@ def main() -> None:
             --giraffe-alert-bg: $alert_bg;
             --giraffe-alert-border: $alert_border;
             --giraffe-code-bg: $code_bg;
-            --giraffe-disabled-bg: $disabled_bg;
-            --giraffe-disabled-text: $disabled_text;
+            --giraffe-disabled-bg: #c9b8a8;
+            --giraffe-disabled-text: #3a2a1e;
           }
 
+          /* Layout */
           html, body, [class*="stApp"] {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font, 'Inter', sans-serif);
             color: var(--giraffe-ink);
             background: var(--giraffe-cream);
             font-size: 15px;
             line-height: 1.6;
           }
 
-          h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+          /* Typography */
+          h1, h2, h3, h4, h5, h6,
+          .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
             font-family: 'Satoshi', sans-serif;
             color: var(--giraffe-ink);
             letter-spacing: 0.3px;
           }
+          .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Satoshi', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--giraffe-accent);
+            margin: 0 0 6px;
+          }
 
+          /* Sidebar */
           [data-testid="stSidebar"] {
             background: var(--giraffe-sidebar);
             border-right: 1px solid var(--giraffe-border);
@@ -208,8 +225,39 @@ def main() -> None:
           [data-testid="stWidgetLabel"] span {
             color: var(--giraffe-ink);
           }
+          [data-testid="stWidgetLabel"],
+          [data-testid="stWidgetLabel"] > div,
+          [data-testid="stWidgetLabel"] [data-testid="stMarkdownContainer"],
+          [data-testid="stWidgetLabel"] div,
+          [data-testid="stWidgetLabel"] p,
+          [data-testid="stWidgetLabel"] span {
+            background: transparent !important;
+          }
+          /* Toggle label wrappers (Streamlit 1.55.0, BaseWeb DOM; fragile selector) */
+          .stToggle [data-testid="stWidgetLabel"],
+          [data-testid="stToggle"] [data-testid="stWidgetLabel"],
+          .stToggle [data-testid="stMarkdownContainer"],
+          [data-testid="stToggle"] [data-testid="stMarkdownContainer"],
+          .stToggle label,
+          [data-testid="stToggle"] label,
+          .stToggle p,
+          [data-testid="stToggle"] p {
+            background: transparent !important;
+            box-shadow: none !important;
+          }
+          .stToggle div:not([data-baseweb="toggle"]):not([role="switch"]),
+          [data-testid="stToggle"] div:not([data-baseweb="toggle"]):not([role="switch"]) {
+            background: transparent !important;
+          }
+          /* Checkbox/toggle label wrapper = input + div (Streamlit 1.55.0, BaseWeb DOM; fragile selector) */
+          [data-testid="stCheckbox"] label input + div,
+          [data-testid="stToggle"] label input + div,
+          .stToggle label input + div {
+            background: transparent !important;
+            box-shadow: none !important;
+          }
 
-          /* Main content labels/radio text contrast */
+          /* Inputs */
           [data-testid="stRadio"] label div,
           [data-testid="stRadio"] span {
             color: var(--giraffe-ink);
@@ -234,6 +282,11 @@ def main() -> None:
             border-radius: 10px;
             color: var(--giraffe-ink);
             box-shadow: 0 1px 0 var(--giraffe-shadow);
+          }
+          .stTextInput > div > div > input:focus {
+            border-color: var(--giraffe-accent) !important;
+            box-shadow: 0 0 0 3px rgba(197, 106, 40, 0.2) !important;
+            outline: none !important;
           }
           .stTextInput input::placeholder,
           .stTextArea textarea::placeholder {
@@ -264,6 +317,7 @@ def main() -> None:
             fill: var(--giraffe-ink) !important;
           }
 
+          /* Buttons */
           .stButton > button {
             background: var(--giraffe-accent);
             color: #ffffff;
@@ -273,17 +327,9 @@ def main() -> None:
             font-weight: 600;
             box-shadow: 0 6px 16px rgba(184, 107, 43, 0.25);
           }
-          .stButton > button:disabled {
-            background: var(--giraffe-disabled-bg);
-            color: var(--giraffe-disabled-text);
-            box-shadow: none;
-            cursor: not-allowed;
-          }
-
           .stButton > button:hover {
             background: var(--giraffe-accent-dark);
           }
-
           .stButton > button:active {
             background: var(--giraffe-accent-pressed);
           }
@@ -291,36 +337,17 @@ def main() -> None:
             outline: none;
             box-shadow: 0 0 0 3px rgba(197, 106, 40, 0.45);
           }
-
-          .stMetric {
-            background: var(--giraffe-surface);
-            border: 1px solid var(--giraffe-sand);
-            border-radius: 12px;
-            padding: 12px 16px;
-            box-shadow: 0 2px 8px var(--giraffe-shadow);
+          .stButton > button:disabled {
+            background: var(--giraffe-disabled-bg);
+            color: var(--giraffe-disabled-text);
+            box-shadow: none;
+            cursor: not-allowed;
           }
 
-          .stAlert {
-            border-radius: 12px;
-            border: 1px solid var(--giraffe-alert-border);
-            background: var(--giraffe-alert-bg);
-            color: var(--giraffe-ink);
+          /* File uploader */
+          [data-testid="stFileUploader"] {
+            margin-top: 1.5rem;
           }
-
-          code, pre, .stCodeBlock {
-            font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            background: var(--giraffe-code-bg);
-          }
-          [data-testid="stCode"] {
-            max-height: 360px;
-            overflow-y: auto;
-            border-radius: 12px;
-          }
-          [data-testid="stCode"] pre {
-            margin: 0;
-            white-space: pre-wrap;
-          }
-
           section[data-testid="stFileUploaderDropzone"] {
             background: var(--giraffe-file-bg);
             border: 1px solid var(--giraffe-file-border);
@@ -335,35 +362,138 @@ def main() -> None:
             fill: var(--giraffe-file-text);
           }
           section[data-testid="stFileUploaderDropzone"] button {
-            background: var(--giraffe-file-btn-bg);
-            color: var(--giraffe-file-btn-text);
-            border-radius: 8px;
-            font-weight: 600;
+            background: var(--giraffe-accent) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 12px rgba(184, 107, 43, 0.3) !important;
+            transition: background 0.15s ease !important;
           }
           section[data-testid="stFileUploaderDropzone"] button:hover {
-            background: var(--giraffe-file-btn-hover);
+            background: var(--giraffe-accent-dark) !important;
           }
+          section[data-testid="stFileUploaderDropzone"] button:active {
+            background: var(--giraffe-accent-pressed) !important;
+          }
+
           a {
             color: var(--giraffe-link);
           }
 
-          /* Streamlit status & expander accents */
-          [data-testid="stStatusWidget"] {
-            border: 1px solid var(--giraffe-border);
-            background: var(--giraffe-surface);
+          /* Radio — BaseWeb DOM (Streamlit 1.55.0). Fragile selector; verify on upgrade. */
+          [data-testid="stRadio"] [role="radio"] {
+            border-color: var(--giraffe-border) !important;
+            background: var(--giraffe-surface) !important;
           }
-          [data-testid="stStatusWidget"] svg {
-            color: var(--giraffe-accent);
-            fill: var(--giraffe-accent);
+          [data-testid="stRadio"] [role="radio"][aria-checked="true"] {
+            border-color: var(--giraffe-accent) !important;
+            background: var(--giraffe-accent) !important;
           }
-          [data-testid="stExpander"] summary svg {
-            color: var(--giraffe-accent);
-            fill: var(--giraffe-accent);
+          [data-testid="stRadio"] [role="radio"][aria-checked="false"] {
+            border-color: var(--giraffe-border) !important;
+            background: var(--giraffe-surface) !important;
+          }
+          [data-testid="stRadio"] [role="radio"]:focus-visible {
+            box-shadow: 0 0 0 3px rgba(197, 106, 40, 0.35) !important;
           }
 
-          /* Progress bar */
+          /* Checkbox — BaseWeb DOM (Streamlit 1.55.0). Fragile selector; verify on upgrade. */
+          [data-testid="stCheckbox"] [data-baseweb="checkbox"] [data-checked="true"] > div {
+            background: var(--giraffe-accent) !important;
+            border-color: var(--giraffe-accent) !important;
+          }
+          [data-testid="stCheckbox"] [data-baseweb="checkbox"] [data-checked="false"] > div {
+            background: var(--giraffe-surface) !important;
+            border-color: var(--giraffe-border) !important;
+          }
+          [data-testid="stCheckbox"] [data-baseweb="checkbox"]:focus-visible > div {
+            box-shadow: 0 0 0 3px rgba(197, 106, 40, 0.35) !important;
+          }
+
+          /* Toggle — BaseWeb DOM (Streamlit 1.55.0). Fragile selector; verify on upgrade. */
+          [data-baseweb="toggle"] [data-checked="true"],
+          [data-baseweb="toggle"] [data-checked="false"] {
+            background: transparent !important;
+          }
+
+          /* Slider — BaseWeb DOM (Streamlit 1.55.0). Fragile selector; verify on upgrade. */
+          [data-testid="stSlider"] [data-baseweb="slider"] [role="progressbar"] > div {
+            background: var(--giraffe-accent) !important;
+          }
+          [data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
+            background: var(--giraffe-accent) !important;
+            border-color: var(--giraffe-accent) !important;
+            box-shadow: 0 0 0 4px rgba(197, 106, 40, 0.25) !important;
+          }
+          [data-testid="stSlider"] [data-baseweb="slider"] [role="slider"]:focus {
+            box-shadow: 0 0 0 5px rgba(197, 106, 40, 0.4) !important;
+          }
+          [data-testid="stSlider"] [data-baseweb="slider"] [data-testid="stSliderTrack"] {
+            background: var(--giraffe-border) !important;
+          }
+
+          /* Progress */
+          [data-testid="stProgress"] > div {
+            background: var(--giraffe-border) !important;
+            border-radius: 99px !important;
+          }
           [data-testid="stProgress"] > div > div {
-            background: var(--giraffe-accent);
+            background: var(--giraffe-accent) !important;
+            border-radius: 99px !important;
+          }
+
+          /* Expander */
+          [data-testid="stExpander"] {
+            border: 1px solid var(--giraffe-border) !important;
+            border-radius: 12px !important;
+            background: var(--giraffe-surface) !important;
+          }
+          [data-testid="stExpander"] summary {
+            border-radius: 10px !important;
+            background: var(--giraffe-surface) !important;
+            color: var(--giraffe-ink) !important;
+          }
+          [data-testid="stExpander"] summary:hover {
+            background: var(--giraffe-sand) !important;
+          }
+          [data-testid="stExpander"] summary svg {
+            fill: var(--giraffe-accent) !important;
+            color: var(--giraffe-accent) !important;
+          }
+
+          /* Alerts / notifications */
+          .stAlert,
+          div[data-testid="stNotification"],
+          div[class*="stAlert"] {
+            border-radius: 12px !important;
+            border: 1px solid var(--giraffe-alert-border);
+            background: var(--giraffe-alert-bg);
+            color: var(--giraffe-ink);
+          }
+          div[data-testid="stNotification"][kind="info"],
+          .stAlert[data-baseweb="notification"][kind="info"] {
+            background: color-mix(in srgb, var(--giraffe-accent) 12%, var(--giraffe-cream)) !important;
+            border-left: 3px solid var(--giraffe-accent) !important;
+            color: var(--giraffe-ink) !important;
+          }
+          div[data-testid="stNotification"][kind="success"],
+          .stAlert[data-baseweb="notification"][kind="success"] {
+            background: color-mix(in srgb, #4a8c62 12%, var(--giraffe-cream)) !important;
+            border-left: 3px solid #4a8c62 !important;
+            color: var(--giraffe-ink) !important;
+          }
+          div[data-testid="stNotification"][kind="warning"],
+          .stAlert[data-baseweb="notification"][kind="warning"] {
+            background: color-mix(in srgb, #c9a227 12%, var(--giraffe-cream)) !important;
+            border-left: 3px solid #c9a227 !important;
+            color: var(--giraffe-ink) !important;
+          }
+          div[data-testid="stNotification"][kind="error"],
+          .stAlert[data-baseweb="notification"][kind="error"] {
+            background: color-mix(in srgb, #c0392b 12%, var(--giraffe-cream)) !important;
+            border-left: 3px solid #c0392b !important;
+            color: var(--giraffe-ink) !important;
           }
 
           /* Dataframe / tables */
@@ -384,7 +514,7 @@ def main() -> None:
             color: var(--giraffe-ink);
           }
 
-          /* Scrollbar (WebKit) */
+          /* Scrollbar */
           ::-webkit-scrollbar {
             width: 7px;
             height: 7px;
@@ -401,92 +531,7 @@ def main() -> None:
             background: var(--giraffe-tan);
           }
 
-          /* ── Slider ───────────────────────────── */
-          [data-testid="stSlider"] [data-baseweb="slider"] [role="progressbar"] > div {
-            background: var(--giraffe-accent) !important;
-          }
-          [data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
-            background: var(--giraffe-accent) !important;
-            border-color: var(--giraffe-accent) !important;
-            box-shadow: 0 0 0 4px rgba(197, 106, 40, 0.25) !important;
-          }
-          [data-testid="stSlider"] [data-baseweb="slider"] [role="slider"]:focus {
-            box-shadow: 0 0 0 5px rgba(197, 106, 40, 0.4) !important;
-          }
-          [data-testid="stSlider"] [data-baseweb="slider"] [data-testid="stSliderTrack"] {
-            background: var(--giraffe-border) !important;
-          }
-
-          /* ── Progress bar ─────────────────────── */
-          [data-testid="stProgress"] > div > div {
-            background: var(--giraffe-accent) !important;
-            border-radius: 99px !important;
-          }
-          [data-testid="stProgress"] > div {
-            background: var(--giraffe-border) !important;
-            border-radius: 99px !important;
-          }
-
-          /* ── Notifications ────────────────────── */
-          div[data-testid="stNotification"],
-          div[class*="stAlert"] {
-            border-radius: 12px !important;
-          }
-          div[data-testid="stNotification"][kind="info"],
-          .stAlert[data-baseweb="notification"][kind="info"] {
-            background: color-mix(in srgb, var(--giraffe-accent) 12%, var(--giraffe-cream)) !important;
-            border-left: 3px solid var(--giraffe-accent) !important;
-            color: var(--giraffe-ink) !important;
-          }
-          div[data-testid="stNotification"][kind="success"],
-          .stAlert[data-baseweb="notification"][kind="success"] {
-            background: color-mix(in srgb, #5a9e6f 12%, var(--giraffe-cream)) !important;
-            border-left: 3px solid #5a9e6f !important;
-            color: var(--giraffe-ink) !important;
-          }
-          div[data-testid="stNotification"][kind="warning"],
-          .stAlert[data-baseweb="notification"][kind="warning"] {
-            background: color-mix(in srgb, #c9a227 12%, var(--giraffe-cream)) !important;
-            border-left: 3px solid #c9a227 !important;
-            color: var(--giraffe-ink) !important;
-          }
-          div[data-testid="stNotification"][kind="error"],
-          .stAlert[data-baseweb="notification"][kind="error"] {
-            background: color-mix(in srgb, #c0392b 12%, var(--giraffe-cream)) !important;
-            border-left: 3px solid #c0392b !important;
-            color: var(--giraffe-ink) !important;
-          }
-
-          /* ── File uploader button ─────────────── */
-          section[data-testid="stFileUploaderDropzone"] button {
-            background: var(--giraffe-accent) !important;
-            color: #ffffff !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            box-shadow: 0 4px 12px rgba(184, 107, 43, 0.3) !important;
-            transition: background 0.15s ease !important;
-          }
-          section[data-testid="stFileUploaderDropzone"] button:hover {
-            background: var(--giraffe-accent-dark) !important;
-          }
-          section[data-testid="stFileUploaderDropzone"] button:active {
-            background: var(--giraffe-accent-pressed) !important;
-          }
-
-          /* ── Radio ────────────────────────────── */
-          [data-testid="stRadio"] [role="radio"][aria-checked="true"] {
-            border-color: var(--giraffe-accent) !important;
-            background: var(--giraffe-accent) !important;
-          }
-          [data-testid="stRadio"] [role="radio"] {
-            border-color: var(--giraffe-border) !important;
-          }
-          [data-testid="stRadio"] [role="radio"]:focus-visible {
-            box-shadow: 0 0 0 3px rgba(197, 106, 40, 0.35) !important;
-          }
-
-          /* ── Status widget ───────────────────── */
+          /* Status widget */
           [data-testid="stStatusWidget"],
           [data-testid="stStatusWidget"] * {
             color: var(--giraffe-ink) !important;
@@ -498,45 +543,14 @@ def main() -> None:
             border-color: var(--giraffe-accent) !important;
             background: color-mix(in srgb, var(--giraffe-accent) 10%, var(--giraffe-surface)) !important;
           }
-
-          /* ── Expander ────────────────────────── */
-          [data-testid="stExpander"] summary svg {
-            fill: var(--giraffe-accent) !important;
-            color: var(--giraffe-accent) !important;
-          }
-          [data-testid="stExpander"] summary {
-            border-radius: 10px !important;
-          }
-          [data-testid="stExpander"] summary:hover {
-            background: var(--giraffe-sand) !important;
-          }
-          [data-testid="stExpander"] {
-            border: 1px solid var(--giraffe-border) !important;
-            border-radius: 12px !important;
-            background: var(--giraffe-surface) !important;
-          }
-
-          /* ── Checkbox ───────────────────────── */
-          [data-testid="stCheckbox"] [data-baseweb="checkbox"] [data-checked="true"] > div,
-          [data-testid="stCheckbox"] input:checked + div {
-            background: var(--giraffe-accent) !important;
-            border-color: var(--giraffe-accent) !important;
-          }
-          [data-testid="stCheckbox"] [data-baseweb="checkbox"]:focus-visible > div {
-            box-shadow: 0 0 0 3px rgba(197, 106, 40, 0.35) !important;
-          }
-
-          /* ── Toggle ─────────────────────────── */
-          [data-baseweb="toggle"] [data-checked="true"] {
-            background: var(--giraffe-accent) !important;
-          }
         </style>
-        """
+"""
     ).safe_substitute(theme_vars)
     st.markdown(css, unsafe_allow_html=True)
     RUN_STATE_FILE = Path(tempfile.gettempdir()) / "girafon_run_state.json"
 
-    st.title("ESRS Gap Detector")
+    st.markdown('<div class="eyebrow">🦒 Girafon</div>', unsafe_allow_html=True)
+    st.title("Girafon — ESRS Gap Detector")
     st.write("Upload an ESG report and get ESRS disclosure gaps with evidence.")
 
     def _run_state():
@@ -651,7 +665,8 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Controls")
-        theme_toggle = st.toggle("🌙 Dark mode", value=is_dark, key="theme_toggle")
+        theme_label = "☀️ Light mode" if is_dark else "🌙 Dark mode"
+        theme_toggle = st.toggle(theme_label, value=is_dark, key="theme_toggle")
         st.session_state.theme_mode = "dark" if theme_toggle else "light"
 
         with st.expander("Settings", expanded=True):

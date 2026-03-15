@@ -2,6 +2,9 @@
 
 **ESRS gap lint for sustainability reports. It tells you what’s missing and shows the exact evidence.**
 
+![Girafon GUI — Main page](public/screenshots/screenshot_overview_girafon.png)
+
+
 **Limitations**
 Girafon is a diagnostic aid, not a compliance certificate. Use it for first‑pass review and validate with an auditor.
 
@@ -359,6 +362,10 @@ while preserving the original structure and printability:
 
 These changes are purely presentational and do **not** alter the core data model
 or analysis logic. The report remains a standalone HTML file.
+
+
+![Girafon — Report example](public/screenshots/screenshot_example_report_girafon.png)
+
 
 ---
 
