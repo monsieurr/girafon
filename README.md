@@ -1,35 +1,21 @@
-# 🦒 Project Girafon
+# 🦒 Girafon
 
-**Automatically analyse any ESG/sustainability report against ESRS (CSRD) requirements and find exactly what's missing — with evidence.**
+**ESRS gap lint for sustainability reports. It tells you what’s missing and shows the exact evidence.**
 
-
-**DISCLAIMER** : 
-This isn't a mature tool by any mean. It can indeed give you hinsights on ESG/sustainability reports but please do not use its results in its current version (or, use with caution please). Besides, if you see incoherent results please tell me and I will gladly investigate.
-
-
+**Limitations**
+Girafon is a diagnostic aid, not a compliance certificate. Use it for first‑pass review and validate with an auditor.
 
 ---
 
-Upload any company ESG/sustainability PDF and get:
-
--  **Per-disclosure status** — FOUND / PARTIAL / MISSING for each ESRS section
--  **Evidence quotes** — the exact sentence and page number that proves each finding
--  **Weighted score** — 0–100 overall score with E / S / G breakdown
--  **Greenwashing flags** — vague language, missing baselines, unsupported net-zero claims
--  **Actionable recommendations** — prioritised list of what to fix and what to add
--  **Omnibus mode (draft)** — toggle between official ESRS Set 1 and draft simplified ESRS proposals
+Upload an ESG PDF and Girafon returns per‑disclosure status, cited quotes with page numbers, a weighted score, greenwashing signals, and a prioritised fix list. Omnibus mode is draft and intended for scenario analysis only.
 
 ---
 
 ## Why this exists
 
-CSRD (Corporate Sustainability Reporting Directive) requires thousands of EU companies to publish detailed ESG reports aligned with ESRS standards. Most companies and consultancies spend weeks manually checking compliance. This tool does it in minutes.
+ESRS compliance checks are slow, repetitive, and error‑prone. Girafon focuses on evidence‑first gap detection instead of trying to be a full compliance system. The tradeoff is intentional: less breadth, more traceability, faster review.
 
-**Key differentiators vs other tools:**
-- Framework-aware, not generic: checks against specific ESRS sections (E1-6, S1-14, G1-3, etc.)
-- Evidence-backed: every finding cites the source passage, page, and quote
-- Omnibus-aware: supports draft simplified ESRS proposals for scenario analysis
-- Open source: free, auditable, no vendor lock-in
+Framework‑aware means each check maps to a named ESRS disclosure. Evidence‑first means every finding is tied to a quote and page. Open source means you can audit what it does, and change it when regulations shift.
 
 ---
 
@@ -187,7 +173,7 @@ Only publish `site/demo` (do not publish `outputs/`, which still contains real c
 Note: Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **not yet adopted law**. The currently applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772).
 
 **Schema profile**
-- **Basic** — Girafon’s 20-disclosure fast scan.
+- **Basic** — 20 disclosures for a first‑pass gap check.
 - **IG3-core** — Girafon preset: ESRS 2 + E1 + G1.
 - **IG3 full** — EFRAG Implementation Guidance datapoint list (non-authoritative).
 
@@ -259,7 +245,7 @@ When `esrs_taxonomy_map.json` exists, CLI and Streamlit outputs automatically ad
 ## IG3 full datapoint schema (optional)
 
 IG3 contains 1,000+ datapoints and is much slower than the basic 20-disclosure run.
-For a faster high-impact scan, use `--schema ig3-core` (ESRS 2 + E1 + G1).
+For a smaller run with high regulatory coverage, use `--schema ig3-core` (ESRS 2 + E1 + G1).
 
 ```bash
 python -m esg_analyzer.frameworks.build_ig3_schema \

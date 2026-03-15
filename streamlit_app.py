@@ -690,10 +690,10 @@ def main() -> None:
                     "Use for scenario analysis; requirements may still change."
                 )
                 st.markdown(
-                    "**Basic** - Girafon’s 20-disclosure fast scan for quick triage."
+                    "**Basic** - 20 disclosures for a first-pass gap check."
                 )
                 st.markdown(
-                    "**IG3-core** - Girafon preset: ESRS 2 + E1 + G1 for high-impact coverage."
+                    "**IG3-core** - ESRS 2 + E1 + G1 for a smaller, focused run."
                 )
                 st.markdown(
                     "**IG3 full** - EFRAG Implementation Guidance list of datapoints (non-authoritative)."
@@ -900,7 +900,7 @@ def main() -> None:
         if schema_profile == "ig3":
             st.warning("IG3 is EFRAG guidance (non-authoritative) and can take a long time.")
         if schema_profile == "ig3-core":
-            st.info("IG3-core is a Girafon preset: ESRS 2 + E1 + G1 for a fast, high-impact scan.")
+            st.info("IG3-core is ESRS 2 + E1 + G1 for a smaller, focused run.")
 
         try:
             llm_config = LLMConfig(provider=provider or None, model=model or None)
@@ -1084,7 +1084,7 @@ def main() -> None:
         if schema_profile == "ig3":
             st.warning("IG3 is EFRAG guidance (non-authoritative) and can take a long time.")
         if schema_profile == "ig3-core":
-            st.info("IG3-core is a Girafon preset: ESRS 2 + E1 + G1 for a fast, high-impact scan.")
+            st.info("IG3-core is ESRS 2 + E1 + G1 for a smaller, focused run.")
 
         try:
             llm_config = LLMConfig(provider=provider or None, model=model or None)
@@ -1260,7 +1260,7 @@ def main() -> None:
     if schema_profile == "ig3":
         st.warning("IG3 is EFRAG guidance (non-authoritative) and can take a long time.")
     if schema_profile == "ig3-core":
-        st.info("IG3-core is a Girafon preset: ESRS 2 + E1 + G1 for a fast, high-impact scan.")
+        st.info("IG3-core is ESRS 2 + E1 + G1 for a smaller, focused run.")
 
     if uploaded is None:
         st.error("Please upload a report first.")

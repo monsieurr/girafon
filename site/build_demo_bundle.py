@@ -233,7 +233,7 @@ def build_demo_bundle(
 
     # Build simple index
     cards = "\n".join(
-        f"<a class=\"demo-card\" href=\"{fname}\">"
+        f"<a class=\"demo-card{' primary' if label.lower().startswith('comparison') else ''}\" href=\"{fname}\">"
         f"<div class=\"demo-title\">{label}</div>"
         f"<div class=\"demo-sub\">Open report</div>"
         f"</a>"
@@ -309,6 +309,10 @@ def build_demo_bundle(
       box-shadow: 0 6px 16px rgba(30, 24, 18, 0.08);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }}
+    .demo-card.primary {{
+      border-color: var(--accent);
+      box-shadow: 0 10px 24px rgba(30, 24, 18, 0.16);
+    }}
     .demo-card:hover {{
       transform: translateY(-2px);
       box-shadow: 0 10px 22px rgba(30, 24, 18, 0.12);
@@ -335,6 +339,17 @@ def build_demo_bundle(
       border-radius: 10px;
       overflow-x: auto;
     }}
+    @media (max-width: 720px) {{
+      .wrap {{ padding: 32px 16px 60px; }}
+      .nav {{ flex-direction: column; align-items: flex-start; }}
+      h1 {{ font-size: 28px; }}
+      p {{ font-size: 15px; }}
+    }}
+    @media (max-width: 480px) {{
+      .grid {{ grid-template-columns: 1fr; }}
+      .demo-card {{ padding: 16px; }}
+      pre {{ font-size: 12px; }}
+    }}
   </style>
 </head>
 <body>
@@ -343,9 +358,9 @@ def build_demo_bundle(
       <a class=\"brand\" href=\"../index.html\">Girafon</a>
       <a class=\"nav-link\" href=\"../index.html\">Back to Home</a>
     </div>
-    <h1>Demo Reports (Anonymized)</h1>
-    <p>These reports are generated outputs with company names removed. Use this page to
-    showcase how Girafon looks and behaves without exposing real company identities.</p>
+    <h1>Anonymized Demo Reports</h1>
+    <p>These are real Girafon outputs with company names removed. The goal is to show the
+    workflow and report style without exposing client identities.</p>
     <div class=\"grid\">
       {cards}
     </div>

@@ -3,33 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ESRS Gap Detector — Evidence-backed ESG Reporting Lint</title>
-  <meta name="description" content="Evidence-backed ESRS/CSRD gap detection for ESG reports. Pinpoint missing disclosures with cited excerpts, plus a clear overall score.">
-  <link rel="canonical" href="https://example.com/esrs-gap-detector">
+  <title>Girafon — ESRS Gap Detector</title>
+  <meta name="description" content="ESRS gap lint that shows missing disclosures with cited excerpts. Built for first-pass review, not assurance.">
+  <link rel="canonical" href="https://monsieurr.github.io/girafon/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%A6%92%3C/text%3E%3C/svg%3E">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="ESRS Gap Detector">
-  <meta property="og:description" content="Evidence-backed ESRS/CSRD gap detection for ESG reports. Pinpoint missing disclosures with cited excerpts, plus a clear overall score.">
-  <meta property="og:url" content="https://example.com/esrs-gap-detector">
-  <meta property="og:image" content="https://example.com/esrs-gap-detector/og-image.svg">
+  <meta property="og:title" content="Girafon — ESRS Gap Detector">
+  <meta property="og:description" content="ESRS gap lint that shows missing disclosures with cited excerpts. Built for first-pass review, not assurance.">
+  <meta property="og:url" content="https://monsieurr.github.io/girafon/">
+  <meta property="og:image" content="https://monsieurr.github.io/girafon/og-image.svg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ESRS Gap Detector">
-  <meta name="twitter:description" content="Evidence-backed ESRS/CSRD gap detection for ESG reports. Pinpoint missing disclosures with cited excerpts, plus a clear overall score.">
-  <meta name="twitter:image" content="https://example.com/esrs-gap-detector/og-image.svg">
+  <meta name="twitter:title" content="Girafon — ESRS Gap Detector">
+  <meta name="twitter:description" content="ESRS gap lint that shows missing disclosures with cited excerpts. Built for first-pass review, not assurance.">
+  <meta name="twitter:image" content="https://monsieurr.github.io/girafon/og-image.svg">
 
   <!-- Structured data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "ESRS Gap Detector",
+    "name": "Girafon — ESRS Gap Detector",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
-    "description": "Evidence-backed ESRS/CSRD gap detection for ESG reports with disclosure-level evidence."
+    "description": "ESRS gap lint that shows missing disclosures with cited excerpts. Built for first-pass review, not assurance."
   }
   </script>
 
@@ -83,21 +83,34 @@
       color: #6e5a47;
       margin-top: 14px;
     }
+    pre {
+      overflow-x: auto;
+    }
+    @media (max-width: 720px) {
+      .wrap { padding: 40px 16px 64px; }
+      h1 { font-size: 32px; }
+      p { font-size: 16px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 28px; }
+      .card { padding: 20px; }
+      pre { font-size: 12px; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>ESRS Gap Detector</h1>
-    <p>Evidence-backed ESRS/CSRD gap detection for ESG reports. Find missing disclosures with cited excerpts, plus a clean overall score.</p>
+    <h1>Girafon</h1>
+    <p>ESRS gap lint for sustainability reports. It flags missing disclosures and shows the exact text it used. This is a first‑pass review tool, not an assurance opinion.</p>
     <div class="card">
       <strong>What it does</strong>
-      <p>Upload a report → detect ESRS gaps → review evidence → export results.</p>
+      <p>Upload a report, get per‑disclosure status with cited evidence, and a fix list you can act on. It trades breadth for traceability and speed.</p>
       <a class="cta" href="demo/">View anonymized demo</a>
       <div class="small">This demo contains anonymized sample reports. No LLM key required.</div>
     </div>
     <div class="card">
-      <strong>Run it locally (fast)</strong>
-      <p>Girafon is meant to be deployed locally. Pick a path:</p>
+      <strong>Run it locally</strong>
+      <p>Girafon is meant to be deployed on your machine. Choose a path:</p>
       <p><strong>GUI (Streamlit)</strong></p>
       <pre style="background:#fff;border:1px solid var(--sand);padding:12px;border-radius:10px;">pip install -r requirements.txt
 ollama serve

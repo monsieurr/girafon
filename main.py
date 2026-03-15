@@ -188,7 +188,7 @@ def main() -> None:
         print("             Consider using a local model with low concurrency.\n")
     if args.schema == "ig3-core":
         print("  NOTE     : IG3-core runs ESRS 2 + E1 + G1 (faster than full IG3).")
-        print("             Use this for a high-impact quick scan.\n")
+        print("             Use this for a smaller, focused run.\n")
 
     def _progress(msg: str) -> None:
         print(msg)
