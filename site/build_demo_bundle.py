@@ -18,10 +18,22 @@ import html as html_lib
 import json
 import re
 import string
+import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from esg_analyzer.report.comparison import generate_comparison
+
+LEGAL_SUFFIXES = {
+    "AG", "SE", "SA", "NV", "PLC", "INC", "LTD", "LLC", "GMBH", "SAS", "SPA",
+    "S.P.A.", "S.P.A", "S P A", "S R L", "SRL", "S.A.", "S.E.", "S.A.S.",
+    "S.R.L.", "GROUP", "HOLDING", "HOLDINGS", "CORP", "CORPORATION", "CO",
+    "COMPANY", "LIMITED", "PUBLIC", "INCORPORATED",
+}
 
 
 def _extract_company_name(html: str) -> str:
@@ -44,7 +56,34 @@ def _alias_name(index: int) -> str:
     return f"Company {name}"
 
 
-def _anonymize_html(html: str, original_name: str, alias: str, extra_terms: List[str]) -> str:
+def _strip_suffixes(name: str) -> str:
+    parts = re.split(r"\s+", name.replace(",", " ").strip())
+    while parts and parts[-1].upper().strip(".") in LEGAL_SUFFIXES:
+        parts.pop()
+    return " ".join(parts).strip()
+
+
+def _generate_variants(name: str) -> List[str]:
+    variants = {name.strip()}
+    stripped = _strip_suffixes(name)
+    if stripped and stripped != name:
+        variants.add(stripped)
+    # Remove punctuation
+    variants.add(re.sub(r"[\\.,]", " ", name).replace("  ", " ").strip())
+    return [v for v in variants if v]
+
+
+def _replace_terms(text: str, term_map: List[Tuple[str, str]]) -> str:
+    # Replace longest terms first to avoid partial matches
+    for term, alias in sorted(term_map, key=lambda x: len(x[0]), reverse=True):
+        if not term:
+            continue
+        pattern = re.compile(rf"(?<!\\w){re.escape(term)}(?!\\w)", re.IGNORECASE)
+        text = pattern.sub(alias, text)
+    return text
+
+
+def _anonymize_html(html: str, alias: str, term_map: List[Tuple[str, str]]) -> str:
     cleaned = html
 
     # Replace title and header explicitly
@@ -70,10 +109,7 @@ def _anonymize_html(html: str, original_name: str, alias: str, extra_terms: List
         flags=re.IGNORECASE | re.DOTALL,
     )
 
-    # Replace occurrences of company name + optional extra terms
-    terms = [t for t in [original_name, *extra_terms] if t]
-    for term in terms:
-        cleaned = re.sub(re.escape(term), alias, cleaned, flags=re.IGNORECASE)
+    cleaned = _replace_terms(cleaned, term_map)
 
     return cleaned
 
@@ -116,16 +152,35 @@ def build_demo_bundle(
     file_map: Dict[str, str] = {}
     demo_entries: List[Tuple[str, str]] = []
 
-    for idx, path in enumerate(html_files, 1):
+    # Extract company names first so we can build a global redaction map.
+    company_names: List[str] = []
+    html_cache: Dict[Path, str] = {}
+    for path in html_files:
         raw_html = path.read_text(encoding="utf-8")
+        html_cache[path] = raw_html
         original_name = _extract_company_name(raw_html) or path.stem
-        alias = _alias_name(idx - 1)
-        name_map[original_name] = alias
+        company_names.append(original_name)
+
+    for idx, original_name in enumerate(company_names, 1):
+        name_map[original_name] = _alias_name(idx - 1)
+
+    # Build a global redaction map (all company names + variants)
+    term_map: List[Tuple[str, str]] = []
+    for original_name, alias in name_map.items():
+        for variant in _generate_variants(original_name):
+            term_map.append((variant, alias))
+    for term in extra_terms:
+        term_map.append((term, "Company"))
+
+    for idx, path in enumerate(html_files, 1):
+        raw_html = html_cache[path]
+        original_name = _extract_company_name(raw_html) or path.stem
+        alias = name_map.get(original_name, _alias_name(idx - 1))
 
         out_name = f"company_{idx:02d}_report.html"
         file_map[path.name] = out_name
 
-        anon_html = _anonymize_html(raw_html, original_name, alias, extra_terms)
+        anon_html = _anonymize_html(raw_html, alias, term_map)
         (output_dir / out_name).write_text(anon_html, encoding="utf-8")
         demo_entries.append((alias, out_name))
 
@@ -203,6 +258,7 @@ def main() -> None:
     build_demo_bundle(input_dir, output_dir, summary_path, extra_terms)
     print(f"Demo bundle created in: {output_dir}")
     print("Review the anonymized HTML for any remaining company references before publishing.")
+    print("Publish only the site/demo folder (not outputs/).")
 
 
 if __name__ == "__main__":

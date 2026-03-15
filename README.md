@@ -174,6 +174,7 @@ site/demo/comparison.html
 ```
 
 You can now publish the `site/` folder on GitHub Pages, Netlify, or any static host.
+Only publish `site/demo` (do not publish `outputs/`, which still contains real company names).
 
 ---
 
