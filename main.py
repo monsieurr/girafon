@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-main.py — ESRS Gap Detector CLI
+main.py : ESRS Gap Detector CLI
 
 Usage:
   python main.py --pdf report.pdf
@@ -54,7 +54,7 @@ def _setup_logging() -> None:
 def main() -> None:
     _setup_logging()
     parser = argparse.ArgumentParser(
-        description="ESRS Gap Detector — Analyse ESG reports for CSRD compliance gaps",
+        description="ESRS Gap Detector : Analyse ESG reports for CSRD compliance gaps",
     )
     parser.add_argument("--pdf",       required=False, help="Path to ESG report (.pdf or .html)")
     parser.add_argument("--input-dir", default="", help="Batch mode: folder containing PDF reports")
@@ -125,7 +125,7 @@ def main() -> None:
             sys.exit(1)
         diff_stamp = _stamp()
         print(f"\n{'='*56}")
-        print(f"  ESRS Gap Detector — Diff")
+        print(f"  ESRS Gap Detector : Diff")
         print(f"  Baseline : {base_path.name}")
         print(f"  Compare  : {new_path.name}")
         print(f"  Mode     : {args.mode.upper()}")
@@ -147,7 +147,7 @@ def main() -> None:
         input_dir = Path(args.input_dir)
         output_dir = Path(args.output_dir) if args.output_dir else (input_dir / "girafon_out")
         print(f"\n{'='*56}")
-        print(f"  ESRS Gap Detector — Batch")
+        print(f"  ESRS Gap Detector : Batch")
         print(f"  Input    : {input_dir}")
         print(f"  Output   : {output_dir}")
         print(f"  Mode     : {args.mode.upper()}")
@@ -334,7 +334,7 @@ def main() -> None:
     # ── Print summary ──────────────────────────────────────────────────────────
     s = score_report
     print(f"\n{'='*56}")
-    print(f"  Score     : {s['overall_score']}/100 — {s['band']['label']}")
+    print(f"  Score     : {s['overall_score']}/100 : {s['band']['label']}")
     print(f"  Compliance: {s['compliance_rate']}% mandatory")
     print(f"  Found / Partial / Missing: {s['found_count']} / {s['partial_count']} / {s['missing_count']}")
     print(f"\n  Category breakdown:")
@@ -386,7 +386,7 @@ def _run_check(args) -> None:
         )
         if "ok" in response.lower():
             print("✓")
-            print(f"\n  ✅ Connection successful — {config.provider}/{config.model} is ready.")
+            print(f"\n  ✅ Connection successful : {config.provider}/{config.model} is ready.")
         else:
             print("⚠")
             print(f"\n  ⚠  Connected but unexpected response: {response[:100]}")

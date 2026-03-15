@@ -27,7 +27,7 @@ def generate_comparison(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Girafon — Cross-report Screening</title>
+  <title>Girafon : Cross-report Screening</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -198,7 +198,7 @@ def generate_comparison(
 <body>
   <div class="top-bar">
     <div>
-      <h1>Girafon — Cross-report screening</h1>
+      <h1>Girafon : Cross-report screening</h1>
       <p>Screening tool for comparing compliance gaps across analyzed reports.</p>
     </div>
   </div>
@@ -369,16 +369,16 @@ def generate_comparison(
 
         const tdScore = document.createElement('td');
         tdScore.className = 'score';
-        tdScore.textContent = isFailed ? '—' : `${{score}}`;
+        tdScore.textContent = isFailed ? ':' : `${{score}}`;
         tr.appendChild(tdScore);
 
         const tdCompliance = document.createElement('td');
-        tdCompliance.textContent = isFailed ? '—' : `${{compliance}}%`;
+        tdCompliance.textContent = isFailed ? ':' : `${{compliance}}%`;
         tr.appendChild(tdCompliance);
 
         const tdMissing = document.createElement('td');
         if (isFailed) {{
-          tdMissing.textContent = '—';
+          tdMissing.textContent = ':';
         }} else {{
           const missPill = pill(row.mandatory_missing ?? 0, row.mandatory_missing > 0 ? 'bad' : 'ok');
           tdMissing.appendChild(missPill);
@@ -387,7 +387,7 @@ def generate_comparison(
 
         const tdPriority = document.createElement('td');
         if (isFailed) {{
-          tdPriority.textContent = '—';
+          tdPriority.textContent = ':';
         }} else {{
           const prioPill = pill(row.high_priority_gaps ?? 0, row.high_priority_gaps > 0 ? 'warn' : 'ok');
           tdPriority.appendChild(prioPill);
@@ -396,7 +396,7 @@ def generate_comparison(
 
         const tdFlags = document.createElement('td');
         if (isFailed) {{
-          tdFlags.textContent = '—';
+          tdFlags.textContent = ':';
         }} else {{
           const flagPill = pill(row.greenwashing_flags ?? 0, row.greenwashing_flags > 0 ? 'warn' : 'ok');
           tdFlags.appendChild(flagPill);

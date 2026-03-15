@@ -9,8 +9,8 @@
     "omnibus_disclaimer": "Simplified ESRS are based on EFRAG technical advice (Dec 2025) and are not yet adopted law. The applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772).",
     "e1_exclusion_note": "E1 Climate Change may be excluded only with a detailed explanation (ESRS 1 §32), making omission unlikely in practice.",
     "modes": {
-      "original": "Full ESRS as per 2023/2772 — applies to Wave 1 (FY2024 reports)",
-      "omnibus": "Simplified ESRS post-Omnibus — scope limited to 1000+ FTE / €450M+ turnover, 61% fewer mandatory data points"
+      "original": "Full ESRS as per 2023/2772 : applies to Wave 1 (FY2024 reports)",
+      "omnibus": "Simplified ESRS post-Omnibus : scope limited to 1000+ FTE / €450M+ turnover, 61% fewer mandatory data points"
     },
     "status_values": [
       "FOUND",
@@ -57,7 +57,7 @@
     "is_quantitative": true,
     "original_mandatory": true,
     "omnibus_mandatory": true,
-    "omnibus_notes": "Retained as mandatory — Scope 1 is a core climate metric under all regimes.",
+    "omnibus_notes": "Retained as mandatory : Scope 1 is a core climate metric under all regimes.",
     "weight_original": 8,
     "weight_omnibus": 9,
     "cross_references": {
@@ -172,7 +172,7 @@
     "is_quantitative": true,
     "original_mandatory": true,
     "omnibus_mandatory": true,
-    "omnibus_notes": "Retained but simplified — companies may now report only significant Scope 3 categories rather than all 15, provided they justify exclusions.",
+    "omnibus_notes": "Retained but simplified : companies may now report only significant Scope 3 categories rather than all 15, provided they justify exclusions.",
     "weight_original": 10,
     "weight_omnibus": 9,
     "cross_references": {
@@ -226,7 +226,7 @@
     "is_quantitative": true,
     "original_mandatory": true,
     "omnibus_mandatory": false,
-    "omnibus_notes": "Moved to voluntary under the Omnibus simplification — intensity ratios are no longer mandatory but remain best practice.",
+    "omnibus_notes": "Moved to voluntary under the Omnibus simplification : intensity ratios are no longer mandatory but remain best practice.",
     "weight_original": 5,
     "weight_omnibus": 3,
     "cross_references": {
@@ -247,7 +247,7 @@
       "gCO2",
       "gCO2e"
     ],
-    "value_hint": "Look for a GHG intensity ratio — a number followed by a unit like gCO2e/MJ, tCO2e/unit, or similar. A target intensity without a current value is PARTIAL."
+    "value_hint": "Look for a GHG intensity ratio : a number followed by a unit like gCO2e/MJ, tCO2e/unit, or similar. A target intensity without a current value is PARTIAL."
   },
   "E1-4_Targets": {
     "framework": "ESRS",
@@ -287,7 +287,7 @@
     "is_quantitative": false,
     "original_mandatory": true,
     "omnibus_mandatory": true,
-    "omnibus_notes": "Retained as mandatory. However, Omnibus removed the requirement to align targets with EU Climate Law pathways — companies now set their own trajectories.",
+    "omnibus_notes": "Retained as mandatory. However, Omnibus removed the requirement to align targets with EU Climate Law pathways : companies now set their own trajectories.",
     "weight_original": 8,
     "weight_omnibus": 8,
     "cross_references": {
@@ -297,7 +297,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": false,
-        "gri_delta": "GRI 305-5 focuses on GHG reduction targets. ESRS E1-4 also requires alignment with Paris Agreement pathways and interim milestones — stricter than GRI here."
+        "gri_delta": "GRI 305-5 focuses on GHG reduction targets. ESRS E1-4 also requires alignment with Paris Agreement pathways and interim milestones : stricter than GRI here."
       }
     },
     "unit_queries": [
@@ -358,7 +358,7 @@
         ],
         "alignment": "full",
         "gri_stricter": true,
-        "gri_delta": "GRI 302-1 requires energy breakdown by fuel type and by renewable/non-renewable per source. ESRS E1-5 allows aggregated totals — GRI is more granular here."
+        "gri_delta": "GRI 302-1 requires energy breakdown by fuel type and by renewable/non-renewable per source. ESRS E1-5 allows aggregated totals : GRI is more granular here."
       }
     },
     "unit_queries": [
@@ -438,7 +438,7 @@
     "name": "Emissions to Air, Water and Soil",
     "category": "Environment",
     "pillar": "Pollution",
-    "description": "Emissions of key pollutants — NOx, SOx, VOCs, particulate matter, heavy metals — into air, water, and soil.",
+    "description": "Emissions of key pollutants : NOx, SOx, VOCs, particulate matter, heavy metals : into air, water, and soil.",
     "keywords": [
       "nox",
       "sox",
@@ -492,7 +492,7 @@
       "nitrogen oxide",
       "pollutant"
     ],
-    "value_hint": "Look for quantified pollutant emissions — SO2, NOx, NMVOC, particulates — in kt or tonnes. GHG emissions alone do not satisfy E2-4."
+    "value_hint": "Look for quantified pollutant emissions : SO2, NOx, NMVOC, particulates : in kt or tonnes. GHG emissions alone do not satisfy E2-4."
   },
   "E3-4_Water": {
     "framework": "ESRS",
@@ -528,7 +528,7 @@
     "is_quantitative": true,
     "original_mandatory": false,
     "omnibus_mandatory": false,
-    "omnibus_notes": "Remains subject to materiality. Mandatory only if water is material — e.g., manufacturing, food & beverage, semiconductors.",
+    "omnibus_notes": "Remains subject to materiality. Mandatory only if water is material : e.g., manufacturing, food & beverage, semiconductors.",
     "weight_original": 4,
     "weight_omnibus": 3,
     "cross_references": {
@@ -540,7 +540,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": true,
-        "gri_delta": "GRI 303-3 requires breakdown of water withdrawal by source (surface water, groundwater, seawater, produced water, third-party water). ESRS E3-4 does not require this source-level granularity — GRI is stricter here."
+        "gri_delta": "GRI 303-3 requires breakdown of water withdrawal by source (surface water, groundwater, seawater, produced water, third-party water). ESRS E3-4 does not require this source-level granularity : GRI is stricter here."
       }
     },
     "unit_queries": [
@@ -601,7 +601,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": true,
-        "gri_delta": "GRI 304-1 requires the size of each operational site in or near protected areas. ESRS E4 allows aggregated figures. GRI 304-4 requires a count of IUCN Red List species affected — ESRS has no equivalent requirement."
+        "gri_delta": "GRI 304-1 requires the size of each operational site in or near protected areas. ESRS E4 allows aggregated figures. GRI 304-4 requires a count of IUCN Red List species affected : ESRS has no equivalent requirement."
       }
     },
     "unit_queries": [
@@ -659,7 +659,7 @@
         ],
         "alignment": "full",
         "gri_stricter": true,
-        "gri_delta": "GRI 306-3 requires waste disclosed by hazardous / non-hazardous AND by disposal method (landfill, incineration, recycling, etc.) simultaneously. ESRS E5-5 allows these to be reported separately — GRI requires the cross-tabulation."
+        "gri_delta": "GRI 306-3 requires waste disclosed by hazardous / non-hazardous AND by disposal method (landfill, incineration, recycling, etc.) simultaneously. ESRS E5-5 allows these to be reported separately : GRI requires the cross-tabulation."
       }
     },
     "unit_queries": [
@@ -719,7 +719,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": true,
-        "gri_delta": "GRI 405-1 requires diversity breakdown by employee category (board, senior management, middle management, employees). ESRS S1-9 requires board and total employees but not the full category ladder — GRI is more granular."
+        "gri_delta": "GRI 405-1 requires diversity breakdown by employee category (board, senior management, middle management, employees). ESRS S1-9 requires board and total employees but not the full category ladder : GRI is more granular."
       }
     },
     "unit_queries": [
@@ -781,7 +781,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": true,
-        "gri_delta": "GRI 403-9 covers employees AND workers not employed by the organisation whose work is controlled by the company. ESRS S1-14 covers a narrower scope of non-employee workers — GRI is broader here."
+        "gri_delta": "GRI 403-9 covers employees AND workers not employed by the organisation whose work is controlled by the company. ESRS S1-14 covers a narrower scope of non-employee workers : GRI is broader here."
       }
     },
     "unit_queries": [
@@ -827,7 +827,7 @@
     "is_quantitative": true,
     "original_mandatory": true,
     "omnibus_mandatory": false,
-    "omnibus_notes": "Moved to voluntary under Omnibus simplification — training hours are no longer a mandatory disclosure.",
+    "omnibus_notes": "Moved to voluntary under Omnibus simplification : training hours are no longer a mandatory disclosure.",
     "weight_original": 4,
     "weight_omnibus": 2,
     "cross_references": {
@@ -893,7 +893,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": false,
-        "gri_delta": "GRI 407-1 identifies operations/suppliers where the right to freedom of association may be at risk. ESRS S1-8 focuses on CBA coverage % — different angle on the same topic."
+        "gri_delta": "GRI 407-1 identifies operations/suppliers where the right to freedom of association may be at risk. ESRS S1-8 focuses on CBA coverage % : different angle on the same topic."
       }
     },
     "unit_queries": [
@@ -910,7 +910,7 @@
   "S2-1_SupplyChain": {
     "framework": "ESRS",
     "section": "S2-1",
-    "name": "Value Chain Workers — Due Diligence",
+    "name": "Value Chain Workers : Due Diligence",
     "category": "Social",
     "pillar": "Workers in the Value Chain",
     "description": "Policies addressing human rights, forced labour, child labour, and fair wages in the supply chain. Must include a due diligence process description.",
@@ -951,7 +951,7 @@
         ],
         "alignment": "partial",
         "gri_stricter": true,
-        "gri_delta": "GRI 408-1 (child labour) and GRI 409-1 (forced labour) require identification of specific operations and suppliers at significant risk. ESRS S2-1 requires policies and due diligence process — GRI demands more operational specificity."
+        "gri_delta": "GRI 408-1 (child labour) and GRI 409-1 (forced labour) require identification of specific operations and suppliers at significant risk. ESRS S2-1 requires policies and due diligence process : GRI demands more operational specificity."
       }
     },
     "unit_queries": [
@@ -960,7 +960,7 @@
       "human rights",
       "supply chain"
     ],
-    "value_hint": "Look for a supplier due diligence PROCESS description AND a remediation mechanism — not just a policy statement."
+    "value_hint": "Look for a supplier due diligence PROCESS description AND a remediation mechanism : not just a policy statement."
   },
   "G1-1_Governance": {
     "framework": "ESRS",
@@ -968,7 +968,7 @@
     "name": "Governance Structure and ESG Oversight",
     "category": "Governance",
     "pillar": "Business Conduct",
-    "description": "Roles and composition of the board and management bodies. How sustainability/ESG is integrated into governance — committees, accountability lines, and incentive structures.",
+    "description": "Roles and composition of the board and management bodies. How sustainability/ESG is integrated into governance : committees, accountability lines, and incentive structures.",
     "keywords": [
       "board of directors",
       "supervisory board",

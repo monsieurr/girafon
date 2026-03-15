@@ -12,8 +12,8 @@ User configures via environment variables:
 No other file in this codebase imports litellm directly.
 
 Two call surfaces are exposed:
-  call_llm()       — synchronous (used by --check and one-off calls)
-  call_llm_async() — async (used by detect_all for concurrent analysis)
+  call_llm()       : synchronous (used by --check and one-off calls)
+  call_llm_async() : async (used by detect_all for concurrent analysis)
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ try:
     litellm.suppress_debug_info = True
     litellm.verbose = False
     litellm.set_verbose = False
-    # LiteLLM uses several logger names depending on version — suppress all of them
+    # LiteLLM uses several logger names depending on version : suppress all of them
     for _log_name in ("LiteLLM", "LiteLLM Router", "LiteLLM Proxy", "litellm", "litellm.utils", "litellm.main"):
         logging.getLogger(_log_name).setLevel(logging.WARNING)
 except ImportError:
@@ -73,7 +73,7 @@ _API_KEY_ENV = {
 def _detect_provider() -> str:
     """
     Auto-detect the best available provider. Priority:
-      1. Ollama — if the local server is reachable (free, no key, works offline)
+      1. Ollama : if the local server is reachable (free, no key, works offline)
       2. Cloud provider whose API key is present in the environment
       3. Raise a clear, actionable error
 
@@ -83,7 +83,7 @@ def _detect_provider() -> str:
     """
     import urllib.request
 
-    # 1. Prefer Ollama — local, free, no key needed
+    # 1. Prefer Ollama : local, free, no key needed
     ollama_base = _ollama_base_url()
     try:
         urllib.request.urlopen(f"{ollama_base}/api/tags", timeout=1)
@@ -96,17 +96,17 @@ def _detect_provider() -> str:
         if os.environ.get(_API_KEY_ENV[provider], "").strip():
             return provider
 
-    # 3. Nothing available — give an actionable error
+    # 3. Nothing available : give an actionable error
     raise ValueError(
         "No LLM provider detected. Choose one of:\n\n"
-        "  Option A — Free cloud API (recommended):\n"
+        "  Option A : Free cloud API (recommended):\n"
         "    1. Get a free key at https://aistudio.google.com (no credit card)\n"
         "    2. Add to .env:  GEMINI_API_KEY=AIza...\n"
         "    3. python main.py --pdf report.pdf --provider gemini\n\n"
-        "  Option B — Local (no API key, requires Ollama):\n"
+        "  Option B : Local (no API key, requires Ollama):\n"
         "    ollama serve && ollama pull qwen2.5:14b\n"
         "    python main.py --pdf report.pdf --provider ollama --model qwen2.5:14b\n\n"
-        "  Option C — Other cloud APIs, add one of these to your .env:\n"
+        "  Option C : Other cloud APIs, add one of these to your .env:\n"
         "    ANTHROPIC_API_KEY=sk-ant-...\n"
         "    OPENAI_API_KEY=sk-...\n"
         "    GROQ_API_KEY=gsk_...\n\n"
@@ -220,7 +220,7 @@ class LLMConfig:
         # litellm model string format + provider-specific tuning
         if self.provider == "ollama":
             self.litellm_model = f"ollama/{self.model}"
-            # Local models on CPU can be slow — use a generous timeout
+            # Local models on CPU can be slow : use a generous timeout
             if self.timeout == 60.0:   # only override if user left it at default
                 self.timeout = 300.0
         else:
@@ -233,7 +233,7 @@ class LLMConfig:
         """
         Safe default concurrency for this provider.
 
-        Ollama runs inference sequentially — sending 6 parallel requests to a
+        Ollama runs inference sequentially : sending 6 parallel requests to a
         14B model causes connection timeouts as the server queues and times out
         requests. Use 1 for local models; cloud APIs can handle more.
 
@@ -242,7 +242,7 @@ class LLMConfig:
         if self.provider == "ollama":
             return 1
         if self.provider == "gemini":
-            # Free tier: 5 RPM for Gemini 2.5 Flash — use 1 concurrent + smart retry
+            # Free tier: 5 RPM for Gemini 2.5 Flash : use 1 concurrent + smart retry
             return 1
         # Cloud APIs: conservative default that works on most free/starter tiers
         return 6
@@ -360,7 +360,7 @@ async def call_llm_async(
 ) -> str:
     """
     Async version of call_llm using litellm.acompletion.
-    Semantically identical to call_llm — same retry logic, same error handling.
+    Semantically identical to call_llm : same retry logic, same error handling.
     Called by detect_all() via asyncio to run multiple disclosure checks
     concurrently (semaphore-controlled to respect API rate limits).
     """

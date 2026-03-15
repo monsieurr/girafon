@@ -17,7 +17,7 @@ lxml>=5.0.0
 # sentence-transformers is optional: install it to unlock dense embedding
 # retrieval (~22 MB model download on first run, ~10-20% recall improvement).
 scikit-learn>=1.4.0
-# sentence-transformers>=2.7.0   # optional — uncomment for semantic retrieval
+# sentence-transformers>=2.7.0   # optional : uncomment for semantic retrieval
 
 # ── Async support (stdlib asyncio + aiohttp used by litellm internally)
 # No extra install needed; litellm.acompletion works out of the box.

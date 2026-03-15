@@ -4,22 +4,22 @@ search.py
 Retrieves the most relevant chunks for a given ESRS disclosure using a
 three-tier retrieval strategy:
 
-  Tier 1 — Dense embeddings (sentence-transformers, optional)
+  Tier 1 : Dense embeddings (sentence-transformers, optional)
     Uses all-MiniLM-L6-v2 (~22 MB, downloads once on first run).
     Handles semantic paraphrasing: "carbon footprint" matches "GHG emissions",
     "workforce diversity" matches "gender pay gap", etc.
     Install: pip install sentence-transformers
 
-  Tier 2 — TF-IDF cosine similarity (scikit-learn, always available)
+  Tier 2 : TF-IDF cosine similarity (scikit-learn, always available)
     Fast, no download, handles bigrams ("scope 3", "net zero", "board diversity").
     Misses synonyms but catches most explicit terminology.
 
-  Tier 3 — Keyword frequency scoring (pure Python, no dependencies)
+  Tier 3 : Keyword frequency scoring (pure Python, no dependencies)
     Final fallback if sklearn is also unavailable.
 
 Why not a vector database?
   The document is transient (processed once, not stored). We're running ~80
-  fixed queries against one document — this does not warrant a vector DB.
+  fixed queries against one document : this does not warrant a vector DB.
   All embeddings are computed in-memory with NumPy cosine similarity.
 
 Why all-MiniLM-L6-v2 specifically?
@@ -37,7 +37,7 @@ Score post-processing
 
   1. Numeric density boost (+0–40%): chunks containing actual numbers with
      ESG units (tCO2e, MWh, %, m³, Mt) are boosted. This addresses the
-     "index page problem" — GRI/ESRS appendix pages score highly on keyword
+     "index page problem" : GRI/ESRS appendix pages score highly on keyword
      similarity because they list every metric name, but contain no values.
      Data pages with real numbers should rank above index pages.
 
@@ -96,7 +96,7 @@ def _adjust_score(text: str, base_score: float) -> float:
     is_index_page = index_signal_count >= 3 or (index_signal_count >= 2 and short_line_ratio > 0.6)
 
     if is_index_page:
-        return base_score * 0.4   # strong penalty — push index pages down
+        return base_score * 0.4   # strong penalty : push index pages down
 
     # ── Numeric density boost ─────────────────────────────────────────────────
     numeric_hits = len(_NUMERIC_ESG.findall(text))
@@ -126,7 +126,7 @@ def _get_embedding_model():
     """Lazy-load the embedding model on first retrieval call."""
     global _embedding_model
     if _embedding_model is None:
-        logger.info("Loading embedding model (all-MiniLM-L6-v2) — first run only…")
+        logger.info("Loading embedding model (all-MiniLM-L6-v2) : first run only…")
         # Suppress noisy but harmless warnings from sentence-transformers and huggingface_hub
         import warnings, os
         _hf_verbosity = os.environ.get("HF_HUB_VERBOSITY")
@@ -170,14 +170,14 @@ def retrieve_chunks(
         try:
             return _embedding_retrieve(chunks, keywords, top_n, min_score)
         except Exception as e:
-            logger.warning("Embedding retrieval failed (%s) — falling back to TF-IDF", e)
+            logger.warning("Embedding retrieval failed (%s) : falling back to TF-IDF", e)
 
     try:
         return _tfidf_retrieve(chunks, keywords, top_n, min_score)
     except ImportError:
-        logger.debug("sklearn not available — using keyword fallback")
+        logger.debug("sklearn not available : using keyword fallback")
     except Exception as e:
-        logger.warning("TF-IDF retrieval failed (%s) — falling back to keyword scoring", e)
+        logger.warning("TF-IDF retrieval failed (%s) : falling back to keyword scoring", e)
 
     return _keyword_retrieve(chunks, keywords, top_n, min_score)
 
@@ -219,14 +219,14 @@ def _embedding_retrieve(
 
     corpus = [c.text for c in chunks]
 
-    # Encode in one batch — significantly faster than encoding one by one
+    # Encode in one batch : significantly faster than encoding one by one
     all_texts = corpus + [query]
     embeddings = model.encode(all_texts, batch_size=64, show_progress_bar=False, normalize_embeddings=True)
 
     chunk_embeddings = embeddings[:-1]   # shape: (n_chunks, dim)
     query_embedding  = embeddings[-1]    # shape: (dim,)
 
-    # Cosine similarity — embeddings are L2-normalised so dot product = cosine sim
+    # Cosine similarity : embeddings are L2-normalised so dot product = cosine sim
     scores = chunk_embeddings @ query_embedding   # shape: (n_chunks,)
 
     results = [

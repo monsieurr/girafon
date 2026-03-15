@@ -9,7 +9,7 @@ Takes detection results and produces:
   - Band (Excellent / Good / Needs Improvement / Weak)
   - Top improvement recommendations
 
-All scoring logic is pure Python — no LLM involved.
+All scoring logic is pure Python : no LLM involved.
 """
 
 from __future__ import annotations
@@ -64,7 +64,7 @@ def compute_scores(
         raise ValueError("compute_scores received an empty results list.")
 
     if mode not in ("original", "omnibus"):
-        logger.warning("Unknown mode %r — defaulting to 'original'", mode)
+        logger.warning("Unknown mode %r : defaulting to 'original'", mode)
         mode = "original"
 
     weight_key = f"weight_{mode}"
@@ -78,11 +78,11 @@ def compute_scores(
                 f"required fields: {missing}. "
                 f"Pass vars(detection_result) from DetectionResult dataclass."
             )
-        # Normalise status defensively — should already be uppercase from detector
+        # Normalise status defensively : should already be uppercase from detector
         r["status"] = str(r.get("status", "MISSING")).upper()
         if r["status"] not in STATUS_VALUES:
             logger.warning(
-                "Result %r has invalid status %r — treating as MISSING",
+                "Result %r has invalid status %r : treating as MISSING",
                 r.get("key"), r["status"],
             )
             r["status"] = "MISSING"

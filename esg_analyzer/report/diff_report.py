@@ -71,7 +71,7 @@ def generate_diff_report(diff_report: Dict[str, Any], output_path: Optional[str]
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Girafon — Report Diff</title>
+  <title>Girafon : Report Diff</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -230,7 +230,7 @@ def generate_diff_report(diff_report: Dict[str, Any], output_path: Optional[str]
 <body>
   <div class="header">
     <div>
-      <h1>Girafon — Report Diff</h1>
+      <h1>Girafon : Report Diff</h1>
       <div class="meta">
         <div>{esc(base.get("label", "Baseline"))} → {esc(new.get("label", "Comparison"))}</div>
         <div>{esc(today)}</div>

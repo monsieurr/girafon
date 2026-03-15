@@ -6,11 +6,11 @@ to determine FOUND / PARTIAL / MISSING with evidence.
 
 Architecture
 ------------
-  DetectionResult   : typed dataclass — no dict sprawl
+  DetectionResult   : typed dataclass : no dict sprawl
   _build_prompt()   : pure function, testable in isolation
   _parse_response() : pure function, testable in isolation
-  detect_one_async(): single disclosure — async, single responsibility
-  detect_all()      : public entry point — runs all disclosures concurrently
+  detect_one_async(): single disclosure : async, single responsibility
+  detect_all()      : public entry point : runs all disclosures concurrently
                       via asyncio + semaphore (respects API rate limits)
 
 Concurrency model
@@ -94,11 +94,11 @@ _SYSTEM_PROMPT = """\
 You are an expert ESG analyst evaluating whether ESRS disclosures are present in a sustainability report.
 
 Your job is DETECTION, not auditing. The distinction matters:
-- FOUND means the disclosure EXISTS with reasonable substance — the company has reported on this topic with actual data or concrete description
-- PARTIAL means the topic is mentioned but lacks substance — vague statements, targets without numbers, topics referenced but not quantified
+- FOUND means the disclosure EXISTS with reasonable substance : the company has reported on this topic with actual data or concrete description
+- PARTIAL means the topic is mentioned but lacks substance : vague statements, targets without numbers, topics referenced but not quantified
 - MISSING means the topic is genuinely absent from the report
 
-Respond ONLY with valid JSON — no markdown fences, no preamble, no postamble. Raw JSON only.
+Respond ONLY with valid JSON : no markdown fences, no preamble, no postamble. Raw JSON only.
 
 Required JSON structure:
 {
@@ -111,7 +111,7 @@ Required JSON structure:
   "data_points_missing": ["<expected but absent>", ...]
 }
 
-Status calibration — be precise:
+Status calibration : be precise:
   FOUND   - The disclosure is substantively present. The company has reported actual numbers,
             named methodology, or provided concrete description. Some expected data points may
             be missing (note them in quality_flags) but the core disclosure EXISTS.
@@ -136,13 +136,13 @@ Quality flags (report these regardless of FOUND/PARTIAL/MISSING status):
 Important: FOUND with quality_flags is the correct output for a disclosure that exists
 but has compliance gaps. Do not downgrade to PARTIAL just because flags are present.
 
-Critical — data tables vs index pages:
+Critical : data tables vs index pages:
 Many sustainability reports include a GRI/ESRS content index appendix that LISTS metric
 names (e.g. "Scope 1 GHG emissions... see page 108") without providing actual values.
 If the context contains BOTH an index/reference passage AND a passage with actual numbers
 or tables, base your verdict on the passage with actual data, not the index entry.
 A page showing "32.4 Mt CO2e | 35.1 Mt CO2e" IS the disclosure. A page saying
-"Scope 1 emissions disclosed on page 108" is NOT — ignore it for your verdict.
+"Scope 1 emissions disclosed on page 108" is NOT : ignore it for your verdict.
 
 """
 
@@ -155,7 +155,7 @@ def _build_prompt(disclosure: Dict[str, Any], context: str, extraction_method: s
     # and adding the hint confuses the LLM on well-formatted input (causes MISSING regressions).
     if extraction_method == "pdfplumber":
         table_hint = (
-            "\nNote — PDF table quality: This document was extracted with a basic PDF parser. "
+            "\nNote : PDF table quality: This document was extracted with a basic PDF parser. "
             "Tables may appear as space-separated values without clear column alignment, e.g. "
             "'Scope 1- Direct emissions Mt CO2e 42 38 34 37 32 33' means Scope 1 = 33 Mt CO2e "
             "(most recent year, rightmost value). If a metric name and numbers appear together, "
@@ -181,7 +181,7 @@ def _build_prompt(disclosure: Dict[str, Any], context: str, extraction_method: s
     )
 
 
-# ── JSON parser — four-stage recovery ─────────────────────────────────────────
+# ── JSON parser : four-stage recovery ─────────────────────────────────────────
 
 # Matches the first complete JSON object in a string
 _JSON_OBJECT_RE = re.compile(r"\{.*\}", re.DOTALL)
@@ -193,10 +193,10 @@ def _parse_response(raw: str, key: str, warn_cb: Optional[Callable[[str], None]]
     """
     Parse LLM JSON with four-stage recovery. Returns {} only if all stages fail.
 
-    Stage 1: Direct parse (happy path — well-behaved LLM output)
+    Stage 1: Direct parse (happy path : well-behaved LLM output)
     Stage 2: Strip markdown fences (```json ... ```)
     Stage 3: Extract first {...} block with regex (preamble/postamble present)
-    Stage 4: Give up, return {} — caller will use keyword fallback
+    Stage 4: Give up, return {} : caller will use keyword fallback
     """
     if not raw or not raw.strip():
         msg = f"[{key}] LLM returned empty response"
@@ -227,7 +227,7 @@ def _parse_response(raw: str, key: str, warn_cb: Optional[Callable[[str], None]]
                 parsed["status"] = status.upper().strip()
             if parsed.get("status") not in VALID_STATUSES:
                 logger.warning(
-                    "[%s] Unexpected status %r — defaulting to MISSING", key, parsed.get("status")
+                    "[%s] Unexpected status %r : defaulting to MISSING", key, parsed.get("status")
                 )
                 parsed["status"] = "MISSING"
             # Clamp best_quote length defensively
@@ -260,8 +260,8 @@ async def _detect_one_async(
     Detect a single ESRS disclosure asynchronously.
     The semaphore ensures we never exceed MAX_CONCURRENT parallel LLM calls.
 
-    Retrieval strategy: multi-query. We run up to 3 retrieval passes —
-    one for the primary keywords, one per major expected data point —
+    Retrieval strategy: multi-query. We run up to 3 retrieval passes :
+    one for the primary keywords, one per major expected data point :
     then deduplicate and take the top chunks by score. This ensures that
     a disclosure whose evidence is spread across multiple sections (e.g.
     Scope 1 value on page 12, methodology on page 34) still gets both into
@@ -363,13 +363,13 @@ async def _detect_all_async(
         result.mode = mode
         result.cross_references = disclosure.get("cross_references", {})
         completed += 1
-        msg = f"Check {completed}/{total} — {key}: {result.status}"
+        msg = f"Check {completed}/{total} : {key}: {result.status}"
         if result.used_fallback:
             msg += " (fallback)"
         if progress_cb:
             progress_cb(msg)
         else:
-            logger.info("[%d/%d] ✓ %s — %s", completed, total, key, result.status)
+            logger.info("[%d/%d] ✓ %s : %s", completed, total, key, result.status)
         return result
 
     tasks = [run_one(key, disc) for key, disc in disclosures.items()]
@@ -389,7 +389,7 @@ def detect_all(
     """
     Public synchronous entry point.
     Runs all disclosure checks concurrently via asyncio internally.
-    Callers (main.py) stay synchronous — no asyncio.run() boilerplate needed there.
+    Callers (main.py) stay synchronous : no asyncio.run() boilerplate needed there.
 
     Parameters
     ----------
@@ -429,7 +429,7 @@ def _multi_query_retrieve(
     Pass 1: Primary keywords (broad topic match)
     Pass 2: Expected data point terms (specific evidence hunt)
     Pass 3: Section identifier e.g. "E1-6", "Scope 1 emissions" (anchor match)
-    Pass 4: Numeric unit hunt — queries using ESG units from the disclosure
+    Pass 4: Numeric unit hunt : queries using ESG units from the disclosure
             (e.g. "tCO2e Mt", "MWh GJ", "m3 withdrawal") to surface sparse
             data table pages that score poorly on keyword similarity but
             contain the actual numbers. This is the fix for the "GRI index
@@ -464,7 +464,7 @@ def _multi_query_retrieve(
         anchor_keywords = [w for w in (section + " " + name).lower().split() if len(w) > 3]
         _add(retrieve_chunks(doc.chunks, anchor_keywords[:6], top_n=top_n // 2))
 
-    # Pass 4: numeric unit hunt — find data table pages with actual values.
+    # Pass 4: numeric unit hunt : find data table pages with actual values.
     # These pages often have sparse text (mostly numbers/symbols) so they score
     # poorly on keyword/embedding similarity despite containing the real data.
     unit_queries = disclosure.get("unit_queries", [])

@@ -4,11 +4,11 @@ document_parser.py
 Parses ESG/sustainability reports into overlapping text chunks with page numbers.
 
 Supported formats:
-  .pdf  — three-tier extraction chain:
+  .pdf  : three-tier extraction chain:
             1. pymupdf4llm  → Markdown (best: preserves tables as | col | col |)
             2. PyMuPDF fitz → plain text (good: fast, decent layout)
             3. pdfplumber   → plain text (fallback)
-  .html / .htm — via BeautifulSoup
+  .html / .htm : via BeautifulSoup
 
 Each chunk carries its source page number, enabling the report to cite
 exact locations ("found on page 34").
@@ -18,7 +18,7 @@ Key design decisions
 - pymupdf4llm is preferred because LLMs understand Markdown tables natively.
   Plain-text extraction from a table like:
       Scope 1  |  14,200 tCO2e  |  2023
-  becomes "Scope 1 14,200 tCO2e 2023" — unreadable soup to the LLM.
+  becomes "Scope 1 14,200 tCO2e 2023" : unreadable soup to the LLM.
   Markdown preserves the structure, sharply reducing false MISSING detections
   on quantitative disclosures.
 
@@ -132,7 +132,7 @@ def parse_document(
         )
 
 
-# ── PDF parser — three-tier extraction chain ───────────────────────────────────
+# ── PDF parser : three-tier extraction chain ───────────────────────────────────
 
 def _parse_pdf(path: Path, **kwargs) -> ParsedDocument:
     """
@@ -154,7 +154,7 @@ def _parse_pdf(path: Path, **kwargs) -> ParsedDocument:
 
             if not page_texts:
                 logger.warning(
-                    "[%s] Extraction returned no text — trying next strategy", method_name
+                    "[%s] Extraction returned no text : trying next strategy", method_name
                 )
                 continue
 
@@ -162,12 +162,12 @@ def _parse_pdf(path: Path, **kwargs) -> ParsedDocument:
 
             if not chunks:
                 logger.warning(
-                    "[%s] Chunking produced no chunks — trying next strategy", method_name
+                    "[%s] Chunking produced no chunks : trying next strategy", method_name
                 )
                 continue
 
             if method_name == "markdown":
-                logger.info("PDF extracted via Markdown (pymupdf4llm) — tables preserved.")
+                logger.info("PDF extracted via Markdown (pymupdf4llm) : tables preserved.")
             else:
                 logger.warning(
                     "PDF extracted via '%s' (pymupdf4llm not available or failed). "
@@ -219,7 +219,7 @@ def _extract_markdown(path: Path) -> Tuple[List[Tuple[int, str]], int]:
     import pymupdf4llm  # type: ignore
 
     # pymupdf4llm prints "Consider using the pymupdf_layout package…" to stdout.
-    # Suppress it — it's a suggestion for a paid add-on, not actionable.
+    # Suppress it : it's a suggestion for a paid add-on, not actionable.
     _stdout = sys.stdout
     sys.stdout = io.StringIO()
     try:
@@ -244,7 +244,7 @@ def _extract_markdown(path: Path) -> Tuple[List[Tuple[int, str]], int]:
 
 
 def _extract_fitz_plain(path: Path) -> Tuple[List[Tuple[int, str]], int]:
-    """PyMuPDF plain text — fast, good reading order, no table structure."""
+    """PyMuPDF plain text : fast, good reading order, no table structure."""
     import fitz  # type: ignore  # PyMuPDF
 
     try:
@@ -269,7 +269,7 @@ def _extract_fitz_plain(path: Path) -> Tuple[List[Tuple[int, str]], int]:
 
 
 def _extract_pdfplumber(path: Path) -> Tuple[List[Tuple[int, str]], int]:
-    """pdfplumber — last resort, slower but sometimes best on complex layouts."""
+    """pdfplumber : last resort, slower but sometimes best on complex layouts."""
     import pdfplumber  # type: ignore
 
     page_texts: List[Tuple[int, str]] = []
@@ -370,7 +370,7 @@ def _build_chunks_from_pages(
         window_words = all_words[start:raw_end]
 
         if len(window_words) < min_chunk_words:
-            # Tiny trailing fragment — merge into the previous chunk
+            # Tiny trailing fragment : merge into the previous chunk
             if chunks and window_words:
                 prev = chunks[-1]
                 merged_text = prev.text + " " + " ".join(window_words)
@@ -410,7 +410,7 @@ def _find_sentence_boundary(words: List[str], pos: int, window: int) -> int:
     Returns adjusted position within [pos-window, pos+window], or pos if none found.
     """
     n = len(words)
-    # Clamp pos to valid range — can be == n when pointing past the last word
+    # Clamp pos to valid range : can be == n when pointing past the last word
     pos = min(pos, n)
     lo = max(0, pos - window)
     hi = min(n, pos + window)

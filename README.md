@@ -45,9 +45,9 @@ You can use Girafon either:
 | Batch runs, automation, CI | **CLI (Terminal)** | Fast, scriptable, easy to scale |
 | Demos, non-technical users | **GUI (Streamlit)** | Upload + click, shareable |
 
-### CLI — Terminal usage
+### CLI : Terminal usage
 
-#### Option A — Local LLM with Ollama (no API key needed)
+#### Option A : Local LLM with Ollama (no API key needed)
 
 ```bash
 # Install Ollama: https://ollama.com
@@ -63,7 +63,7 @@ python main.py --check               # verify connection
 python main.py --pdf report.pdf      # run analysis
 ```
 
-#### Option B — Cloud API (Anthropic, OpenAI, Groq, Mistral)
+#### Option B : Cloud API (Anthropic, OpenAI, Groq, Mistral)
 
 ```bash
 cp .env.example .env
@@ -75,11 +75,11 @@ python main.py --check               # verify connection
 python main.py --pdf report.pdf
 ```
 
-This produces an HTML report like `report_report_YYYYMMDD_HHMMSS.html` — open it in any browser.
+This produces an HTML report like `report_report_YYYYMMDD_HHMMSS.html` : open it in any browser.
 
-### GUI — Streamlit usage
+### GUI : Streamlit usage
 
-#### Option C — Local Streamlit UI
+#### Option C : Local Streamlit UI
 
 ```bash
 streamlit run streamlit_app.py
@@ -88,7 +88,7 @@ streamlit run streamlit_app.py
 Reports generated from the UI are saved under `./outputs` by default.
 You can override this with `GIRAFON_OUTPUT_DIR=/path/to/folder`.
 
-#### Option D — Streamlit Cloud (self-hosted UI)
+#### Option D : Streamlit Cloud (self-hosted UI)
 
 1) Push this repo to your GitHub.
 2) On Streamlit Cloud, create a new app from your repo.
@@ -98,7 +98,7 @@ You can override this with `GIRAFON_OUTPUT_DIR=/path/to/folder`.
 > Note: Streamlit Cloud / Render / Hugging Face Spaces cannot access your **local** Ollama.
 > For public hosting, use a cloud LLM provider (OpenAI/Anthropic/Groq/Mistral) via API keys.
 
-#### Option E — Docker (self-hosted UI)
+#### Option E : Docker (self-hosted UI)
 
 ```bash
 docker build -t girafon .
@@ -167,15 +167,15 @@ Only publish `site/demo` (do not publish `outputs/`, which still contains real c
 ## Modes and profiles (what they mean)
 
 **ESRS mode**
-- **Original** — ESRS Set 1 as adopted in 2023 (current official baseline).
-- **Omnibus / Simplified (draft)** — proposed simplifications; use for scenario analysis (not yet adopted law).
+- **Original** : ESRS Set 1 as adopted in 2023 (current official baseline).
+- **Omnibus / Simplified (draft)** : proposed simplifications; use for scenario analysis (not yet adopted law).
 
 Note: Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **not yet adopted law**. The currently applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772).
 
 **Schema profile**
-- **Basic** — 20 disclosures for a first‑pass gap check.
-- **IG3-core** — Girafon preset: ESRS 2 + E1 + G1.
-- **IG3 full** — EFRAG Implementation Guidance datapoint list (non-authoritative).
+- **Basic** : 20 disclosures for a first‑pass gap check.
+- **IG3-core** : Girafon preset: ESRS 2 + E1 + G1.
+- **IG3 full** : EFRAG Implementation Guidance datapoint list (non-authoritative).
 
 ---
 
@@ -338,7 +338,7 @@ esg-gap-detector/
 
 **Design principles:**
 - Framework logic is pure data (JSON), never hardcoded
-- LLM is used only to evaluate evidence — scoring is deterministic
+- LLM is used only to evaluate evidence : scoring is deterministic
 - No vector DB required for MVP (keyword search + cosine upgrade path built in)
 - Modular: swap any component without touching others
 
@@ -397,7 +397,7 @@ The tool flags vague or unsupported language patterns including:
 
 ## Limitations
 
-- This tool is **advisory only** — it is not a legal compliance certificate
+- This tool is **advisory only** : it is not a legal compliance certificate
 - Accuracy depends on PDF text extraction quality (scanned PDFs may need OCR)
 - LLM evaluation can produce false positives/negatives; always human-review the output
 - ESRS rules are subject to ongoing regulatory change; schema will be updated
@@ -426,13 +426,13 @@ PRs welcome, especially:
 
 ## License
 
-MIT — free to use, modify, and distribute.
+MIT : free to use, modify, and distribute.
 
 ---
 
 ## References
 
 - [EFRAG ESRS Delegated Act (EU) 2023/2772](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:L_202302772)
-- [EU Omnibus Directive — Feb 2026](https://eur-lex.europa.eu)
+- [EU Omnibus Directive : Feb 2026](https://eur-lex.europa.eu)
 - [GHG Protocol Corporate Standard](https://ghgprotocol.org/corporate-standard)
-- [CSRD Overview — EFRAG](https://www.efrag.org/en/projects/esrs-mandatory-standards)
+- [CSRD Overview : EFRAG](https://www.efrag.org/en/projects/esrs-mandatory-standards)

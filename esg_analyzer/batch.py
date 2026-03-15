@@ -59,7 +59,7 @@ def analyze_batch(
     for idx, pdf in enumerate(pdfs, 1):
         company_name = clean_company_name(pdf.name)
         report_path = output_dir / f"{pdf.stem}_report_{batch_stamp}.html"
-        _notify(progress, f"[{idx}/{len(pdfs)}] {company_name} — {pdf.name}")
+        _notify(progress, f"[{idx}/{len(pdfs)}] {company_name} : {pdf.name}")
 
         try:
             result = run_pipeline(
@@ -101,7 +101,7 @@ def analyze_batch(
             )
         except Exception as exc:
             err = str(exc)
-            _notify(warn, f"[{idx}/{len(pdfs)}] ERROR — {pdf.name}: {err}")
+            _notify(warn, f"[{idx}/{len(pdfs)}] ERROR : {pdf.name}: {err}")
             summary.append(
                 {
                     "company": company_name,
