@@ -592,6 +592,17 @@ def _build_html(
       gap: 16px;
       font-size: 12px;
     }}
+    .nav-links .nav-back {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }}
     .nav-links a {{
       color: #dbeafe;
       text-decoration: none;
@@ -656,11 +667,14 @@ def _build_html(
       line-height: 1;
     }}
     .score-circle .score-label {{
-      font-size: 11px;
+      font-size: 10px;
       color: {score_color};
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-top: 2px;
+      margin-top: 4px;
+      line-height: 1.2;
+      text-align: center;
+      max-width: 90px;
     }}
 
     /* ── Executive summary ── */

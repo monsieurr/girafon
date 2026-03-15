@@ -111,6 +111,20 @@ def _anonymize_html(html: str, alias: str, term_map: List[Tuple[str, str]]) -> s
 
     cleaned = _replace_terms(cleaned, term_map)
 
+    # Demo badge in header
+    badge_html = '<span class="mode-pill" style="background:#fde68a;color:#92400e;border-color:#f59e0b;">Demo</span>'
+    cleaned = cleaned.replace(
+        "<span>📋 Framework:",
+        f"{badge_html}<span>📋 Framework:",
+    )
+
+    # Demo back button inside nav (only for demo outputs)
+    if "nav-back" not in cleaned:
+        cleaned = cleaned.replace(
+            '<div class="nav-links">',
+            '<div class="nav-links"><a class="nav-back" href="index.html"><- Demo Home</a>',
+        )
+
     return cleaned
 
 
@@ -197,8 +211,12 @@ def build_demo_bundle(
         demo_entries.insert(0, ("Comparison workspace", "comparison.html"))
 
     # Build simple index
-    links = "\n".join(
-        f"<li><a href=\"{fname}\">{label}</a></li>" for label, fname in demo_entries
+    cards = "\n".join(
+        f"<a class=\"demo-card\" href=\"{fname}\">"
+        f"<div class=\"demo-title\">{label}</div>"
+        f"<div class=\"demo-sub\">Open report</div>"
+        f"</a>"
+        for label, fname in demo_entries
     )
     index_html = f"""<!doctype html>
 <html lang=\"en\">
@@ -207,31 +225,124 @@ def build_demo_bundle(
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
   <title>Girafon Demo (Anonymized)</title>
   <style>
-    body {{ font-family: Inter, system-ui, sans-serif; background: #f6f2ed; color: #24180f; }}
-    .wrap {{ max-width: 800px; margin: 0 auto; padding: 48px 20px; }}
-    h1 {{ font-size: 28px; }}
-    p {{ line-height: 1.6; }}
-    ul {{ padding-left: 18px; }}
-    li {{ margin: 8px 0; }}
-    a {{ color: #a1581f; font-weight: 600; text-decoration: none; }}
+    :root {{
+      --ink: #2f241b;
+      --accent: #6b4d35;
+      --cream: #f6efe5;
+      --sand: #e6d5bf;
+      --card: #ffffff;
+    }}
+    body {{
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      margin: 0;
+    }}
+    .wrap {{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }}
+    .nav {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }}
+    .brand {{
+      font-family: "Satoshi", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+    }}
+    .nav-link {{
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }}
+    h1 {{
+      font-family: "Satoshi", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-size: 36px;
+      margin: 0 0 12px;
+    }}
+    p {{
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0 0 18px;
+    }}
+    .grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 24px 0 32px;
+    }}
+    .demo-card {{
+      background: var(--card);
+      border: 1px solid var(--sand);
+      border-radius: 14px;
+      padding: 18px;
+      text-decoration: none;
+      color: var(--ink);
+      box-shadow: 0 6px 16px rgba(30, 24, 18, 0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }}
+    .demo-card:hover {{
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(30, 24, 18, 0.12);
+    }}
+    .demo-title {{
+      font-weight: 700;
+      margin-bottom: 6px;
+    }}
+    .demo-sub {{
+      font-size: 13px;
+      color: #6e5a47;
+    }}
+    .card {{
+      background: var(--card);
+      border: 1px solid var(--sand);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 20px;
+    }}
+    pre {{
+      background: #fff;
+      border: 1px solid var(--sand);
+      padding: 12px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }}
   </style>
 </head>
 <body>
   <div class=\"wrap\">
-    <h1>Girafon Demo (Anonymized)</h1>
+    <div class=\"nav\">
+      <a class=\"brand\" href=\"../index.html\">Girafon</a>
+      <a class=\"nav-link\" href=\"../index.html\">Back to Home</a>
+    </div>
+    <h1>Demo Reports (Anonymized)</h1>
     <p>These reports are generated outputs with company names removed. Use this page to
     showcase how Girafon looks and behaves without exposing real company identities.</p>
-    <ul>
-      {links}
-    </ul>
-    <h2 style=\"margin-top:32px;\">Try the real tool (local)</h2>
-    <p>Girafon is meant to be deployed locally. Quick start:</p>
-    <pre style=\"background:#fff;border:1px solid #e6d5bf;padding:12px;border-radius:10px;\">pip install -r requirements.txt
+    <div class=\"grid\">
+      {cards}
+    </div>
+    <div class=\"card\">
+      <strong>Try the real tool (local)</strong>
+      <p>Girafon is meant to be deployed locally. Pick a path:</p>
+      <p><strong>GUI (Streamlit)</strong></p>
+      <pre>pip install -r requirements.txt
 ollama serve
 ollama pull qwen2.5:14b
 streamlit run streamlit_app.py</pre>
-    <p>CLI mode:</p>
-    <pre style=\"background:#fff;border:1px solid #e6d5bf;padding:12px;border-radius:10px;\">python main.py --pdf path/to/report.pdf</pre>
+      <p><strong>CLI (script)</strong></p>
+      <pre>python main.py --pdf path/to/report.pdf</pre>
+      <p><strong>Docker (self-hosted)</strong></p>
+      <pre>docker build -t girafon .
+docker run -p 8501:8501 -e OLLAMA_HOST=http://host.docker.internal:11434 girafon</pre>
+      <p>Source: <a class=\"nav-link\" href=\"https://github.com/monsieurr/girafon\" target=\"_blank\" rel=\"noreferrer\">github.com/monsieurr/girafon</a></p>
+    </div>
   </div>
 </body>
 </html>"""
