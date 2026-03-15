@@ -5,6 +5,9 @@
     "source_omnibus": "EU Omnibus Directive adopted 24 Feb 2026, published OJ 26 Feb 2026",
     "last_updated": "2026-02",
     "note": "Each disclosure has both original_mandatory and omnibus_mandatory flags. Run the tool with --mode original or --mode omnibus to switch regimes.",
+    "mandatory_note": "In Girafon, 'mandatory' means mandatory IF the topic is material. Only ESRS 2 Appendix B datapoints linked to SFDR, Pillar 3 or EU Taxonomy are mandatory regardless of materiality.",
+    "omnibus_disclaimer": "Simplified ESRS are based on EFRAG technical advice (Dec 2025) and are not yet adopted law. The applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772).",
+    "e1_exclusion_note": "E1 Climate Change may be excluded only with a detailed explanation (ESRS 1 §32), making omission unlikely in practice.",
     "modes": {
       "original": "Full ESRS as per 2023/2772 — applies to Wave 1 (FY2024 reports)",
       "omnibus": "Simplified ESRS post-Omnibus — scope limited to 1000+ FTE / €450M+ turnover, 61% fewer mandatory data points"
@@ -27,6 +30,7 @@
     "category": "Environment",
     "pillar": "Climate Change",
     "description": "Direct greenhouse gas emissions from owned or controlled sources. Must include absolute value in tCO2e, consolidation approach (equity share or operational control), and GHG Protocol methodology reference.",
+    "_note": "Split from ESRS E1-6 §44 for gap-analysis granularity. Regulatory structure has one disclosure requirement covering Scopes 1–3 and total GHG emissions; intensity is a datapoint within E1-6.",
     "keywords": [
       "scope 1",
       "direct emissions",
@@ -82,6 +86,7 @@
     "category": "Environment",
     "pillar": "Climate Change",
     "description": "Indirect GHG emissions from purchased electricity, heat or steam. Both market-based and location-based figures required under original ESRS.",
+    "_note": "Split from ESRS E1-6 §44 for gap-analysis granularity. Regulatory structure has one disclosure requirement covering Scopes 1–3 and total GHG emissions; intensity is a datapoint within E1-6.",
     "keywords": [
       "scope 2",
       "indirect emissions",
@@ -136,6 +141,7 @@
     "category": "Environment",
     "pillar": "Climate Change",
     "description": "All other indirect emissions across the value chain. Must list relevant GHG Protocol categories (1–15), disclose estimation methodology, and identify significant categories.",
+    "_note": "Split from ESRS E1-6 §44 for gap-analysis granularity. Regulatory structure has one disclosure requirement covering Scopes 1–3 and total GHG emissions; intensity is a datapoint within E1-6.",
     "keywords": [
       "scope 3",
       "value chain",
@@ -196,6 +202,7 @@
     "category": "Environment",
     "pillar": "Climate Change",
     "description": "Total GHG emissions per unit of net revenue. Enables cross-company normalised comparison.",
+    "_note": "Split from ESRS E1-6 §44(c) for gap-analysis granularity. Regulatory structure has one disclosure requirement covering Scopes 1–3 and total GHG emissions; intensity is a datapoint within E1-6.",
     "keywords": [
       "intensity",
       "emissions per revenue",

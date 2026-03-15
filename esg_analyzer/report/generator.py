@@ -73,11 +73,16 @@ def _build_html(
         mode_label = "ESRS Set 1 (Delegated Act 2023)"
         mode_badge = ""
         mode_note = ""
+        mode_header_note = ""
         framework_ref = "ESRS Set 1 Delegated Act (EU) 2023/2772 · GHG Protocol Corporate Standard"
     else:
         mode_label = "ESRS Simplified / Omnibus (draft)"
         mode_badge = '<span class="mode-pill">Draft</span>'
-        mode_note = "Simplified/Omnibus settings are based on draft proposals and may change."
+        mode_note = (
+            "Simplified/Omnibus settings are based on EFRAG technical advice (Dec 2025) "
+            "and are not yet adopted law. ESRS Set 1 (EU 2023/2772) remains applicable."
+        )
+        mode_header_note = "⚠️ Draft (not adopted law). ESRS Set 1 remains applicable."
         framework_ref = (
             "ESRS Set 1 Delegated Act (EU) 2023/2772 · Simplified ESRS (Omnibus draft) · "
             "GHG Protocol Corporate Standard"
@@ -259,7 +264,20 @@ def _build_html(
                 gri_html += f'<div class="gri-delta">GRI stricter: {esc(delta_raw)}</div>'
             gri_html += "</div></div>"
 
-        mandatory_tag = '<span class="mandatory-tag">MANDATORY</span>' if item.get("is_mandatory") else ""
+        mandatory_title = (
+            "Mandatory if the topic is material. Only ESRS 2 Appendix B datapoints "
+            "linked to SFDR, Pillar 3 or EU Taxonomy are mandatory regardless of materiality."
+        )
+        mandatory_tag = (
+            f'<span class="mandatory-tag" title="{esc_attr(mandatory_title)}">MANDATORY</span>'
+            if item.get("is_mandatory") else ""
+        )
+        e1_note_html = ""
+        if str(item.get("section", "")).startswith("E1-"):
+            e1_note_html = (
+                '<div class="e1-note">E1 note: Climate Change may be excluded only with a detailed explanation '
+                "(ESRS 1 §32).</div>"
+            )
 
         review_html = f"""
         <div class="review-block">
@@ -321,6 +339,7 @@ def _build_html(
           </td>
           <td class="col-name">
             <strong>{esc(item['name'])}</strong>
+            {e1_note_html}
             {rationale_html}
             {quote_html}
             {flags_html}
@@ -488,6 +507,15 @@ def _build_html(
     </section>
     """
 
+    disclosure_notes_html = """
+    <div class="tool-note">
+      <strong>Mandatory note:</strong> “MANDATORY” means mandatory <em>if the topic is material</em>. Only ESRS 2 Appendix B datapoints (SFDR/Pillar 3/EU Taxonomy-linked) are mandatory regardless of materiality.
+    </div>
+    <div class="tool-note">
+      <strong>E1-6 structure note:</strong> ESRS E1-6 is a single disclosure requirement. Girafon displays its datapoints (Scopes 1–3 and GHG intensity) as separate rows for gap-analysis granularity.
+    </div>
+    """
+
     disclosure_tools_html = f"""
     <div class="disclosure-tools" id="disclosure-tools">
       <div class="tool-group filter-buttons">
@@ -534,6 +562,7 @@ def _build_html(
         <button id="export-csv" aria-label="Export reviewed findings as CSV">Export reviewed (CSV)</button>
       </div>
     </div>
+    {disclosure_notes_html}
     {category_nav_html}
     """
 
@@ -646,6 +675,10 @@ def _build_html(
       flex-wrap: wrap;
     }}
     .header-left .meta span {{ display: flex; align-items: center; gap: 6px; }}
+    .meta-disclaimer {{
+      color: #b45309;
+      font-weight: 600;
+    }}
 
     /* Score circle */
     .score-circle {{
@@ -836,6 +869,16 @@ def _build_html(
       padding: 12px 0 20px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 12px;
+    }}
+    .tool-note {{
+      font-size: 12px;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 0 0 10px;
+      line-height: 1.5;
     }}
     .tool-group {{
       display: flex;
@@ -1181,6 +1224,16 @@ def _build_html(
       font-style: italic;
       border-radius: 0 4px 4px 0;
     }}
+    .e1-note {{
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      line-height: 1.4;
+    }}
     .flag-row {{
       display: flex;
       flex-wrap: wrap;
@@ -1398,6 +1451,7 @@ def _build_html(
     <div class="meta">
       <span>📅 {today}</span>
       <span>📋 Framework: {esc(mode_label)} {mode_badge}</span>
+      {f'<span class="meta-disclaimer">{esc(mode_header_note)}</span>' if mode_header_note else ''}
       {f'<span>🧭 Profile: {esc(profile_label)}</span>' if profile_label else ''}
       {'<span>📄 Source: ' + esc(pdf_filename) + '</span>' if pdf_filename else ''}
       <span>🔍 {r['total_disclosures']} disclosures analysed</span>

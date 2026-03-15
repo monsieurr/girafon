@@ -182,7 +182,9 @@ Only publish `site/demo` (do not publish `outputs/`, which still contains real c
 
 **ESRS mode**
 - **Original** — ESRS Set 1 as adopted in 2023 (current official baseline).
-- **Omnibus / Simplified (draft)** — proposed simplifications; use for scenario analysis.
+- **Omnibus / Simplified (draft)** — proposed simplifications; use for scenario analysis (not yet adopted law).
+
+Note: Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **not yet adopted law**. The currently applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772).
 
 **Schema profile**
 - **Basic** — Girafon’s 20-disclosure fast scan.
@@ -294,9 +296,9 @@ explicit "Not material" columns with marks (e.g. X).
 | Mode | Description | Scope |
 |------|-------------|-------|
 | `original` | Full ESRS Delegated Act (EU) 2023/2772 | Wave 1 companies (FY2024 reports) |
-| `omnibus` | Simplified ESRS post-Omnibus Directive (Feb 2026) | 1,000+ FTE / €450M+ turnover |
+| `omnibus` | Simplified ESRS (draft; not adopted law) | 1,000+ FTE / €450M+ turnover |
 
-The Omnibus Directive (adopted 24 Feb 2026) reduced mandatory data points by ~61%. Use `--mode omnibus` to evaluate against the new simplified requirements.
+Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **not yet adopted law**. The applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772). Use `--mode omnibus` only for forward‑looking scenario analysis.
 
 ---
 
@@ -318,6 +320,8 @@ The Omnibus Directive (adopted 24 Feb 2026) reduced mandatory data points by ~61
 | S1-9 | Gender Diversity | Workforce | ✅ | ✅ |
 | S1-14 | Health & Safety (LTIFR) | Workforce | ✅ | ✅ |
 | S1-13 | Training Hours | Workforce | ✅ | ⬜ voluntary |
+
+**Mandatory note:** “Mandatory” here means mandatory **if the topic is material**. Only ESRS 2 Appendix B datapoints (SFDR/Pillar 3/EU Taxonomy-linked) are mandatory regardless of materiality.
 | S1-8 | Collective Bargaining | Workforce | ✅ | ✅ |
 | S2-1 | Supply Chain Due Diligence | Value Chain | materiality | materiality |
 | G1-1 | Governance Structure | Governance | ✅ | ✅ |

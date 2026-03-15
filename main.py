@@ -69,7 +69,7 @@ def main() -> None:
     parser.add_argument("--json",      default="",     help="Also save raw results as JSON")
     parser.add_argument(
         "--mode", choices=["original", "omnibus"], default="original",
-        help="ESRS mode: original (2023) or omnibus (2026 simplified)",
+        help="ESRS mode: original (2023) or omnibus (draft, not adopted law)",
     )
     parser.add_argument("--provider",  default="", help="LLM provider: anthropic, openai, ollama, groq, mistral")
     parser.add_argument("--model",     default="", help="Model name (e.g. llama3.2, gpt-4o-mini)")
@@ -153,6 +153,12 @@ def main() -> None:
         print(f"  Mode     : {args.mode.upper()}")
         print(f"  Schema   : {args.schema}")
         print(f"{'='*56}\n")
+
+    if args.mode == "omnibus":
+        print(
+            "  NOTE     : Omnibus/Simplified is draft (EFRAG technical advice, Dec 2025) and not adopted law.\n"
+            "             ESRS Set 1 (EU 2023/2772) remains applicable.\n"
+        )
 
     if batch_mode:
         if args.provider or args.model:
