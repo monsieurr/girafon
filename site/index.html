@@ -97,13 +97,18 @@
     </div>
     <div class="card">
       <strong>Run it locally (fast)</strong>
-      <p>Girafon is meant to be deployed locally. Quick start:</p>
+      <p>Girafon is meant to be deployed locally. Pick a path:</p>
+      <p><strong>GUI (Streamlit)</strong></p>
       <pre style="background:#fff;border:1px solid var(--sand);padding:12px;border-radius:10px;">pip install -r requirements.txt
 ollama serve
 ollama pull qwen2.5:14b
 streamlit run streamlit_app.py</pre>
-      <p>CLI mode:</p>
+      <p><strong>CLI (script)</strong></p>
       <pre style="background:#fff;border:1px solid var(--sand);padding:12px;border-radius:10px;">python main.py --pdf path/to/report.pdf</pre>
+      <p><strong>Docker (self-hosted)</strong></p>
+      <pre style="background:#fff;border:1px solid var(--sand);padding:12px;border-radius:10px;">docker build -t girafon .
+docker run -p 8501:8501 -e OLLAMA_HOST=http://host.docker.internal:11434 girafon</pre>
+      <p><a class="cta" href="https://github.com/monsieurr/girafon" target="_blank" rel="noreferrer">View on GitHub</a></p>
     </div>
   </div>
 </body>
