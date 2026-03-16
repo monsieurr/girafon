@@ -10,7 +10,7 @@ Girafon is a diagnostic aid, not a compliance certificate. Use it for first‑pa
 
 ---
 
-Upload an ESG PDF and Girafon returns per‑disclosure status, cited quotes with page numbers, a weighted score, greenwashing signals, and a prioritised fix list. Omnibus mode is draft and intended for scenario analysis only.
+Upload an ESG PDF or HTML report and Girafon returns per‑disclosure status, cited quotes with page numbers, a weighted score, greenwashing signals, and a prioritised fix list. Omnibus mode is draft and intended for scenario analysis only.
 
 ---
 
@@ -54,7 +54,7 @@ You can use Girafon either:
 
 ```bash
 # Install Ollama: https://ollama.com
-ollama pull llama3.2      # or: mistral, gemma3, phi3
+ollama pull llama3.2      # or: mistral, gemma3, qwen2.5
 ollama serve              # start the local server
 
 cp .env.example .env
@@ -66,7 +66,7 @@ python main.py --check               # verify connection
 python main.py --pdf report.pdf      # run analysis
 ```
 
-#### Option B : Cloud API (Anthropic, OpenAI, Groq, Mistral)
+#### Option B : Cloud API (Gemini, Anthropic, OpenAI, Groq, Mistral)
 
 ```bash
 cp .env.example .env
@@ -144,12 +144,12 @@ If you want a public demo without exposing real company names, you can generate
 an anonymized static showcase from existing HTML reports.
 
 1) Generate reports as usual (single or batch).
-2) Build the demo bundle:
+2) Build the demo bundle (pass `--summary` if you want the comparison workspace):
 
 ```bash
 python site/build_demo_bundle.py \
-  --input-dir outputs \
-  --summary outputs/summary.json \
+  --input-dir ./out \
+  --summary ./out/summary.json \
   --output-dir site/demo
 ```
 
@@ -191,7 +191,7 @@ python main.py --input-dir <folder>  # Batch mode: folder of PDFs
                --company "Name"       # Company name for the report header
                --output report.html   # Custom output path
                --json results.json    # Also save raw results as JSON
-               --mode original        # "original" (ESRS 2023) or "omnibus" (2026)
+               --mode original        # "original" (ESRS 2023) or "omnibus" (draft; not adopted law)
                --chunk-words 500      # Chunk size in words (default: 500)
                --overlap-words 120    # Chunk overlap (default: 120)
                --min-chunk-words 40   # Discard very short chunks (default: 40)
@@ -285,7 +285,7 @@ explicit "Not material" columns with marks (e.g. X).
 | Mode | Description | Scope |
 |------|-------------|-------|
 | `original` | Full ESRS Delegated Act (EU) 2023/2772 | Wave 1 companies (FY2024 reports) |
-| `omnibus` | Simplified ESRS (draft; not adopted law) | 1,000+ FTE / €450M+ turnover |
+| `omnibus` | Simplified ESRS (draft; not adopted law) | Indicative scope only (see Omnibus materials) |
 
 Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **not yet adopted law**. The applicable standard remains ESRS Set 1 (Delegated Act EU 2023/2772). Use `--mode omnibus` only for forward‑looking scenario analysis.
 
@@ -309,14 +309,14 @@ Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **n
 | S1-9 | Gender Diversity | Workforce | ✅ | ✅ |
 | S1-14 | Health & Safety (LTIFR) | Workforce | ✅ | ✅ |
 | S1-13 | Training Hours | Workforce | ✅ | ⬜ voluntary |
-
-**Mandatory note:** “Mandatory” here means mandatory **if the topic is material**. Only ESRS 2 Appendix B datapoints (SFDR/Pillar 3/EU Taxonomy-linked) are mandatory regardless of materiality.
 | S1-8 | Collective Bargaining | Workforce | ✅ | ✅ |
 | S2-1 | Supply Chain Due Diligence | Value Chain | materiality | materiality |
 | G1-1 | Governance Structure | Governance | ✅ | ✅ |
 | G1-3 | Anti-Corruption Policy | Governance | ✅ | ✅ |
 | G1-4 | Corruption Incidents | Governance | ✅ | ✅ |
 | G1-5 | Political Lobbying | Governance | materiality | ⬜ voluntary |
+
+**Mandatory note:** “Mandatory” here means mandatory **if the topic is material**. Only ESRS 2 Appendix B datapoints (SFDR/Pillar 3/EU Taxonomy-linked) are mandatory regardless of materiality.
 
 ---
 
@@ -331,7 +331,7 @@ esg-gap-detector/
 │   ├── frameworks/
 │   │   └── esrs_schema.json            # ESRS disclosures (Omnibus-aware)
 │   ├── retrieval/
-│   │   └── search.py                   # Keyword-based chunk retrieval (TF-IDF style)
+│   │   └── search.py                   # 3-tier retrieval (embeddings → TF-IDF → keyword)
 │   ├── analysis/
 │   │   ├── detector.py                 # LLM-powered disclosure detection
 │   │   └── scorer.py                   # Deterministic weighted scoring
@@ -342,7 +342,7 @@ esg-gap-detector/
 **Design principles:**
 - Framework logic is pure data (JSON), never hardcoded
 - LLM is used only to evaluate evidence : scoring is deterministic
-- No vector DB required for MVP (keyword search + cosine upgrade path built in)
+- No vector DB required for MVP (embeddings/TF‑IDF/keyword retrieval in‑memory)
 - Modular: swap any component without touching others
 
 ---
@@ -417,7 +417,7 @@ The tool flags vague or unsupported language patterns including:
 - [ ] Year-over-year trend tracking
 - [ ] Semantic search upgrade (sentence-transformers + FAISS)
 - [ ] GRI / ISSB cross-mapping
-- [ ] Batch processing for multiple companies
+- [x] Batch processing for multiple companies
 - [x] Streamlit web UI (basic)
 
 ---
@@ -439,7 +439,7 @@ MIT : free to use, modify, and distribute.
 
 ## References
 
-- [EFRAG ESRS Delegated Act (EU) 2023/2772](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:L_202302772)
-- [EU Omnibus Directive : Feb 2026](https://eur-lex.europa.eu)
+- [Commission Delegated Regulation (EU) 2023/2772 (ESRS Set 1)](https://op.europa.eu/en/publication-detail/-/publication/98029000-a070-11ee-b164-01aa75ed71a1/language-en)
+- [EFRAG technical advice on Draft Simplified ESRS (Dec 2025)](https://www.efrag.org/en/news-and-calendar/news/efrag-provides-its-technical-advice-on-draft-simplified-esrs-to-the-european-commission)
 - [GHG Protocol Corporate Standard](https://ghgprotocol.org/corporate-standard)
 - [CSRD Overview : EFRAG](https://www.efrag.org/en/projects/esrs-mandatory-standards)
