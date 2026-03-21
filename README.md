@@ -323,7 +323,7 @@ Omnibus/Simplified mode is based on EFRAG technical advice (Dec 2025) and is **n
 ## Architecture
 
 ```
-esg-gap-detector/
+girafon/
 ├── main.py                              # CLI entry point
 ├── esg_analyzer/
 │   ├── parsers/

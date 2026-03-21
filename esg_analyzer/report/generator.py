@@ -404,19 +404,21 @@ def _build_html(
             <div class="progress-bar" style="width:{cs['score']}%;background:{_cat_color(cs['score'])}"></div>
           </div>
           <div class="weight-legend">Weight = contribution to overall score (higher = more impact).</div>
-          <table class="disclosure-table">
-            <thead>
-              <tr>
-                <th class="col-section">Section</th>
-                <th class="col-name">Disclosure</th>
-                <th class="col-status">Status</th>
-                <th class="col-weight"><abbr title="Importance weight in scoring (higher = more impact)">Weight</abbr></th>
-              </tr>
-            </thead>
-            <tbody>
-              {''.join(rows)}
-            </tbody>
-          </table>
+          <div class="table-scroll">
+            <table class="disclosure-table">
+              <thead>
+                <tr>
+                  <th class="col-section">Section</th>
+                  <th class="col-name">Disclosure</th>
+                  <th class="col-status">Status</th>
+                  <th class="col-weight"><abbr title="Importance weight in scoring (higher = more impact)">Weight</abbr></th>
+                </tr>
+              </thead>
+              <tbody>
+                {''.join(rows)}
+              </tbody>
+            </table>
+          </div>
         </section>"""
 
     # Recommendations
@@ -620,6 +622,7 @@ def _build_html(
       display: flex;
       gap: 16px;
       font-size: 12px;
+      flex-wrap: wrap;
     }}
     .nav-links .nav-back {{
       display: inline-flex;
@@ -1128,10 +1131,20 @@ def _build_html(
     }}
 
     /* ── Disclosure table ── */
+    .table-scroll {{
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+    }}
     .disclosure-table {{
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
+      min-width: 760px;
     }}
     .disclosure-table thead tr {{
       border-bottom: 2px solid var(--border);
@@ -1419,6 +1432,152 @@ def _build_html(
       padding: 24px 64px;
       font-size: 11px;
       line-height: 1.7;
+    }}
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {{
+      .top-nav,
+      .report-header,
+      .exec-summary,
+      .stats-bar,
+      .materiality-summary,
+      .main-content,
+      .report-footer {{
+        padding-left: 28px;
+        padding-right: 28px;
+      }}
+      .report-header {{
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }}
+      .score-circle {{
+        justify-self: start;
+      }}
+      .disclosure-tools {{
+        gap: 12px;
+      }}
+    }}
+
+    @media (max-width: 768px) {{
+      .top-nav {{
+        position: static;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }}
+      .nav-links {{
+        width: 100%;
+        gap: 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+      }}
+      .report-header,
+      .exec-summary,
+      .stats-bar,
+      .materiality-summary,
+      .main-content,
+      .report-footer {{
+        padding-left: 16px;
+        padding-right: 16px;
+      }}
+      .report-header {{
+        padding-top: 28px;
+        padding-bottom: 24px;
+      }}
+      .header-left h1 {{
+        font-size: 26px;
+      }}
+      .header-left .meta {{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }}
+      .score-circle {{
+        width: 118px;
+        height: 118px;
+      }}
+      .score-circle .score-num {{
+        font-size: 30px;
+      }}
+      .stats-bar {{
+        gap: 18px 20px;
+      }}
+      .stat {{
+        min-width: 130px;
+      }}
+      .category-header {{
+        flex-direction: column;
+        gap: 6px;
+        align-items: flex-start;
+      }}
+      .category-meta {{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }}
+      .disclosure-tools {{
+        align-items: stretch;
+      }}
+      .tool-group {{
+        min-width: 100%;
+      }}
+      .tool-group.filter-buttons {{
+        flex-wrap: wrap;
+        gap: 6px;
+      }}
+      .tool-group.search {{
+        min-width: 100%;
+      }}
+      .tool-group.export {{
+        width: 100%;
+        flex-wrap: wrap;
+      }}
+      .tool-group.export button {{
+        flex: 1 1 170px;
+      }}
+      .details-toggle {{
+        flex-wrap: wrap;
+      }}
+      .rec-item {{
+        gap: 10px;
+      }}
+    }}
+
+    @media (max-width: 560px) {{
+      body {{
+        font-size: 13px;
+      }}
+      .header-left h1 {{
+        font-size: 22px;
+      }}
+      .score-circle {{
+        width: 108px;
+        height: 108px;
+      }}
+      .score-circle .score-num {{
+        font-size: 26px;
+      }}
+      .score-circle .score-label {{
+        max-width: 74px;
+        font-size: 7px;
+      }}
+      .section-title {{
+        font-size: 20px;
+      }}
+      .nav-links a {{
+        font-size: 11px;
+      }}
+      .tool-group button,
+      .tool-group input[type="text"] {{
+        font-size: 12px;
+      }}
+      .table-scroll {{
+        border-radius: 8px;
+      }}
     }}
 
     /* ── Print ── */
